@@ -24,11 +24,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderStyle: 'solid',
         borderWidth: 0,
-        // Shadow for iOS
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.8,
-        shadowRadius: 4,
         // Shadow for Android
         elevation: 3,
 

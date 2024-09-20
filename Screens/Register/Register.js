@@ -4,11 +4,12 @@ import { Text, View } from 'react-native'
 import colors from '../../assets/color/colors';
 import icons from '../../assets/iconApp/icons';
 import { Picker } from '@react-native-picker/picker';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import apiWithoutAuth, { endpoints } from '../../Configs/APIs';
-
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import LottieView from 'lottie-react-native';
 
 const Register = ({ navigation }) => {
+    const [loading, setLoading] = useState(false);
     const [userName, setUserName] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
@@ -17,20 +18,23 @@ const Register = ({ navigation }) => {
     const [password, setPassword] = useState("");
     const [passConfirm, setPassConfirm] = useState("");
     const [gender, setGender] = useState("");
-    const [date, setDate] = useState(new Date());
-    const [show, setShow] = useState(false);
     const [showPass, setShowPass] = useState(false);
+    // chọn ngày sinh
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(null);
 
-    const onChange = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
-        setShow(Platform.OS === 'ios'); // Sử dụng Platform để kiểm tra nếu đang chạy trên iOS
-        setDate(currentDate);
+    const showDatePicker = () => {
+        setDatePickerVisibility(true);
     };
 
-    const showDatepicker = () => {
-        setShow(true);
+    const hideDatePicker = () => {
+        setDatePickerVisibility(false);
     };
-    // bắt lỗi và hiển thị
+
+    const handleConfirm = (date) => {
+        setSelectedDate(date);
+        hideDatePicker();
+    };
 
     const [errors, setErrors] = useState({
         userName: '',
@@ -137,15 +141,15 @@ const Register = ({ navigation }) => {
     }, [displayText, isDeleting, index]); // Thực thi lại khi displayText, isDeleting, hoặc index thay đổi
 
     // định dạng ngày sinh
-    function formatDate(isoString) {
-        const date = new Date(isoString);
+    // function formatDate(isoString) {
+    //     const date = new Date(isoString);
 
-        const day = date.getDate().toString().padStart(2, '0');   // Lấy ngày (định dạng 2 chữ số)
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');  // Lấy tháng (tháng trong JS bắt đầu từ 0)
-        const year = date.getFullYear();  // Lấy năm
+    //     const day = date.getDate().toString().padStart(2, '0');   // Lấy ngày (định dạng 2 chữ số)
+    //     const month = (date.getMonth() + 1).toString().padStart(2, '0');  // Lấy tháng (tháng trong JS bắt đầu từ 0)
+    //     const year = date.getFullYear();  // Lấy năm
 
-        return `${day}/${month}/${year}`;  // Định dạng ngày/tháng/năm
-    }
+    //     return `${day}/${month}/${year}`;  // Định dạng ngày/tháng/năm
+    // }
 
     // hàm đăng ký
 
@@ -163,6 +167,7 @@ const Register = ({ navigation }) => {
                 phone: phone,
             };
             try {
+                setLoading(true);
                 // Gọi API để đăng nhập
                 const response = await apiWithoutAuth.post(endpoints.register, userData);
 
@@ -172,12 +177,14 @@ const Register = ({ navigation }) => {
                 } else {
                     console.log("Có lỗi xảy ra:", response.data);
                 }
+                setLoading(false);
             } catch (error) {
                 if (error.response && error.response.status === 409) {
                     console.log("Lỗi:", error.response.data); // Xử lý lỗi do email hoặc username đã tồn tại
                 } else {
                     console.log("Lỗi kết nối hoặc lỗi không xác định:", error.message);
                 }
+                setLoading(false);
             }
         }
     }
@@ -299,24 +306,23 @@ const Register = ({ navigation }) => {
 
                     <View style={{ width: '90%', marginBottom: 5 }}>
                         <Text style={styles.text_show}>Birth</Text>
-                        <View style={styles.input_contai}>
-                            <Image
-                                style={{ width: 30, height: 30 }}
-                                source={require('../../assets/images/icondate.png')} />
-                            <Button onPress={showDatepicker} title="Chọn ngày" />
-                            {show && (
-                                <DateTimePicker
-                                    value={date}
-                                    mode="date"
-                                    display="default"
-                                    onChange={onChange}
-                                />
-                            )}
-                            {Platform.OS === 'android' && (
-                                <Text style={{ fontSize: 19, fontWeight: '400', marginLeft: 10 }}>
-                                    {date.toLocaleDateString()}
-                                </Text>
-                            )}
+                        <View style={[styles.input_contai, { padding: 5 }]}>
+                            <TouchableOpacity onPress={showDatePicker}>
+                                <Image
+                                    style={{ width: 30, height: 30 }}
+                                    source={require('../../assets/images/icondate.png')} />
+                            </TouchableOpacity>
+
+                            <Text style={{ fontSize: 17, fontWeight: '500' }}>{selectedDate ? selectedDate.toDateString() : 'Chưa chọn ngày sinh'}</Text>
+
+                            <DateTimePickerModal
+                                isVisible={isDatePickerVisible}
+                                mode="date"
+                                maximumDate={new Date()} // Giới hạn ngày tối đa là hôm nay
+                                date={new Date(2000, 0, 1)} // Ngày mặc định (1/1/2000)
+                                onConfirm={handleConfirm}
+                                onCancel={hideDatePicker}
+                            />
                         </View>
                     </View>
 
@@ -337,7 +343,7 @@ const Register = ({ navigation }) => {
                             <TouchableOpacity onPress={() => setShowPass(prevShowPass => !prevShowPass)}>
                                 <Image
                                     style={{ width: 30, height: 30 }}
-                                    source={showPass
+                                    source={!showPass
                                         ? require('../../assets/images/iconhide.png')  // Nếu showPass là true
                                         : require('../../assets/images/iconsee.png')  // Nếu showPass là false
                                     } />
@@ -364,7 +370,7 @@ const Register = ({ navigation }) => {
                             <TouchableOpacity onPress={() => setShowPass(prevShowPass => !prevShowPass)}>
                                 <Image
                                     style={{ width: 30, height: 30 }}
-                                    source={showPass
+                                    source={!showPass
                                         ? require('../../assets/images/iconhide.png')  // Nếu showPass là true
                                         : require('../../assets/images/iconsee.png')  // Nếu showPass là false
                                     } />
@@ -372,10 +378,19 @@ const Register = ({ navigation }) => {
                         </View>
                         {errors.pass2 ? <Text style={styles.text_error}>{errors.pass2}</Text> : null}
                     </View>
+                    {!loading ? (
+                        <TouchableOpacity style={styles.btn_register} onPress={register}>
+                            <Text style={{ fontSize: 21, fontWeight: '700', color: colors.black }}>Đăng Ký</Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <LottieView
+                            source={require('../../assets/animations/Animation - 1726832285926.json')} // Đường dẫn tới file Lottie
+                            autoPlay
+                            loop
+                            style={{ width: 100, height: 100 }}
+                        />
+                    )}
 
-                    <TouchableOpacity style={styles.btn_register} onPress={register}>
-                        <Text style={{ fontSize: 21, fontWeight: '700', color: colors.black }}>Đăng Ký</Text>
-                    </TouchableOpacity>
                 </View>
 
                 <TouchableOpacity
@@ -424,7 +439,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         borderWidth: 2,
         borderRadius: 30,
-        padding: 8,
+        paddingLeft: 8,
         borderColor: colors.gold,
         alignItems: 'center',
     },

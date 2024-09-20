@@ -1,6 +1,6 @@
 // FloatingLabelInput.js
 import React, { useState, useRef, useEffect } from 'react';
-import { StyleSheet, TextInput, View, Animated } from 'react-native';
+import { StyleSheet, TextInput, View, Animated, KeyboardAvoidingView } from 'react-native';
 import colors from '../assets/color/colors';
 
 const FloatingLabelInput = ({ label, value, setValue, isPassword }) => {
@@ -41,18 +41,21 @@ const FloatingLabelInput = ({ label, value, setValue, isPassword }) => {
     };
 
     return (
-        <View style={styles.container}>
-            <Animated.Text style={labelStyle}>{label}</Animated.Text>
-            <TextInput
-                style={styles.input}
-                value={value}
-                onChangeText={setValue}
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
-                secureTextEntry={isPassword} // Ẩn văn bản nếu là trường password
-                placeholder=""
-            />
-        </View>
+        <KeyboardAvoidingView>
+            <View style={styles.container}>
+                <Animated.Text style={labelStyle}>{label}</Animated.Text>
+                <TextInput
+                    style={styles.input}
+                    value={value}
+                    onChangeText={setValue}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                    secureTextEntry={isPassword} // Ẩn văn bản nếu là trường password
+                    placeholder=""
+                />
+            </View>
+        </KeyboardAvoidingView>
+
     );
 };
 
@@ -64,7 +67,7 @@ const styles = StyleSheet.create({
         borderColor: colors.black,
         borderRadius: 10,
         textAlign: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start', // Đẩy nội dung lên cuối cùng
     },
     input: {
         paddingHorizontal: 16,

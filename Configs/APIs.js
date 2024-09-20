@@ -2,7 +2,7 @@ import axios from "axios";
 import cookie from "react-cookies";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const HOST = 'http://192.168.1.19:8080'; //  IPv4 Address ios lỗi thì cú chạy lại 
+export const HOST = 'http://192.168.1.17:8080'; //  IPv4 Address ios lỗi thì cú chạy lại 
 
 export const endpoints = {
     'login': '/api/login',

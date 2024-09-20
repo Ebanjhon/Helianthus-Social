@@ -1,9 +1,10 @@
-import React, { PureComponent, useEffect, useRef, useState } from 'react'
-import { Alert, FlatList, Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import React, { PureComponent, useContext, useEffect, useRef, useState } from 'react'
+import { Alert, Button, FlatList, Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import TabHeader from '../../Components/TabHeader';
 import colors from '../../assets/color/colors';
 import { BlurView } from '@react-native-community/blur';
 import icons from '../../assets/iconApp/icons';
+import { UserContext } from '../../Configs/Context';
 
 const data = [
     { id: '1', username: 'eban', image: 'https://i.pinimg.com/564x/4c/6a/15/4c6a15e4a6d60ba3ca008591c503758f.jpg' },
@@ -29,11 +30,11 @@ const datachat = [
     { id: 9, username: 'Dorian', avatar: 'https://i.pinimg.com/564x/7e/f1/27/7ef127d87951bd507bdfafae151d1c09.jpg', text: 'sjefbklsgubksdbfksdg', time: '16:9', count: 5 },
 ];
 
-const Message = () => {
+const Message = ({ navigation }) => {
     const inputRef = useRef(null);
     const [focus, setFocus] = useState(false);
     const [search, setSearch] = useState('');
-
+    const [user, dispatchUser] = useContext(UserContext);
     useEffect(() => {
         if (focus && inputRef.current) {
             inputRef.current.focus();
@@ -52,7 +53,7 @@ const Message = () => {
         <SafeAreaView style={styles.container}>
             <View style={styles.head_search}>
                 {!focus ? (<>
-                    <Text style={styles.title}>@Eban123</Text>
+                    <Text style={styles.title}>@{user.username}</Text>
                     <TouchableOpacity
                         onPress={searchHandle}>
                         <Image
@@ -70,6 +71,12 @@ const Message = () => {
                             placeholder='Tìm người dùng'
                             onBlur={handleBlur}
                         />
+                        <TouchableOpacity
+                            onPress={handleBlur}
+                            style={{ width: 50, height: 35, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center', borderRadius: 60, marginRight: 5 }}
+                        >
+                            <Text style={{ fontSize: 18, fontWeight: "600", color: colors.light }}>Hủy</Text>
+                        </TouchableOpacity>
                     </View>
                 </>)}
 
@@ -110,7 +117,8 @@ const Message = () => {
                         keyExtractor={(chat) => chat.id}
                         showsHorizontalScrollIndicator={false}
                         renderItem={({ item }) => (
-                            <TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => navigation.navigate("Chat", { 'userTarget': item })}>
                                 <View style={styles.item_chat_list}>
                                     <View style={{ flexDirection: 'row' }}>
                                         <Image
@@ -237,7 +245,11 @@ const styles = StyleSheet.create({
         backgroundColor: colors.gold,
         borderRadius: 50,
         paddingLeft: 10,
-        elevation: 9
+        elevation: 9,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        overflow: 'hidden',
+        alignItems: 'center'
     }
 });
 

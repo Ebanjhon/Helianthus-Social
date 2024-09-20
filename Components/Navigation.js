@@ -22,6 +22,8 @@ import ProfileUser from '../Screens/ProfileUser/ProfileUser';
 import Post from '../Screens/Post/Post';
 import UpdateProfile from '../Screens/ProfileUser/UpdateProfile';
 import Message from '../Screens/Message/Message';
+import { BlurView } from '@react-native-community/blur';
+import Chat from '../Screens/Message/Chat';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -53,101 +55,83 @@ function HomeTabs() {
         };
     }, [navigation, route.name]);
     return (
-        <Tab.Navigator
-            screenOptions={{
-                headerShown: false,
-                tabBarShowLabel: false,
-                tabBarStyle: {
-                    ...styles.tabBarStyle, // Giữ các style hiện tại
-                    display: state.visible ? 'flex' : 'none', // Hiển thị hoặc ẩn TabBar dựa trên trạng thái
-                },
-            }}
-        >
+        <View style={{ flex: 1 }}>
+            <Tab.Navigator
+                screenOptions={{
+                    headerShown: false,
+                    tabBarShowLabel: false,
+                    tabBarStyle: {
+                        ...styles.tabBarStyle,
+                        display: state.visible ? 'flex' : 'none',
+                    },
+                }}
+            >
+                <Tab.Screen name="Home" component={Home} options={{
+                    tabBarIcon: ({ focused }) => (
+                        <View style={styles.tabBarIconText}>
+                            <Image
+                                source={icons.home_full}
+                                resizeMode='contain'
+                                style={[{ tintColor: focused ? colors.gold : colors.secondary }, styles.icon]}
+                            />
+                        </View>
+                    ),
+                }} />
 
-            <Tab.Screen name="Home" component={Home} options={{
-                tabBarIcon: ({ focused }) => (
-                    <View style={styles.tabBarIconText}>
-                        <Image
-                            source={icons.home_full}
-                            resizeMode='contain'
-                            style={[
-                                { tintColor: focused ? colors.gold : colors.secondary },
-                                styles.icon
-                            ]}
-                        />
-                    </View>
-                ),
-            }} />
+                <Tab.Screen name="Search" component={Search} options={{
+                    tabBarIcon: ({ focused }) => (
+                        <View style={styles.tabBarIconText}>
+                            <Image
+                                source={icons.search}
+                                resizeMode='contain'
+                                style={[{ tintColor: focused ? colors.gold : colors.secondary }, styles.icon]}
+                            />
+                        </View>
+                    ),
+                }} />
 
+                <Tab.Screen name="Post" component={Post} options={{
+                    tabBarStyle: { display: 'none' },
+                    tabBarIcon: ({ focused }) => (
+                        <View style={styles.tabBarIconText}>
+                            <Image
+                                source={icons.add}
+                                resizeMode='contain'
+                                style={{
+                                    tintColor: focused ? colors.gold : colors.black,
+                                    width: 45, height: 45,
+                                }}
+                            />
+                        </View>
+                    ),
+                }} />
 
-            <Tab.Screen name="Search" component={Search} options={{
-                tabBarIcon: ({ focused }) => (
-                    <View style={styles.tabBarIconText}>
-                        <Image
-                            source={icons.search}
-                            resizeMode='contain'
-                            style={[
-                                { tintColor: focused ? colors.gold : colors.secondary },
-                                styles.icon
-                            ]}
-                        />
-
-                    </View>
-                ),
-            }} />
-
-            {/* Ẩn Tab Bar khi vào màn hình Post */}
-            <Tab.Screen name="Post" component={Post} options={{
-                tabBarStyle: { display: 'none' },// ẩn navigation
-                tabBarIcon: ({ focused }) => (
-                    <View style={{
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}>
-                        <Image
-                            source={icons.add}
-                            resizeMode='contain'
-                            style={{
-                                tintColor: focused ? colors.gold : colors.black,
-                                width: 65, height: 65,
-                            }}
-                        />
-                    </View>
-                ),
-            }} />
-
-            <Tab.Screen name="Notification" component={Notification}
-                options={{
+                <Tab.Screen name="Notification" component={Notification} options={{
                     tabBarIcon: ({ focused }) => (
                         <View style={styles.tabBarIconText}>
                             <Image
                                 source={icons.notifi}
                                 resizeMode='contain'
-                                style={[
-                                    { tintColor: focused ? colors.gold : colors.secondary },
-                                    styles.icon
-                                ]}
+                                style={[{ tintColor: focused ? colors.gold : colors.secondary }, styles.icon]}
                             />
                         </View>
                     ),
-                }}
-            />
+                }} />
 
-            <Tab.Screen name="Profile" component={UserProfile} options={{
-                tabBarIcon: ({ focused }) => (
-                    <View style={styles.tabBarIconText}>
-                        <Image
-                            source={icons.profile}
-                            resizeMode='contain'
-                            style={[
-                                { tintColor: focused ? colors.gold : colors.secondary },
-                                styles.icon
-                            ]}
-                        />
-                    </View>
-                ),
-            }} />
-        </Tab.Navigator>
+                <Tab.Screen name="Profile" component={UserProfile} options={{
+                    tabBarIcon: ({ focused }) => (
+                        <View style={styles.tabBarIconText}>
+                            <Image
+                                source={icons.profile}
+                                resizeMode='contain'
+                                style={[{ tintColor: focused ? colors.gold : colors.secondary }, styles.icon]}
+                            />
+                        </View>
+                    ),
+                }} />
+            </Tab.Navigator>
+
+        </View>
     );
 }
 
@@ -258,6 +242,7 @@ const Navigation = () => {
                             <Stack.Screen name="HomeTabs" component={HomeTabs} />
                             <Stack.Screen name="Logout" component={Logout} />
                             <Stack.Screen name="Message" component={Message} />
+                            <Stack.Screen name="Chat" component={Chat} />
                         </>)}
                     </Stack.Navigator>
                 </TabBarProvider>
@@ -272,10 +257,10 @@ const styles = StyleSheet.create({
         bottom: 10,
         left: 15,
         right: 15,
-        backgroundColor: colors.white,
+        backgroundColor: colors.light,
         borderRadius: 50,
-        height: 60,
-        elevation: 0,
+        height: 50,
+        zIndex: 2,
 
     }, tabBarIconText: {
         alignItems: 'center',
@@ -294,8 +279,7 @@ const styles = StyleSheet.create({
     fullname: {
         fontSize: 18,
         color: colors.black
-    }
-
+    },
 });
 
 export default Navigation

@@ -89,7 +89,9 @@ const Home = ({ navigation }) => {
     };
 
     const addPost = (newPost) => {
-        setPosts((prevPosts) => [...prevPosts, ...newPost]);
+        if (newPost !== undefined) {
+            setPosts((prevPosts) => [...prevPosts, ...newPost]);
+        }
     };
 
     // hàm format date

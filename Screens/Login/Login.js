@@ -13,9 +13,11 @@ const Login = ({ navigation }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [user, dispatch] = useContext(UserContext);
+    const [loading, setLoading] = useState(false);
 
     const loginPress = async () => {
         try {
+            setLoading(true);
             // Gọi API để đăng nhập
             const response = await apiWithoutAuth.post(endpoints.login, {
                 username,
@@ -37,19 +39,25 @@ const Login = ({ navigation }) => {
                     type: 'login',
                     payload: userResponse.data,
                 });
+                setLoading(false);
             } else {
                 throw new Error(`Login failed with status ${response.status}`);
+                setLoading(false);
             }
         } catch (error) {
             console.error('Lỗi Đăng nhập:', error);
+            setLoading(false);
         }
     };
 
     return (
         <View style={styles.container}>
-
-
-
+            <LottieView
+                source={require('../../assets/animations/Animation - 1726832984119.json')} // Đường dẫn tới file Lottie
+                autoPlay
+                loop
+                style={{ width: 200, height: 200, marginTop: 10 }}
+            />
             <Text style={styles.title}>Sign in</Text>
 
             <View style={{ padding: 16, width: '95%' }}>
@@ -67,14 +75,23 @@ const Login = ({ navigation }) => {
                 />
             </View>
 
-            <TouchableOpacity style={styles.button} onPress={loginPress}>
-                <Text style={styles.buttonText}>Đăng Nhập</Text>
-            </TouchableOpacity>
+            {loading ? (
+                <LottieView
+                    source={require('../../assets/animations/Animation - 1726832285926.json')} // Đường dẫn tới file Lottie
+                    autoPlay
+                    loop
+                    style={{ width: 100, height: 100 }}
+                />
+            ) : (
+                <TouchableOpacity style={styles.button} onPress={loginPress}>
+                    <Text style={styles.buttonText}>Đăng Nhập</Text>
+                </TouchableOpacity>
+            )}
 
             <TouchableOpacity
                 onPress={() => navigation.navigate('Register')}
             >
-                <Text>Đăng lý tài khoản</Text>
+                <Text>Đăng ký tài khoản</Text>
             </TouchableOpacity>
 
         </View>
