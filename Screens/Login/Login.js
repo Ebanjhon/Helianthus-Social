@@ -8,6 +8,8 @@ import { UserContext } from '../../Configs/Context';
 import { Button, Text, View } from 'react-native';
 import LottieView from 'lottie-react-native';
 import colors from '../../assets/color/colors';
+import Toast from 'react-native-toast-message';
+import { showToast, toastConfigExport } from '../../Configs/ToastConfig';
 
 const Login = ({ navigation }) => {
     const [username, setUsername] = useState('');
@@ -16,6 +18,10 @@ const Login = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
 
     const loginPress = async () => {
+        if (username.length === 0 || password.length === 0) {
+            showToast('warning', 'Vui lòng điền đầy đủ thốn tin!');
+            return;
+        }
         try {
             setLoading(true);
             // Gọi API để đăng nhập
@@ -45,7 +51,7 @@ const Login = ({ navigation }) => {
                 setLoading(false);
             }
         } catch (error) {
-            console.error('Lỗi Đăng nhập:', error);
+            showToast('error', 'Đăng nhập thất bại!', 'Sai thông tin đăng nhập!');
             setLoading(false);
         }
     };
@@ -58,6 +64,8 @@ const Login = ({ navigation }) => {
                 loop
                 style={{ width: 200, height: 200, marginTop: 10 }}
             />
+            <Toast config={toastConfigExport} />
+
             <Text style={styles.title}>Sign in</Text>
 
             <View style={{ padding: 16, width: '95%' }}>

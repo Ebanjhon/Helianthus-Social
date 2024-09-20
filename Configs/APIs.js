@@ -12,6 +12,9 @@ export const endpoints = {
     'loadPost': (currentUserId, page) => `/api/post?currentUserId=${currentUserId}&page=${page}`,
     'create-comment': '/api/comment',
     'load-comments': (postId) => `/api/comment/post/${postId}`,
+    'search-user': (text, userId) => `/api/users/search?text=${text}&idUser=${userId}`,
+    'following': '/api/follow',
+    'unfollowing': (userid, useridtarger) => `/api/follow?idUser=${userid}&idTargetUser=${useridtarger}`
 
 }
 

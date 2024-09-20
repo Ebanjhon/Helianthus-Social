@@ -202,6 +202,51 @@ const Home = ({ navigation }) => {
             throw error;
         }
     };
+    // hàm theo dỏi
+    const following = async (userTarget) => {
+        const form = {
+            idUser: user.id,
+            idTargetUser: userTarget
+        };
+        const api = await authApi();
+        try {
+            const response = await api.post(endpoints['following'], form);
+            if (response.status === 200) {
+                console.log("Đã theo dõi thành công!");
+            } else {
+                console.log("Không thể theo dõi người dùng.");
+            }
+        } catch (error) {
+            // Kiểm tra lỗi và thông báo
+            if (error.response) {
+                // console.error('Lỗi từ server:', error.response.data);
+            } else {
+                console.error('Lỗi mạng hoặc không thể kết nối:', error.message);
+            }
+            throw error; // Ném lỗi lên trên nếu cần
+        }
+    };
+
+    // hàm hủy theo doi
+    const unFollow = async (userTarget) => {
+        const api = await authApi();
+        try {
+            const response = await api.delete(endpoints['unfollowing'](user.id, userTarget));
+            if (response.status === 200) {
+                console.log("Đã bỏ theo dõi thành công!");
+            } else {
+                console.log("Không thể thực hiện!");
+            }
+        } catch (error) {
+            // Kiểm tra lỗi và thông báo
+            if (error.response) {
+                console.error('Lỗi từ server:', error.response.data);
+            } else {
+                console.error('Lỗi mạng hoặc không thể kết nối:', error.message);
+            }
+            throw error; // Ném lỗi lên trên nếu cần
+        }
+    };
 
     // hàm fetch bình luận
     const fetchComment = async () => {
@@ -239,7 +284,7 @@ const Home = ({ navigation }) => {
     const renderComment = ({ item }) => (
         <View style={{ width: '100%', minHeight: 70, flexDirection: 'row' }}>
             <Image
-                style={{ width: 50, height: 50, borderRadius: 50, margin: 5 }}
+                style={{ width: 40, height: 40, borderRadius: 50, margin: 5 }}
                 // source={{ uri: 'https://i.pinimg.com/564x/83/4a/d9/834ad9f6c5f2fca8ffa63acfbd274f38.jpg' }}
                 source={{
                     uri: item.avatar === ""
@@ -270,7 +315,7 @@ const Home = ({ navigation }) => {
                     renderItem={({ item: child }) => (
                         <View style={{ width: 'auto', minHeight: 70, flexDirection: 'row' }}>
                             <Image
-                                style={{ width: 50, height: 50, borderRadius: 50, margin: 5 }}
+                                style={{ width: 40, height: 40, borderRadius: 50, margin: 5 }}
                                 source={{
                                     uri: item.avatar === ""
                                         ? 'https://i.pinimg.com/564x/25/ee/de/25eedef494e9b4ce02b14990c9b5db2d.jpg'
@@ -323,7 +368,7 @@ const Home = ({ navigation }) => {
 
                             <View style={styles.contai_popup}>
                                 <TouchableOpacity onPress={unpop}>
-                                    <View style={{ width: '100%', height: '25%' }}></View>
+                                    <View style={{ width: '100%', height: '20%' }}></View>
                                 </TouchableOpacity>
 
                                 <View style={styles.contain_cmt_view}>
@@ -439,14 +484,23 @@ const Home = ({ navigation }) => {
                             </View>
 
                             <View style={styles.contain_action}>
-                                <TouchableOpacity
-                                    style={styles.btn_follow}
-                                    activeOpacity={0.3}>
+                                {item.following ? (
+                                    <TouchableOpacity
+                                        onPress={() => unFollow(item.idUser)}
+                                        style={styles.btn_follow}
+                                        activeOpacity={0.3}>
 
-                                    <Text style={{ fontSize: 18, fontWeight: '600', color: colors.info }}>
-                                        {item.following ? 'Following' : 'Follow'}
-                                    </Text>
-                                </TouchableOpacity>
+                                        <Text style={{ fontSize: 18, fontWeight: '600', color: colors.info }}>following</Text>
+                                    </TouchableOpacity>
+                                ) : (
+                                    <TouchableOpacity
+                                        onPress={() => following(item.idUser)}
+                                        style={styles.btn_follow}
+                                        activeOpacity={0.3}>
+
+                                        <Text style={{ fontSize: 18, fontWeight: '600', color: colors.info }}>follow</Text>
+                                    </TouchableOpacity>
+                                )}
 
                                 <TouchableOpacity
                                     onPress={() => popup(item.idPost)}

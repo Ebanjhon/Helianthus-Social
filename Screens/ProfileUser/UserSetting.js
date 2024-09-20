@@ -3,11 +3,26 @@ import { StyleSheet } from "react-native";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import colors from '../../assets/color/colors';
 import { useEffect } from "react";
+import icons from "../../assets/iconApp/icons";
 
 const UserSeting = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
+            <View style={{ backgroundColor: colors.light, width: '100%', height: 50, elevation: 9, alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row' }}>
+
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('ProfileDetail')}
+                    style={{ width: 50, alignItems: 'center', height: 50, justifyContent: 'center' }}>
+                    <Image
+                        style={{ width: 30, height: 30, tintColor: colors.black }}
+                        source={{ uri: icons.back_head }}
+                    />
+                </TouchableOpacity>
+
+                <Text style={styles.title}>Cài đặt</Text>
+                <Text style={{ width: 50 }}></Text>
+            </View>
             <View style={styles.box}>
                 <Text style={styles.title_box}>Trung tâm tài khoản</Text>
                 <TouchableOpacity onPress={() => navigation.navigate("UpdatePrifile")}>
@@ -87,8 +102,12 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: colors.dark,
         marginTop: 7
+    },
+    title: {
+        fontSize: 20,
+        fontWeight: '500',
+        color: colors.black
     }
-
 
 });
 

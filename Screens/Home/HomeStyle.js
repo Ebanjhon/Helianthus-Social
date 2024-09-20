@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     },
     contain_cmt_view: {
         width: '100%',
-        height: '95%',
+        height: '80%',
         backgroundColor: colors.xamtrang,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,

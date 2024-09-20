@@ -4,13 +4,12 @@ import SlideUpView from "./SlideUp";
 import React, { useContext, useState } from "react";
 import colors from "../../assets/color/colors";
 import icons from '../../assets/iconApp/icons';
-import { authApi, endpoints } from "../../config/APIs";
-import Toast from 'react-native-toast-message';
 import { UserContext } from "../../Configs/Context";
 import ImagePicker from 'react-native-image-crop-picker';
 import { ActivityIndicator } from "react-native";
 import Slider from '@react-native-community/slider';
 import { launchImageLibrary } from 'react-native-image-picker';
+import { authApi, endpoints } from "../../Configs/APIs";
 
 const Post = ({ navigation }) => {
     const [content, setContent] = React.useState('');
@@ -59,18 +58,6 @@ const Post = ({ navigation }) => {
 
     // hàm tạo bài viết
     const createPost = async () => {
-        // console.log(user.id);
-        try {
-            Toast.show({
-                type: 'success',
-                position: 'bottom',
-                text1: 'Hello',
-                text2: 'This is a toast message',
-            });
-        } catch (error) {
-            console.error('Toast error:', error);
-        }
-
         let formData = new FormData();
 
         // Thêm dữ liệu userId và content vào form
@@ -79,7 +66,7 @@ const Post = ({ navigation }) => {
         // Thêm từng ảnh vào FormData
         images.forEach((image, index) => {
             const file = {
-                uri: image.uri, // Đường dẫn đến ảnh trên thiết bị
+                uri: image, // Sử dụng đúng đường dẫn ảnh từ ImagePicker (path)
                 type: 'image/jpeg', // Loại MIME của ảnh
                 name: `photo_${index}.jpg`, // Tên ảnh
             };
@@ -87,6 +74,7 @@ const Post = ({ navigation }) => {
         });
 
         try {
+            console.log(formData)
             const api = await authApi();
             const response = await api.post(endpoints['create-post'], formData, {
                 headers: {
@@ -102,9 +90,6 @@ const Post = ({ navigation }) => {
             throw error;
         }
     };
-
-    const [brightness, setBrightness] = useState(0.5); // Giá trị độ sáng khởi tạo
-    const [imageUri, setImageUri] = useState('https://example.com/image.jpg'); // Thay bằng URL của bạn
 
     return (
         <View style={styles.contai_post}>

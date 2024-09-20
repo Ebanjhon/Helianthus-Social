@@ -24,6 +24,7 @@ import UpdateProfile from '../Screens/ProfileUser/UpdateProfile';
 import Message from '../Screens/Message/Message';
 import { BlurView } from '@react-native-community/blur';
 import Chat from '../Screens/Message/Chat';
+import Toast from 'react-native-toast-message';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -139,50 +140,6 @@ function UserProfile() {
     const navigation = useNavigation();
     return (
         <Stack.Navigator initialRouteName="ProfileDetail">
-            <Stack.Screen name="Setting" component={UserSeting}
-                options={{
-                    headerStyle: {
-                        height: 50,
-                    },
-                    title: 'Cài đặt',
-                    headerTitleAlign: 'center',
-                    headerTitleStyle: styles.title_top_screen,
-                    headerLeft: () => (
-                        <View style={{ height: '100%', width: 'auto', alignItems: 'center', justifyContent: 'center' }}>
-                            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => navigation.navigate('ProfileDetail')}>
-                                <Image
-                                    style={{ width: 35, height: 35, tintColor: colors.black }}
-                                    source={{ uri: icons.back_head }}
-                                />
-                                <Text style={{ fontSize: 19, fontWeight: '500', color: colors.black }}>Quay lại</Text>
-                            </TouchableOpacity>
-                        </View>
-                    ),
-                }} />
-
-            <Stack.Screen name="UpdatePrifile" component={UpdateProfile}
-                options={{
-                    headerStyle: {
-                        height: 50,
-                    },
-                    title: 'Chỉnh sửa',
-                    headerTitleAlign: 'center',
-                    headerTitleStyle: styles.title_top_screen,
-                    headerLeft: () => (
-                        <View style={{ height: '100%', width: 'auto', alignItems: 'center', justifyContent: 'center' }}>
-                            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => navigation.navigate('Setting')}>
-                                <Image
-                                    style={{ width: 35, height: 35, tintColor: colors.black }}
-                                    source={{ uri: icons.back_head }}
-                                />
-                                <Text style={{ fontSize: 19, fontWeight: '500', color: colors.black }}>Quay lại</Text>
-                            </TouchableOpacity>
-                        </View>
-                    ),
-                }} />
-
-
-
             <Stack.Screen name="ProfileDetail" component={ProfileUser}
                 options={{
                     headerStyle: {
@@ -228,26 +185,31 @@ const Navigation = () => {
     }, []);
 
     return (
-        <NavigationContainer independent={true}>
-            <UserContext.Provider value={[user, dispatch]}>
-                <TabBarProvider>
-                    <Stack.Navigator
-                        initialRouteName="Intro"
-                        screenOptions={{ headerShown: false }}>
-                        {user == null ? (<>
-                            <Stack.Screen name="Intro" component={IntroApp} />
-                            <Stack.Screen name="Login" component={Login} />
-                            <Stack.Screen name="Register" component={Register} />
-                        </>) : (<>
-                            <Stack.Screen name="HomeTabs" component={HomeTabs} />
-                            <Stack.Screen name="Logout" component={Logout} />
-                            <Stack.Screen name="Message" component={Message} />
-                            <Stack.Screen name="Chat" component={Chat} />
-                        </>)}
-                    </Stack.Navigator>
-                </TabBarProvider>
-            </UserContext.Provider>
-        </NavigationContainer>
+        <>
+            <NavigationContainer independent={true}>
+                <UserContext.Provider value={[user, dispatch]}>
+                    <TabBarProvider>
+                        <Stack.Navigator
+                            initialRouteName="Intro"
+                            screenOptions={{ headerShown: false }}>
+                            {user == null ? (<>
+                                <Stack.Screen name="Intro" component={IntroApp} />
+                                <Stack.Screen name="Login" component={Login} />
+                                <Stack.Screen name="Register" component={Register} />
+                            </>) : (<>
+                                <Stack.Screen name="HomeTabs" component={HomeTabs} />
+                                <Stack.Screen name="Logout" component={Logout} />
+                                <Stack.Screen name="Message" component={Message} />
+                                <Stack.Screen name="Chat" component={Chat} />
+                                <Stack.Screen name="Setting" component={UserSeting} />
+                                <Stack.Screen name="UpdatePrifile" component={UpdateProfile} />
+                            </>)}
+                        </Stack.Navigator>
+                    </TabBarProvider>
+                </UserContext.Provider>
+            </NavigationContainer>
+            <Toast ref={(ref) => Toast.setRef(ref)} />
+        </>
     );
 }
 

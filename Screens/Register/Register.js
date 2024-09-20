@@ -7,6 +7,8 @@ import { Picker } from '@react-native-picker/picker';
 import apiWithoutAuth, { endpoints } from '../../Configs/APIs';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import LottieView from 'lottie-react-native';
+import Toast from 'react-native-toast-message';
+import { showToast, showToastBottom, toastConfigExport } from '../../Configs/ToastConfig';
 
 const Register = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
@@ -43,8 +45,21 @@ const Register = ({ navigation }) => {
         email: '',
         pass1: '',
         pass2: '',
-        date: '',
+        birth: '',
     });
+
+    // hàm định dạng ngày
+    const formatDate = (date) => {
+        // Lấy ngày, đảm bảo luôn có 2 chữ số
+        const day = String(date.getDate()).padStart(2, '0');
+        // Lấy tháng, cộng thêm 1 vì tháng bắt đầu từ 0
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        // Lấy năm
+        const year = date.getFullYear();
+
+        // Trả về chuỗi ngày tháng theo định dạng yyyy-MM-dd
+        return `${year}-${month}-${day}`;
+    };
 
     // Hàm kiểm tra tất cả các trường input
     function validateInputs() {
@@ -85,6 +100,10 @@ const Register = ({ navigation }) => {
 
         if (passConfirm.length === 0) {
             newErrors.pass2 = 'vui lòng nhập mật khẩu!';
+        }
+
+        if (selectedDate === null) {
+            newErrors.birth = 'Vui lòng chọn ngày sinh!'
         }
 
         setErrors(newErrors);
@@ -140,19 +159,7 @@ const Register = ({ navigation }) => {
         return () => clearInterval(intervalId);  // Dọn dẹp interval khi component unmount
     }, [displayText, isDeleting, index]); // Thực thi lại khi displayText, isDeleting, hoặc index thay đổi
 
-    // định dạng ngày sinh
-    // function formatDate(isoString) {
-    //     const date = new Date(isoString);
-
-    //     const day = date.getDate().toString().padStart(2, '0');   // Lấy ngày (định dạng 2 chữ số)
-    //     const month = (date.getMonth() + 1).toString().padStart(2, '0');  // Lấy tháng (tháng trong JS bắt đầu từ 0)
-    //     const year = date.getFullYear();  // Lấy năm
-
-    //     return `${day}/${month}/${year}`;  // Định dạng ngày/tháng/năm
-    // }
-
     // hàm đăng ký
-
     const register = async () => {
         if (validateInputs()) {
             const userData = {
@@ -165,6 +172,7 @@ const Register = ({ navigation }) => {
                 email: email,
                 avatar: "",
                 phone: phone,
+                birthDate: formatDate(selectedDate),
             };
             try {
                 setLoading(true);
@@ -172,7 +180,7 @@ const Register = ({ navigation }) => {
                 const response = await apiWithoutAuth.post(endpoints.register, userData);
 
                 if (response.status === 201) {
-                    console.log("User created successfully with ID:", response.data.id);
+                    showToastBottom('successRegister', 'Đăng ký thành công!', 'Bạn có thể đăng nhập sau khi hoàn tất.');
                     navigation.navigate('Login');
                 } else {
                     console.log("Có lỗi xảy ra:", response.data);
@@ -180,6 +188,7 @@ const Register = ({ navigation }) => {
                 setLoading(false);
             } catch (error) {
                 if (error.response && error.response.status === 409) {
+                    showToastBottom('error', 'Thông báo!', error.response.data);
                     console.log("Lỗi:", error.response.data); // Xử lý lỗi do email hoặc username đã tồn tại
                 } else {
                     console.log("Lỗi kết nối hoặc lỗi không xác định:", error.message);
@@ -282,6 +291,7 @@ const Register = ({ navigation }) => {
                                 value={phone}
                                 onChangeText={setPhone}
                                 keyboardType="phone-pad"
+                                maxLength={10}
                                 placeholder='Số điện thoại'
                                 style={styles.text_input}>
 
@@ -324,6 +334,7 @@ const Register = ({ navigation }) => {
                                 onCancel={hideDatePicker}
                             />
                         </View>
+                        {errors.birth ? <Text style={styles.text_error}>{errors.birth}</Text> : null}
                     </View>
 
                     <View style={{ width: '90%', marginBottom: 5 }}>
@@ -390,9 +401,8 @@ const Register = ({ navigation }) => {
                             style={{ width: 100, height: 100 }}
                         />
                     )}
-
+                    <Toast config={toastConfigExport} />
                 </View>
-
                 <TouchableOpacity
                     style={{ width: '100%', alignItems: 'center' }}
                     onPress={() => navigation.navigate('Login')}>
