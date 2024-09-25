@@ -5,12 +5,12 @@ import { UserContext } from '../../Configs/Context';
 import { useContext, useState } from 'react';
 
 const chat = [
-    { id: 1, userid: 7, text: 'Hello', time: '20:11' },
+    { id: 1, userid: 3, text: 'Hello', time: '20:11' },
     { id: 2, userid: 2, text: 'hi', time: '20:11' },
-    { id: 3, userid: 7, text: 'How are you?', time: '20:11' },
-    { id: 4, userid: 7, text: 'everything is good', time: '20:11' },
+    { id: 3, userid: 3, text: 'How are you?', time: '20:11' },
+    { id: 4, userid: 3, text: 'everything is good', time: '20:11' },
     { id: 5, userid: 2, text: 'yeah, im well, and you', time: '20:11' },
-    { id: 6, userid: 7, text: 'still great, wanna hangout', time: '20:11' },
+    { id: 6, userid: 3, text: 'still great, wanna hangout', time: '20:11' },
     { id: 7, userid: 2, text: 'sure!', time: '20:11' },
     { id: 8, userid: 2, text: 'OK lest go', time: '20:11' },
 ]
@@ -18,7 +18,7 @@ const chat = [
 
 const Chat = ({ route, navigation }) => {
     const [user, dispatchUser] = useContext(UserContext);
-    const { userTarget } = route.params;
+    const { userId, avatar, username, roomId } = route.params;
     const [typeText, setTypeText] = useState('');
     return (
         <View style={styles.container}>
@@ -32,8 +32,12 @@ const Chat = ({ route, navigation }) => {
                     </TouchableOpacity>
                     <Image
                         style={styles.avatar}
-                        source={{ uri: userTarget.avatar }} />
-                    <Text style={{ fontSize: 17, fontWeight: '500', color: colors.black, marginLeft: 10 }}>{userTarget.username}</Text>
+                        source={{
+                            uri: avatar === ''
+                                ? 'https://i.pinimg.com/564x/25/ee/de/25eedef494e9b4ce02b14990c9b5db2d.jpg'
+                                : avatar
+                        }} />
+                    <Text style={{ fontSize: 17, fontWeight: '500', color: colors.black, marginLeft: 10 }}>{username}</Text>
                 </View>
                 <TouchableOpacity>
                     <Image
@@ -55,7 +59,11 @@ const Chat = ({ route, navigation }) => {
                         {(item.userid !== user.id && (index === chat.length - 1 || chat[index + 1].userid !== item.userid)) && (
                             <Image
                                 style={[styles.avatar, { marginRight: 5, marginLeft: 5 }]}
-                                source={{ uri: userTarget.avatar }}
+                                source={{
+                                    uri: avatar === ''
+                                        ? 'https://i.pinimg.com/564x/25/ee/de/25eedef494e9b4ce02b14990c9b5db2d.jpg'
+                                        : avatar
+                                }}
                             />
                         )}
 

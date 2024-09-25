@@ -5,6 +5,8 @@ import colors from '../../assets/color/colors';
 import { BlurView } from '@react-native-community/blur';
 import icons from '../../assets/iconApp/icons';
 import { UserContext } from '../../Configs/Context';
+import { authApi, endpoints } from '../../Configs/APIs';
+import Navigation from '../../Components/Navigation';
 
 const data = [
     { id: '1', username: 'eban', image: 'https://i.pinimg.com/564x/4c/6a/15/4c6a15e4a6d60ba3ca008591c503758f.jpg' },
@@ -33,7 +35,6 @@ const datachat = [
 const Message = ({ navigation }) => {
     const inputRef = useRef(null);
     const [focus, setFocus] = useState(false);
-    const [search, setSearch] = useState('');
     const [user, dispatchUser] = useContext(UserContext);
     useEffect(() => {
         if (focus && inputRef.current) {
@@ -47,6 +48,63 @@ const Message = ({ navigation }) => {
 
     const searchHandle = () => {
         setFocus(true);
+    };
+    // hàm lấy du liệu tìm kiếm
+    const [search, setSearch] = useState('');
+    const [result, setResult] = useState([]);
+    const searchUser = async () => {
+        if (!search) {
+            setResult([]);
+            return;
+        }
+
+        const api = await authApi();
+
+        try {
+            const response = await api.get(endpoints['search-user'](search, user.id));
+            if (response.status === 200) {
+                setResult(response.data);
+                console.log(response.data);
+            } else if (response.status === 404) {
+                console.log("No users found.");
+            } else {
+                console.log("Error:", response.status);
+            }
+        } catch (error) {
+            setResult([]);
+        }
+    };
+
+    useEffect(() => {
+        searchUser();
+    }, [search]);
+
+    // lay phong chat
+    const getRoomChat = async (userOther) => {
+        const api = await authApi();
+
+        try {
+            const response = await api.get(endpoints['get-room-chat'](user.id, userOther.user_id));
+            if (response.status === 200) {
+                console.log(response.data);
+                chat(userOther.user_id, userOther.avatar, userOther.user_name, response.data);
+            } else if (response.status === 404) {
+                console.log("No users found.");
+            } else {
+                console.log("Error:", response.status);
+            }
+        } catch (error) {
+            console.log("ERROE");
+        }
+    };
+    // đen phon chat
+
+    const chat = (id, avatar, username, roomId) => {
+        console.log(id);
+        console.log(avatar);
+        console.log(username);
+        console.log(roomId);
+        navigation.navigate("Chat", { 'userId': id, 'avatar': avatar, 'username': username, 'roomId': roomId });
     };
 
     return (
@@ -88,19 +146,26 @@ const Message = ({ navigation }) => {
             {focus ? (
                 <View style={styles.listContainer}>
                     <FlatList
-                        data={datachat}
+                        data={result}
                         keyExtractor={(chat) => chat.id}
                         showsHorizontalScrollIndicator={false}
                         renderItem={({ item }) => (
-                            <TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => getRoomChat(item)}
+                            >
                                 <View style={styles.item_chat_list}>
                                     <View style={{ flexDirection: 'row' }}>
                                         <Image
                                             style={styles.image_avatar}
-                                            source={{ uri: item.avatar }} />
+                                            source={{
+                                                uri: item.avatar === ''
+                                                    ? 'https://i.pinimg.com/564x/25/ee/de/25eedef494e9b4ce02b14990c9b5db2d.jpg'
+                                                    : item.avatar
+                                            }}
+                                        />
                                         <View style={{ marginLeft: 5 }}>
-                                            <Text style={{ fontSize: 17, fontWeight: '500', color: colors.black }}>{item.username}</Text>
-                                            <Text style={styles.text_chat}>{item.text}</Text>
+                                            <Text style={{ fontSize: 17, fontWeight: '500', color: colors.black }}>{item.firstname} {item.lastname}</Text>
+                                            <Text style={styles.text_chat}>{item.user_name}</Text>
                                         </View>
                                     </View>
                                     <View>
@@ -108,7 +173,9 @@ const Message = ({ navigation }) => {
                                     </View>
                                 </View>
                             </TouchableOpacity>
-                        )} />
+                        )}
+                        style={{ paddingLeft: 10, paddingRight: 10 }}
+                    />
                 </View>
             ) : (
                 <View style={styles.listContainer}>
@@ -229,8 +296,8 @@ const styles = StyleSheet.create({
         padding: 10,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        backgroundColor: colors.white,
-        marginBottom: 10,
+        backgroundColor: colors.xamtrang,
+        marginBottom: 5,
         alignContent: 'center',
         alignItems: 'center'
     },

@@ -6,18 +6,17 @@ import colors from "../../assets/color/colors";
 import icons from '../../assets/iconApp/icons';
 import { UserContext } from "../../Configs/Context";
 import ImagePicker from 'react-native-image-crop-picker';
-import { ActivityIndicator } from "react-native";
-import Slider from '@react-native-community/slider';
-import { launchImageLibrary } from 'react-native-image-picker';
 import { authApi, endpoints } from "../../Configs/APIs";
+import Toast from 'react-native-toast-message';
+import { showToast, toastConfigExport } from '../../Configs/ToastConfig';
 
 const Post = ({ navigation }) => {
     const [content, setContent] = React.useState('');
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [user, dispatch] = useContext(UserContext);
-
     const [showEditor, setShowEditor] = useState(false);
+    const [loadUpdate, setLoadUpdate] = useState(true);
 
     // hàm lấy ảnh
     // Chọn nhiều ảnh từ thư viện
@@ -26,8 +25,19 @@ const Post = ({ navigation }) => {
             multiple: true,      // Cho phép chọn nhiều ảnh
             mediaType: 'photo',
         }).then(selectedImages => {
-            const imageUris = selectedImages.map(image => image.path); // Lấy đường dẫn của các ảnh
-            setImages(imageUris); // Lưu vào state
+            if (selectedImages.length > 0) {
+                const imageUris = selectedImages.map(image => image.path); // Lấy đường dẫn của các ảnh
+                setImages(prevImages => [...prevImages, ...imageUris]);
+            } else {
+                console.log('Không có ảnh nào được chọn');
+            }
+        }).catch(error => {
+            if (error.code === 'E_PICKER_CANCELLED') {
+                // Người dùng đã hủy bỏ chọn ảnh
+                console.log('Người dùng đã hủy quá trình chọn ảnh');
+            } else {
+                console.log('Có lỗi xảy ra: ', error);
+            }
         });
     };
 
@@ -49,43 +59,45 @@ const Post = ({ navigation }) => {
         setImages(updatedImages);  // Cập nhật state
     };
 
-    // hàm gọi edit ảnh
-    const startEdit = (url) => {
-        setShowEditor(true);
-        manipulateImage(url);
-    };
-
-
     // hàm tạo bài viết
     const createPost = async () => {
         let formData = new FormData();
-
         // Thêm dữ liệu userId và content vào form
         formData.append('userId', user.id);
         formData.append('content', content);
         // Thêm từng ảnh vào FormData
-        images.forEach((image, index) => {
-            const file = {
-                uri: image, // Sử dụng đúng đường dẫn ảnh từ ImagePicker (path)
-                type: 'image/jpeg', // Loại MIME của ảnh
-                name: `photo_${index}.jpg`, // Tên ảnh
-            };
-            formData.append('files', file);
-        });
+        if (images.length === 0) {
+            formData.append('files', []);
+        } else {
+            images.forEach((image, index) => {
+                const file = {
+                    uri: image, // Sử dụng đúng đường dẫn ảnh từ ImagePicker (path)
+                    type: 'image/jpeg', // Loại MIME của ảnh
+                    name: `photo_${index}.jpg`, // Tên ảnh
+                };
+                formData.append('files', file);
+            });
+        }
 
         try {
-            console.log(formData)
+            setLoadUpdate(false);
             const api = await authApi();
             const response = await api.post(endpoints['create-post'], formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            console.log(response.data);
-            setImages([]);
-            setContent('');
-            navigation.navigate('Home');
+            if (response.status === 200) {
+                setImages([]);
+                setContent('');
+                showToast('success', 'Message!', 'Đăng tải bài viết thành công.');
+                setTimeout(() => {
+                    setLoadUpdate(true);
+                    navigation.navigate('Home');
+                }, 3000);
+            }
         } catch (error) {
+            setLoadUpdate(true);
             console.error('Error creating post:', error);
             throw error;
         }
@@ -102,13 +114,19 @@ const Post = ({ navigation }) => {
             <SlideUpView>
                 <View style={styles.head_post}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Text style={{ fontSize: 18, fontWeight: '500', color: colors.dark }}>Hủy</Text>
+                        {loadUpdate && <>
+                            <Text style={{ fontSize: 18, fontWeight: '500', color: colors.dark }}>Hủy</Text>
+                        </>}
                     </TouchableOpacity>
-
-                    <Text style={{ fontSize: 20, fontWeight: '500' }}>Tạo bài viết</Text>
-
+                    {loadUpdate ? (
+                        <Text style={{ fontSize: 20, fontWeight: '500' }}>Tạo bài viết</Text>
+                    ) : (
+                        <Text style={{ fontSize: 20, fontWeight: '500' }}>Vui lòng không thoát khỏi màn hình này!</Text>
+                    )}
                     <TouchableOpacity onPress={createPost}>
-                        <Text style={{ fontSize: 18, fontWeight: '500', color: colors.dark }}>Đăng</Text>
+                        {loadUpdate && <>
+                            <Text style={{ fontSize: 18, fontWeight: '500', color: colors.dark }}>Đăng</Text>
+                        </>}
                     </TouchableOpacity>
                 </View>
                 <View style={styles.border_head} />
@@ -123,18 +141,18 @@ const Post = ({ navigation }) => {
                             {/* hiện thị hình đã chọn tại đây */}
                             <Image
                                 style={styles.media}
-                                source={{ uri: item }}  // Sử dụng item trực tiếp nếu nó là đường dẫn ảnh
+                                source={{ uri: item }}
                             />
+                            {loadUpdate && <>
+                                <TouchableOpacity style={styles.remove} onPress={() => removeImage(index)}>
+                                    <Image style={{ width: 30, height: 30 }} source={{ uri: icons.remove }} />
+                                </TouchableOpacity>
 
-                            <TouchableOpacity style={styles.remove} onPress={() => removeImage(index)}>
-                                <Image style={{ width: 30, height: 30 }} source={{ uri: icons.remove }} />
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                onPress={startEdit}
-                                style={styles.edit_media}>
-                                <Text style={{ fontSize: 18, fontWeight: '700', color: colors.xamtrang }}>Chỉnh sửa</Text>
-                            </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.edit_media}>
+                                    <Text style={{ fontSize: 18, fontWeight: '700', color: colors.xamtrang }}>Chỉnh sửa</Text>
+                                </TouchableOpacity>
+                            </>}
                         </View>
                     )}
                     ListEmptyComponent={
@@ -147,10 +165,10 @@ const Post = ({ navigation }) => {
                         <>
                             <View style={{ marginBottom: 7, flexDirection: 'row' }}>
                                 <Image
-                                    style={{ width: 50, height: 50, borderRadius: 3 }}
+                                    style={{ width: 50, height: 50, borderRadius: 50 }}
 
                                     source={{
-                                        uri: user.avatar === ""
+                                        uri: user.avatar === ''
                                             ? 'https://i.pinimg.com/564x/25/ee/de/25eedef494e9b4ce02b14990c9b5db2d.jpg'
                                             : user.avatar
                                     }} />
@@ -196,6 +214,7 @@ const Post = ({ navigation }) => {
                     }
                 />
             </SlideUpView >
+            <Toast style={{}} config={toastConfigExport} />
         </View >
     )
 };

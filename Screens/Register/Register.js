@@ -181,7 +181,9 @@ const Register = ({ navigation }) => {
 
                 if (response.status === 201) {
                     showToastBottom('successRegister', 'Đăng ký thành công!', 'Bạn có thể đăng nhập sau khi hoàn tất.');
-                    navigation.navigate('Login');
+                    setTimeout(() => {
+                        navigation.navigate('Login');
+                    }, 3000);
                 } else {
                     console.log("Có lỗi xảy ra:", response.data);
                 }

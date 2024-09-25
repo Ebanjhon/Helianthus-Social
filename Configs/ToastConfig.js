@@ -64,6 +64,8 @@ export const showToast = (type, text1, text2) => {
         type: type,  // 'success' hoặc 'error'
         text1: text1,
         text2: text2,
+        visibilityTime: 2500,  // Hiển thị trong 2 giây (2000 milliseconds)
+        autoHide: true,  // Tự động ẩn sau 2 giây
     });
 };
 

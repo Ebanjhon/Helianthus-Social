@@ -1,16 +1,17 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { Image, ImageBackground, Text, TouchableOpacity, View, FlatList, StyleSheet, RefreshControl, Alert, ActivityIndicator, Modal, Button, SafeAreaView, TextInput, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Dimensions } from 'react-native'
+import React, { forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { Image, Text, TouchableOpacity, View, FlatList, RefreshControl, Modal, Button, SafeAreaView, TextInput, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Dimensions, LogBox } from 'react-native'
 import colors from '../../assets/color/colors';
 import icons from '../../assets/iconApp/icons';
 import styles from './HomeStyle';
-import { StatusBar } from 'react-native';
 import { useTabBar } from '../../Configs/TabBarContext';
 import { authApi, endpoints } from '../../Configs/APIs';
 import { UserContext } from '../../Configs/Context';
 import { BlurView } from '@react-native-community/blur';
-import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 
-const Home = ({ navigation }) => {
+LogBox.ignoreLogs(['Function components cannot be given refs']);
+
+const Home = forwardRef(({ navigation }, ref) => {
     const flatListRef = useRef(null);
     const [refreshing, setRefreshing] = useState(false);
     const { state, dispatch } = useTabBar();
@@ -130,7 +131,7 @@ const Home = ({ navigation }) => {
         const year = date.getFullYear();
 
         // Định dạng thành chuỗi như mong muốn "phút:giờ yyyy-mm-dd"
-        const formattedDate = `${minutes}:${hours} ${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
+        const formattedDate = `${hours}:${minutes} ${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
 
         return formattedDate;
     };
@@ -150,6 +151,7 @@ const Home = ({ navigation }) => {
         setModalVisible(false);
         setPostId(0);
     };
+
     // gọi api lấy dữ liệu
     const loadPost = async () => {
         const api = await authApi();
@@ -168,6 +170,7 @@ const Home = ({ navigation }) => {
             setLoading(false);
         }
     };
+
     // khoi tạo hook chay dau tien
     useEffect(() => {
         loadPost();
@@ -183,7 +186,7 @@ const Home = ({ navigation }) => {
             idPost: postId,
             content: comment,
         };
-        console.log(commentData);
+        // console.log(commentData);
 
         const api = await authApi();
 
@@ -203,16 +206,18 @@ const Home = ({ navigation }) => {
         }
     };
     // hàm theo dỏi
-    const following = async (userTarget) => {
+    const following = async (item) => {
         const form = {
             idUser: user.id,
-            idTargetUser: userTarget
+            idTargetUser: item.idUser
         };
+
         const api = await authApi();
         try {
             const response = await api.post(endpoints['following'], form);
             if (response.status === 200) {
-                console.log("Đã theo dõi thành công!");
+                console.log(item.idPost);
+                handleFollowPost(item.idUser, true);
             } else {
                 console.log("Không thể theo dõi người dùng.");
             }
@@ -228,12 +233,12 @@ const Home = ({ navigation }) => {
     };
 
     // hàm hủy theo doi
-    const unFollow = async (userTarget) => {
+    const unFollow = async (item) => {
         const api = await authApi();
         try {
-            const response = await api.delete(endpoints['unfollowing'](user.id, userTarget));
+            const response = await api.delete(endpoints['unfollowing'](user.id, item.idUser));
             if (response.status === 200) {
-                console.log("Đã bỏ theo dõi thành công!");
+                handleFollowPost(item.idUser, false);
             } else {
                 console.log("Không thể thực hiện!");
             }
@@ -246,6 +251,17 @@ const Home = ({ navigation }) => {
             }
             throw error; // Ném lỗi lên trên nếu cần
         }
+    };
+
+    // cập nhật trạng thái follow
+    const handleFollowPost = (idUser, followStatus) => {
+        setPosts(prevPosts =>
+            prevPosts.map(post =>
+                post.idUser === idUser
+                    ? { ...post, following: followStatus }
+                    : post
+            )
+        );
     };
 
     // hàm fetch bình luận
@@ -281,13 +297,54 @@ const Home = ({ navigation }) => {
     useEffect(() => {
     }, [idCommentParent]);
 
+    // hàm thích bài viết
+    const likePost = async (postId) => {
+        const api = await authApi();
+        try {
+            const response = await api.post(endpoints['like-post'](user.id, postId));
+            if (response.status === 200) {
+                handleLikePost(response.data.postId, response.data.countLike, true);
+            }
+        } catch (error) {
+            console.error('Error like post:', error);
+            throw error;
+        }
+    };
+
+    // hàm bỏ thích bài viết
+    const disLikePost = async (postId) => {
+        const api = await authApi();
+        try {
+            const response = await api.delete(endpoints['like-post'](user.id, postId));
+            if (response.status === 200) {
+                handleLikePost(response.data.postId, response.data.countLike, false);
+            }
+        } catch (error) {
+            console.error('Error like post:', error);
+            throw error;
+        }
+    };
+
+    // hàm cập nhật giá trị like
+    const handleLikePost = (idPost, newLikes, likedStatus) => {
+        setPosts(prevPosts =>
+            prevPosts.map(post =>
+                post.idPost === idPost
+                    ? { ...post, likes: newLikes, liked: likedStatus }  // Cập nhật likes và liked cho post tương ứng
+                    : post // Giữ nguyên các post khác
+            )
+        );
+    };
+
+
+
+    // xuất comments
     const renderComment = ({ item }) => (
         <View style={{ width: '100%', minHeight: 70, flexDirection: 'row' }}>
             <Image
                 style={{ width: 40, height: 40, borderRadius: 50, margin: 5 }}
-                // source={{ uri: 'https://i.pinimg.com/564x/83/4a/d9/834ad9f6c5f2fca8ffa63acfbd274f38.jpg' }}
                 source={{
-                    uri: item.avatar === ""
+                    uri: item.avatar === ''
                         ? 'https://i.pinimg.com/564x/25/ee/de/25eedef494e9b4ce02b14990c9b5db2d.jpg'
                         : item.avatar
                 }}
@@ -317,7 +374,7 @@ const Home = ({ navigation }) => {
                             <Image
                                 style={{ width: 40, height: 40, borderRadius: 50, margin: 5 }}
                                 source={{
-                                    uri: item.avatar === ""
+                                    uri: item.avatar === ''
                                         ? 'https://i.pinimg.com/564x/25/ee/de/25eedef494e9b4ce02b14990c9b5db2d.jpg'
                                         : item.avatar
                                 }}
@@ -452,7 +509,7 @@ const Home = ({ navigation }) => {
                             <Image
                                 style={{ width: 50, height: 50, borderRadius: 50 }}
                                 source={{
-                                    uri: item.avatar === ""
+                                    uri: item.avatar === null
                                         ? 'https://i.pinimg.com/564x/25/ee/de/25eedef494e9b4ce02b14990c9b5db2d.jpg'
                                         : item.avatar
                                 }} />
@@ -486,7 +543,7 @@ const Home = ({ navigation }) => {
                             <View style={styles.contain_action}>
                                 {item.following ? (
                                     <TouchableOpacity
-                                        onPress={() => unFollow(item.idUser)}
+                                        onPress={() => unFollow(item)}
                                         style={styles.btn_follow}
                                         activeOpacity={0.3}>
 
@@ -494,7 +551,7 @@ const Home = ({ navigation }) => {
                                     </TouchableOpacity>
                                 ) : (
                                     <TouchableOpacity
-                                        onPress={() => following(item.idUser)}
+                                        onPress={() => following(item)}
                                         style={styles.btn_follow}
                                         activeOpacity={0.3}>
 
@@ -509,14 +566,27 @@ const Home = ({ navigation }) => {
                                     <Text style={{ fontSize: 18, fontWeight: '600', color: colors.info }}>Comment</Text>
                                 </TouchableOpacity>
 
-                                <TouchableOpacity
-                                    activeOpacity={0.3}
-                                    style={styles.btn_like}>
-                                    <Text style={{ fontSize: 18, fontWeight: '600', color: colors.danger }}>100</Text>
-                                    <Image
-                                        style={{ width: 35, height: 35, tintColor: colors.gold }}
-                                        source={{ uri: icons.like }} />
-                                </TouchableOpacity>
+                                <View style={styles.btn_like}>
+                                    <Text style={{ fontSize: 18, fontWeight: '600', color: colors.danger }}>{item.likes}</Text>
+
+                                    {item.liked ? (
+                                        <TouchableOpacity
+                                            onPress={() => disLikePost(item.idPost)}
+                                            activeOpacity={0.3}>
+                                            <Image
+                                                style={{ width: 35, height: 35, tintColor: colors.gold }}
+                                                source={{ uri: icons.like }} />
+                                        </TouchableOpacity>
+                                    ) : (
+                                        <TouchableOpacity
+                                            onPress={() => likePost(item.idPost)}
+                                            activeOpacity={0.3}>
+                                            <Image
+                                                style={{ width: 35, height: 35, tintColor: colors.black }}
+                                                source={{ uri: icons.like }} />
+                                        </TouchableOpacity>
+                                    )}
+                                </View>
                             </View>
                         </View>
                     </View>
@@ -550,6 +620,6 @@ const Home = ({ navigation }) => {
             />
         </SafeAreaView>
     );
-};
+});
 
 export default Home;

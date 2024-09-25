@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useReducer } from 'react';
+import React, { Component, forwardRef, useEffect, useReducer, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image, Text, Touchable, TouchableOpacity, View } from 'react-native';
 import IntroApp from '../Screens/Intro/IntroApp';
@@ -30,7 +30,8 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 
-function HomeTabs() {
+const HomeTabs = forwardRef((props, ref) => {
+
     const { state } = useTabBar();
     const navigation = useNavigation();
     const route = useRoute();
@@ -134,7 +135,7 @@ function HomeTabs() {
 
         </View>
     );
-}
+});
 
 function UserProfile() {
     const navigation = useNavigation();
@@ -190,7 +191,7 @@ const Navigation = () => {
                 <UserContext.Provider value={[user, dispatch]}>
                     <TabBarProvider>
                         <Stack.Navigator
-                            initialRouteName="Intro"
+                            initialRouteName="HomeTabs"
                             screenOptions={{ headerShown: false }}>
                             {user == null ? (<>
                                 <Stack.Screen name="Intro" component={IntroApp} />

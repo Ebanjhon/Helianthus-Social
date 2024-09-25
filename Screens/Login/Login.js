@@ -1,13 +1,12 @@
 import styles from './LoginStyle';
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useState } from 'react';
 import FloatingLabelInput from '../../Components/FloatingLabelInput';
 import apiWithoutAuth, { authApi, endpoints } from '../../Configs/APIs';
 import { UserContext } from '../../Configs/Context';
-import { Button, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import LottieView from 'lottie-react-native';
-import colors from '../../assets/color/colors';
 import Toast from 'react-native-toast-message';
 import { showToast, toastConfigExport } from '../../Configs/ToastConfig';
 
@@ -47,8 +46,9 @@ const Login = ({ navigation }) => {
                 });
                 setLoading(false);
             } else {
-                throw new Error(`Login failed with status ${response.status}`);
+                showToast('error', 'Đăng nhập thất bại!', 'Sai thông tin đăng nhập!');
                 setLoading(false);
+                throw new Error(`Login failed with status ${response.status}`);
             }
         } catch (error) {
             showToast('error', 'Đăng nhập thất bại!', 'Sai thông tin đăng nhập!');

@@ -1,8 +1,7 @@
 import axios from "axios";
-import cookie from "react-cookies";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const HOST = 'http://192.168.1.17:8080'; //  IPv4 Address ios lỗi thì cú chạy lại 
+export const HOST = 'http://192.168.1.35:8080'; //  IPv4 Address ios lỗi thì cú chạy lại 
 
 export const endpoints = {
     'login': '/api/login',
@@ -14,7 +13,14 @@ export const endpoints = {
     'load-comments': (postId) => `/api/comment/post/${postId}`,
     'search-user': (text, userId) => `/api/users/search?text=${text}&idUser=${userId}`,
     'following': '/api/follow',
-    'unfollowing': (userid, useridtarger) => `/api/follow?idUser=${userid}&idTargetUser=${useridtarger}`
+    'unfollowing': (userid, useridtarger) => `/api/follow?idUser=${userid}&idTargetUser=${useridtarger}`,
+    'update-avatar': '/api/users/update-avatar',
+    'like-post': (userId, postId) => `/api/post/like-post?userId=${userId}&postId=${postId}`,
+    'delete-post': (postId) => `/api/post?postId=${postId}`,
+    'profile-detail': (userId) => `/api/users/detail?idUser=${userId}`,
+    'get-my-post': (userId) => `/api/post/myposts?idUser=${userId}`,
+    'my-medias': (userId, page) => `/api/media?userId=${userId}&pageable=${page}`,
+    'get-room-chat': (firstUser, lastUser) => `/api/chat/room?firstUserId=${firstUser}&lastUserId=${lastUser}`,
 
 }
 

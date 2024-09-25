@@ -3,7 +3,6 @@ import colors from '../../assets/color/colors';
 
 const styles = StyleSheet.create({
     container: {
-        height: '100%',
         width: 'auto',
         alignItems: 'center',
     },
@@ -33,7 +32,11 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: colors.gray,
         fontWeight: '400',
-        marginBottom: 10
+        marginBottom: 10,
+        fontWeight: '500',
+        backgroundColor: colors.light,
+        borderRadius: 50,
+        padding: 5
     },
     line_border: {
         width: '90%',
@@ -47,7 +50,8 @@ const styles = StyleSheet.create({
         margin: 4,
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-around'
+        justifyContent: 'space-around',
+        backgroundColor: colors.light
     },
     title: {
         fontSize: 22,
@@ -68,10 +72,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.success
     },
     scene: {
-        // backgroundColor: colors.danger,
-        height: '100%',
-        width: '100%',
-        padding: 5
+        flex: 1, height: 5000
     },
     contai_edit_avata: {
         width: "auto",
@@ -84,6 +85,49 @@ const styles = StyleSheet.create({
         borderStyle: 'solid',
         borderWidth: 1,
         borderColor: colors.gray
+    },
+    grid: {
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    box: {
+        backgroundColor: 'tomato',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10,
+    },
+    row: {
+        justifyContent: 'space-between', // Căn đều các item theo chiều ngang
+    },
+    postContain: {
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    post: {
+        width: '90%',
+        height: 'auto',
+        backgroundColor: colors.light,
+        borderRadius: 15,
+        padding: 10
+    },
+    wrapper: {
+        height: 250,
+    },
+    dot: {
+        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        margin: 3,
+    },
+    activeDot: {
+        backgroundColor: '#ffffff',
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        margin: 3,
     },
 
 });

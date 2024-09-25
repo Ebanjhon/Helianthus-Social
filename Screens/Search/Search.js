@@ -1,11 +1,11 @@
-import { FlatList, Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import styles from "./SearchStyle";
 import colors from "../../assets/color/colors";
-import TabHeader from "../../Components/TabHeader";
 import { useTabBar } from "../../Configs/TabBarContext";
 import { authApi, endpoints } from "../../Configs/APIs";
 import { UserContext } from "../../Configs/Context";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const Search = () => {
     const { state, dispatch } = useTabBar();
     const title = "Tìm kiếm";
@@ -46,11 +46,21 @@ const Search = () => {
         }
     };
 
+    // lấy dữ liệu
+    // Lấy mảng đối tượng
+    // const getArrayData = async (key) => {
+    //     try {
+    //         const jsonValue = await AsyncStorage.getItem(key); // Lấy chuỗi JSON từ AsyncStorage
+    //         return jsonValue != null ? JSON.parse(jsonValue) : null; // Chuyển chuỗi JSON trở lại thành mảng đối tượng
+    //     } catch (error) {
+    //         console.error('Error retrieving data:', error);
+    //     }
+    // };
+
     // Khởi tạo hook chạy đầu tiên
     useEffect(() => {
         searchUser();
     }, [text]);
-
 
     // hàm theo dỏi
     const following = async (userTarget) => {
@@ -82,33 +92,65 @@ const Search = () => {
         }
     };
 
+    useEffect(() => {
+        // Hàm sẽ được gọi khi bàn phím ảo xuất hiện
+        const keyboardDidShowListener = Keyboard.addListener(
+            'keyboardDidShow',
+            () => {
+                console.log('Bàn phím đã xuất hiện');
+                // Gọi hàm của bạn tại đây
+                hideTabBar();
+            }
+        );
+
+        // Hàm sẽ được gọi khi bàn phím ảo ẩn đi
+        const keyboardDidHideListener = Keyboard.addListener(
+            'keyboardDidHide',
+            () => {
+                console.log('Bàn phím đã ẩn đi');
+                // Gọi hàm của bạn tại đây
+                showTabBar();
+            }
+        );
+
+        // Hủy lắng nghe khi component bị hủy
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, []);
+
+    // truy cập thông tin user
+
+    const viewUser = async () => {
+        try {
+            const jsonValue = JSON.stringify(result);
+            await AsyncStorage.setItem(key, userlist);
+            console.log('Data stored successfully');
+        } catch (error) {
+            console.error('Error storing data:', error);
+        }
+    };
 
     return (
         <View style={styles.container}>
-            {/* <TabHeader title={title} /> */}
-            <ScrollView style={{ width: '100%' }}>
-                <View style={{ width: '100%', alignItems: 'center', backgroundColor: colors.light }}>
-                    <View style={styles.contai_search}>
-                        <TextInput
-                            style={{ fontSize: 16 }}
-                            placeholder="Tìm kiếm..."
-                            onChange={(e) => setText(e.nativeEvent.text)}
-                            multiline={true} // Cho phép nhập nhiều dòng
-                            onFocus={hideTabBar}
-                            onBlur={showTabBar}
-                        />
-                    </View>
-                </View>
-
+            <View style={{ width: '100%' }}>
                 <FlatList
                     data={result}
                     keyExtractor={(item) => item.user_id}
                     showsHorizontalScrollIndicator={false}
                     renderItem={({ item }) => (
-                        <TouchableOpacity style={styles.item_notifi}>
+                        <TouchableOpacity
+                            onPress={viewUser}
+                            style={styles.item_notifi}>
+
                             <Image
                                 style={styles.image_avatar}
-                                source={{ uri: 'https://i.pinimg.com/564x/7d/2d/c5/7d2dc513fc506bd9ad6cf3847b7326c2.jpg' }} />
+                                source={{
+                                    uri: item.avatar === ''
+                                        ? 'https://i.pinimg.com/564x/25/ee/de/25eedef494e9b4ce02b14990c9b5db2d.jpg'
+                                        : item.avatar
+                                }} />
                             <View>
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <Text style={styles.fullname}>{item.firstname} {item.lastname}</Text>
@@ -130,8 +172,21 @@ const Search = () => {
                                 <Text>@{item.user_name} - Có {item.countFollow} người theo giỏi</Text>
                             </View>
                         </TouchableOpacity>
-                    )} />
-            </ScrollView>
+                    )}
+                    ListHeaderComponent={
+                        <View style={{ width: '100%', alignItems: 'center', backgroundColor: colors.light, elevation: 9, }}>
+                            <View style={styles.contai_search}>
+                                <TextInput
+                                    style={{ fontSize: 16 }}
+                                    placeholder="Tìm kiếm..."
+                                    onChange={(e) => setText(e.nativeEvent.text)}
+                                    multiline={true}
+                                />
+                            </View>
+                        </View>
+                    }
+                />
+            </View>
         </View>
     )
 };

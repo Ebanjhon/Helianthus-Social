@@ -6,6 +6,12 @@ const UserReducer = (user, action) => {
         case "logout": {
             return null;
         }
+        case "update_avatar": {
+            return {
+                ...user,
+                avatar: action.payload.avatar, // Cập nhật avatar mới
+            };
+        }
         default:
             return user;
     }
