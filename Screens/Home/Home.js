@@ -535,7 +535,7 @@ const Home = forwardRef(({ navigation }, ref) => {
                                     showsHorizontalScrollIndicator={false}
 
                                     contentContainerStyle={{
-                                        paddingLeft: '12%'
+                                        // paddingLeft: '12%'
                                     }}
                                 />
                             </View>

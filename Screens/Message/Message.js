@@ -6,7 +6,6 @@ import { BlurView } from '@react-native-community/blur';
 import icons from '../../assets/iconApp/icons';
 import { UserContext } from '../../Configs/Context';
 import { authApi, endpoints } from '../../Configs/APIs';
-import Navigation from '../../Components/Navigation';
 
 const data = [
     { id: '1', username: 'eban', image: 'https://i.pinimg.com/564x/4c/6a/15/4c6a15e4a6d60ba3ca008591c503758f.jpg' },

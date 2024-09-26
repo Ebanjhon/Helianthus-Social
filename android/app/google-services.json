@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "991486997888",
+    "project_id": "message-social-5d4bd",
+    "storage_bucket": "message-social-5d4bd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:991486997888:android:58caa1e6fa113f9b01bd65",
+        "android_client_info": {
+          "package_name": "com.mysocial"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwNJIPyQ6O57qgV_zezmwTCEXG4Q84nGc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

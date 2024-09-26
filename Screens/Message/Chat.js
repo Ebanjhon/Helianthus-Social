@@ -1,25 +1,86 @@
-import { Text, StyleSheet, View, Image, TouchableOpacity, FlatList, TextInput } from 'react-native'
+import { Text, StyleSheet, View, Image, TouchableOpacity, FlatList, TextInput, Alert } from 'react-native'
 import colors from '../../assets/color/colors';
 import icons from '../../assets/iconApp/icons';
 import { UserContext } from '../../Configs/Context';
-import { useContext, useState } from 'react';
-
-const chat = [
-    { id: 1, userid: 3, text: 'Hello', time: '20:11' },
-    { id: 2, userid: 2, text: 'hi', time: '20:11' },
-    { id: 3, userid: 3, text: 'How are you?', time: '20:11' },
-    { id: 4, userid: 3, text: 'everything is good', time: '20:11' },
-    { id: 5, userid: 2, text: 'yeah, im well, and you', time: '20:11' },
-    { id: 6, userid: 3, text: 'still great, wanna hangout', time: '20:11' },
-    { id: 7, userid: 2, text: 'sure!', time: '20:11' },
-    { id: 8, userid: 2, text: 'OK lest go', time: '20:11' },
-]
-
+import { useContext, useEffect, useState } from 'react';
+import firestore from '@react-native-firebase/firestore';
 
 const Chat = ({ route, navigation }) => {
     const [user, dispatchUser] = useContext(UserContext);
     const { userId, avatar, username, roomId } = route.params;
-    const [typeText, setTypeText] = useState('');
+    const [text, setText] = useState('');
+    const [messages, setMessages] = useState([]);
+
+
+    // Hàm gửi dữ liệu lên Firestore
+    const sendMessage = async () => {
+        if (!text || text.trim() === "") {
+            return;
+        }
+        try {
+            // Chuyển roomId thành chuỗi nếu nó là số
+            const roomIdString = String(roomId);
+            // Lưu tin nhắn trong sub-collection "Messages" của phòng tương ứng
+            await firestore()
+                .collection('Rooms')           // Collection chính 'Rooms'
+                .doc(roomIdString)             // Document đại diện cho từng phòng (roomId)
+                .collection('Messages')        // Sub-collection "Messages" chứa tin nhắn
+                .add({
+                    userId: user.id,              // ID người dùng
+                    message: text.trim(),     // Nội dung tin nhắn
+                    timestamp: firestore.FieldValue.serverTimestamp(), // Thời gian gửi tin nhắn
+                });
+            setText('');
+        } catch (error) {
+            console.error('Error creating message: ', error);
+        }
+    };
+
+    // gọi lấy dữ liệu
+
+    const fetchMessages = async () => {
+        try {
+            // Lắng nghe thay đổi theo thời gian thực với onSnapshot
+            const unsubscribe = firestore()
+                .collection('Rooms')           // Collection 'Rooms'
+                .doc(String(roomId))           // Document với roomId
+                .collection('Messages')        // Sub-collection "Messages"
+                .orderBy('timestamp', 'asc')   // Sắp xếp tin nhắn theo thời gian
+                .limit(30)
+                .onSnapshot(snapshot => {
+                    const newMessages = snapshot.docs.map(doc => {
+                        const data = doc.data();
+                        return {
+                            id: doc.id,
+                            userId: data.userId,
+                            message: data.message,
+                            timestamp: data.timestamp,  // Hoặc format lại thời gian nếu cần
+                        };
+                    });
+                    setMessages(newMessages);
+                });
+            // Hàm trả về dùng để hủy lắng nghe khi component unmount
+            return () => unsubscribe();
+        } catch (error) {
+            console.error('Error fetching messages:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchMessages();
+    }, [roomId]);
+
+    // hàm format giờ
+    const formatTimestamp = (timestamp) => {
+        if (!timestamp) return '';  // Nếu không có timestamp, trả về chuỗi rỗng
+
+        const date = new Date(timestamp.seconds * 1000);  // Chuyển đổi timestamp từ Firestore
+        const hours = date.getHours().toString().padStart(2, '0');  // Lấy giờ và thêm 0 nếu cần
+        const minutes = date.getMinutes().toString().padStart(2, '0');  // Lấy phút và thêm 0 nếu cần
+
+        return `${minutes}:${hours}`;  // Định dạng phút:giờ
+    };
+
     return (
         <View style={styles.container}>
             <View style={{ width: '100%', flexDirection: 'row', height: 40, alignItems: 'center', justifyContent: 'space-between', backgroundColor: colors.light, elevation: 8 }}>
@@ -48,15 +109,15 @@ const Chat = ({ route, navigation }) => {
             </View>
 
             <FlatList
-                data={chat}
+                data={messages}
                 keyExtractor={(c) => c.id}
                 showsHorizontalScrollIndicator={false}
                 renderItem={({ item, index }) => (
                     <View style={[
                         styles.contai_chat,
-                        item.userid === user.id ? styles.userleft : styles.userright
+                        item.userId === user.id ? styles.userleft : styles.userright
                     ]}>
-                        {(item.userid !== user.id && (index === chat.length - 1 || chat[index + 1].userid !== item.userid)) && (
+                        {(item.userId !== user.id && (index === messages.length - 1 || messages[index + 1].userId !== item.userId)) && (
                             <Image
                                 style={[styles.avatar, { marginRight: 5, marginLeft: 5 }]}
                                 source={{
@@ -69,15 +130,15 @@ const Chat = ({ route, navigation }) => {
 
                         <View style={[
                             styles.text_chat,
-                            item.userid !== user.id ? styles.item_left : styles.item_right,
-                            (index !== chat.length - 1 && chat[index + 1].userid == item.userid) ? { marginLeft: 40 } : {}
+                            item.userId !== user.id ? styles.item_left : styles.item_right,
+                            (index !== messages.length - 1 && messages[index + 1].userId == item.userId) ? { marginLeft: 40 } : {}
                         ]}>
-                            <Text style={{ color: colors.black }}>{item.text}</Text>
+                            <Text style={{ color: colors.black }}>{item.message}</Text>
                         </View>
 
 
-                        {index === chat.length - 1 || chat[index + 1].userid !== item.userid ? (
-                            <Text style={{ marginLeft: 7, marginRight: 7 }}>{item.time}</Text>
+                        {index === messages.length - 1 || messages[index + 1].userId !== item.userId ? (
+                            <Text style={{ marginLeft: 7, marginRight: 7 }}>{formatTimestamp(item.timestamp)}</Text>
                         ) : null}
                     </View>
                 )}
@@ -87,11 +148,12 @@ const Chat = ({ route, navigation }) => {
             <View style={styles.input_contai}>
                 <TextInput
                     style={{ fontSize: 17, width: '90%' }}
-                    value={typeText}
-                    onChange={(e) => setTypeText(e)}
+                    value={text}
+                    onChangeText={(text) => setText(text)}
                     placeholder='Nhập nội dung tin nhắn'
                 />
-                <TouchableOpacity>
+                <TouchableOpacity
+                    onPress={sendMessage}>
                     <Image
                         style={{ width: 30, height: 30, tintColor: colors.gold }}
                         source={{ uri: icons.sendMess }}

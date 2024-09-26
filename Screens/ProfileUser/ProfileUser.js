@@ -12,6 +12,9 @@ import Swiper from 'react-native-swiper';
 LogBox.ignoreLogs([
     'VirtualizedLists should never be nested inside plain ScrollViews', // Thông báo cảnh báo bạn muốn bỏ qua
 ]);
+LogBox.ignoreLogs([
+    'Warning: A props object containing a "key" prop is being spread into JSX'
+]);
 
 const ProfileUser = ({ navigation }) => {
     const [user, dispatchUser] = useContext(UserContext);
