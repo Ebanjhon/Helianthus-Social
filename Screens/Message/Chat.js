@@ -11,7 +11,6 @@ const Chat = ({ route, navigation }) => {
     const [text, setText] = useState('');
     const [messages, setMessages] = useState([]);
 
-
     // Hàm gửi dữ liệu lên Firestore
     const sendMessage = async () => {
         if (!text || text.trim() === "") {
@@ -30,6 +29,7 @@ const Chat = ({ route, navigation }) => {
                     message: text.trim(),     // Nội dung tin nhắn
                     timestamp: firestore.FieldValue.serverTimestamp(), // Thời gian gửi tin nhắn
                 });
+            updateChatRoom(text);
             setText('');
         } catch (error) {
             console.error('Error creating message: ', error);
@@ -37,7 +37,6 @@ const Chat = ({ route, navigation }) => {
     };
 
     // gọi lấy dữ liệu
-
     const fetchMessages = async () => {
         try {
             // Lắng nghe thay đổi theo thời gian thực với onSnapshot
@@ -68,6 +67,7 @@ const Chat = ({ route, navigation }) => {
 
     useEffect(() => {
         fetchMessages();
+        createChatRoom();
     }, [roomId]);
 
     // hàm format giờ
@@ -81,9 +81,62 @@ const Chat = ({ route, navigation }) => {
         return `${minutes}:${hours}`;  // Định dạng phút:giờ
     };
 
+    // lưu dữ liệu last text
+
+    const createChatRoom = async () => {
+        try {
+            // Chuyển roomId thành chuỗi 
+            const roomIdString = String(roomId);
+            // Truy cập vào Collection 'Chats' và Document với id là roomIdString
+            const roomDocRef = firestore()
+                .collection('Chats')
+                .doc(roomIdString);
+            // Kiểm tra sự tồn tại của document với ID này
+            const roomDocSnapshot = await roomDocRef.get();
+            if (roomDocSnapshot.exists) {
+                // Nếu document đã tồn tại, không tạo mới và thông báo
+                console.log(`Room with ID: ${roomIdString} already exists.`);
+            } else {
+                // Nếu document chưa tồn tại, tạo mới document
+                await roomDocRef.set({
+                    idRoom: roomIdString,    // ID của phòng chat
+                    avatar: avatar,          // Ảnh đại diện của phòng chat hoặc người dùng
+                    idUser: user.id,
+                    username: username,      // Tên người dùng đang tham gia chat
+                    time: firestore.FieldValue.serverTimestamp(), // Thời gian hiện tại
+                    lastText: ''       // Nội dung tin nhắn cuối cùng
+                });
+                console.log('Chat room created successfully!');
+            }
+        } catch (error) {
+            console.error('Error creating chat room: ', error);
+        }
+    };
+
+    // cập nhật chat
+    const updateChatRoom = async (newLastText) => {
+        try {
+            const roomIdString = String(roomId);
+            // Tham chiếu đến Document của phòng chat trong Collection 'Chats'
+            const roomDocRef = firestore()
+                .collection('Chats')
+                .doc(roomIdString);
+
+            // Cập nhật trường lastText và time của Document với roomId tương ứng
+            await roomDocRef.update({
+                lastText: newLastText,                             // Cập nhật nội dung tin nhắn cuối cùng
+                time: firestore.FieldValue.serverTimestamp()       // Cập nhật thời gian hiện tại
+            });
+
+            console.log(`Chat room with ID: ${roomIdString} updated successfully!`);
+        } catch (error) {
+            console.error('Error updating chat room:', error);
+        }
+    };
+
     return (
         <View style={styles.container}>
-            <View style={{ width: '100%', flexDirection: 'row', height: 40, alignItems: 'center', justifyContent: 'space-between', backgroundColor: colors.light, elevation: 8 }}>
+            <View style={{ width: '100%', flexDirection: 'row', height: 50, alignItems: 'center', justifyContent: 'space-between', backgroundColor: colors.light, elevation: 8 }}>
                 <View style={{ flexDirection: 'row', height: 40, alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => navigation.navigate("Message")}>
                         <Image
@@ -177,7 +230,7 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         borderWidth: 2,
         borderStyle: 'solid',
-        borderColor: colors.danger
+        borderColor: colors.gold
     },
     contai_chat: {
         width: '100%',
@@ -207,7 +260,7 @@ const styles = StyleSheet.create({
         elevation: 7,
     },
     item_right: {
-        backgroundColor: colors.light,
+        backgroundColor: colors.xamnhe,
         elevation: 7
     },
     input_contai: {

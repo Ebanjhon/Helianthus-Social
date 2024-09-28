@@ -6,30 +6,8 @@ import { BlurView } from '@react-native-community/blur';
 import icons from '../../assets/iconApp/icons';
 import { UserContext } from '../../Configs/Context';
 import { authApi, endpoints } from '../../Configs/APIs';
-
-const data = [
-    { id: '1', username: 'eban', image: 'https://i.pinimg.com/564x/4c/6a/15/4c6a15e4a6d60ba3ca008591c503758f.jpg' },
-    { id: '2', username: 'hung', image: 'https://i.pinimg.com/736x/12/62/88/126288089aa47b7967de05723caf24c3.jpg' },
-    { id: '3', username: 'hiếu', image: 'https://i.pinimg.com/564x/05/f8/e1/05f8e12f20723d1c9eac540a8e74c62d.jpg' },
-    { id: '4', username: 'nhung', image: 'https://i.pinimg.com/564x/2b/dd/73/2bdd73c0489abd00c798e05b6471547b.jpg' },
-    { id: '5', username: 'phương', image: 'https://i.pinimg.com/564x/3e/05/13/3e0513406926f6b658f967f8481c29c6.jpg' },
-    { id: '6', username: 'hiếu', image: 'https://i.pinimg.com/564x/05/f8/e1/05f8e12f20723d1c9eac540a8e74c62d.jpg' },
-    { id: '7', username: 'nhung', image: 'https://i.pinimg.com/564x/2b/dd/73/2bdd73c0489abd00c798e05b6471547b.jpg' },
-    { id: '8', username: 'phương', image: 'https://i.pinimg.com/564x/3e/05/13/3e0513406926f6b658f967f8481c29c6.jpg' },
-    // Thêm các item khác tại đây
-];
-
-const datachat = [
-    { id: 1, username: 'Niê_suri', avatar: 'https://i.pinimg.com/736x/0a/d6/45/0ad64585c5fa622a2a57e78faa01bab1.jpg', text: 'anh khỏe không?', time: '10:2', count: 5 },
-    { id: 2, username: 'Hơ_mnar', avatar: 'https://i.pinimg.com/564x/ba/ca/45/baca45133ca61d9a6f9f41a6374d2136.jpg', text: 'CÓ chuyện gì nói đi', time: '15:9', count: 5 },
-    { id: 3, username: 'Mr_Bean', avatar: 'https://i.pinimg.com/564x/07/c6/24/07c62428499a13767813c6ef5f7875b0.jpg', text: 'Hê loo', time: '10:9', count: 5 },
-    { id: 4, username: 'Mark', avatar: 'https://i.pinimg.com/736x/81/57/49/815749f7111a7c5bb91cb64758ae5f42.jpg', text: 'how was your day?', time: '10:11', count: 5 },
-    { id: 5, username: 'Mike', avatar: 'https://i.pinimg.com/736x/09/3b/93/093b9352297ce3516b1c8005761f75a9.jpg', text: 'Mai đá banh nhé!', time: '5:28', count: 5 },
-    { id: 6, username: 'Kevin', avatar: 'https://i.pinimg.com/736x/0a/d6/45/0ad64585c5fa622a2a57e78faa01bab1.jpg', text: 'Đi tập gym không anh bạn?', time: '23:9', count: 5 },
-    { id: 7, username: 'Oggy', avatar: 'https://i.pinimg.com/564x/35/3d/27/353d27484c4a67efc4b677853677986d.jpg', text: 'Meow moew', time: '10:9', count: 5 },
-    { id: 8, username: 'Duck_fil', avatar: 'https://i.pinimg.com/564x/7b/59/a9/7b59a905c118892b52bbf20868c763e0.jpg', text: 'kak kak kakk', time: '4:15', count: 5 },
-    { id: 9, username: 'Dorian', avatar: 'https://i.pinimg.com/564x/7e/f1/27/7ef127d87951bd507bdfafae151d1c09.jpg', text: 'sjefbklsgubksdbfksdg', time: '16:9', count: 5 },
-];
+import firestore from '@react-native-firebase/firestore';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Message = ({ navigation }) => {
     const inputRef = useRef(null);
@@ -79,36 +57,111 @@ const Message = ({ navigation }) => {
     }, [search]);
 
     // lay phong chat
-    const getRoomChat = async (userOther) => {
+    const getRoomChat = async (userOther, type) => {
+        let uchat;
+        switch (type) {
+            case 0:
+                uchat = { 'id': userOther.user_id, 'username': userOther.user_name, 'avatar': userOther.avatar };
+                break;
+            case 1:
+                uchat = { 'id': userOther.userId, 'username': userOther.username, 'avatar': userOther.avatar };
+                break;
+        }
         const api = await authApi();
-
         try {
-            const response = await api.get(endpoints['get-room-chat'](user.id, userOther.user_id));
+            const response = await api.get(endpoints['get-room-chat'](user.id, uchat.id));
             if (response.status === 200) {
-                console.log(response.data);
-                chat(userOther.user_id, userOther.avatar, userOther.user_name, response.data);
+                chat(uchat.id, uchat.avatar, uchat.username, response.data);
             } else if (response.status === 404) {
                 console.log("No users found.");
             } else {
                 console.log("Error:", response.status);
             }
         } catch (error) {
-            console.log("ERROE");
+            console.log("ERROE" + error);
         }
     };
     // đen phon chat
-
     const chat = (id, avatar, username, roomId) => {
-        console.log(id);
-        console.log(avatar);
-        console.log(username);
-        console.log(roomId);
         navigation.navigate("Chat", { 'userId': id, 'avatar': avatar, 'username': username, 'roomId': roomId });
     };
 
+    // format time
+    const formatTime = (timestamp) => {
+        if (!timestamp) return '';  // Nếu không có timestamp, trả về chuỗi rỗng
+
+        const date = new Date(timestamp.seconds * 1000);  // Chuyển đổi timestamp từ Firestore
+        const hours = date.getHours().toString().padStart(2, '0');  // Lấy giờ và thêm 0 nếu cần
+        const minutes = date.getMinutes().toString().padStart(2, '0');  // Lấy phút và thêm 0 nếu cần
+
+        return `${minutes}:${hours}`;  // Định dạng phút:giờ
+    };
+
+    // fetch user chat
+    const [listChat, setListChat] = useState([]);
+    const fetchListUserChat = async () => {
+        const api = await authApi();
+        try {
+            const response = await api.get(endpoints['get-user-chat'](user.id));
+            if (response.status === 200) {
+                setListChat(response.data);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    // lấy list chat
+    const [dataChat, setDataChat] = useState([]);
+
+    const getChatsByUserId = async () => {
+        try {
+            // Thực hiện truy vấn đến Collection 'Chats' với điều kiện lọc là idUser
+            const querySnapshot = await firestore()
+                .collection('Chats')                // Tên Collection là 'Chats'
+                .where('idUser', '==', user.id)       // Lọc theo trường 'idUser'
+                .get();                             // Lấy dữ liệu
+
+            // Kiểm tra xem dữ liệu có tồn tại hay không
+            if (querySnapshot.empty) {
+                // console.log('No matching documents found.');
+                setDataChat([]); // Đặt dataChat thành mảng rỗng nếu không có dữ liệu khớp
+                return;
+            }
+
+            // Chuyển đổi dữ liệu từ querySnapshot thành mảng
+            const chatRooms = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+
+            // Sắp xếp chatRooms theo thời gian giảm dần
+            const sortedChatRooms = chatRooms.sort((a, b) => {
+                const timeA = a.time ? a.time.toMillis() : 0; // Chuyển đổi timestamp sang milliseconds
+                const timeB = b.time ? b.time.toMillis() : 0;
+                return timeB - timeA; // Sắp xếp theo thời gian giảm dần
+            });
+
+            setDataChat(sortedChatRooms); // Cập nhật state với dữ liệu đã sắp xếp
+        } catch (error) {
+            console.error('Error fetching chat rooms by userId: ', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchListUserChat();
+        getChatsByUserId();
+    }, [user.id])
+
+    useFocusEffect(
+        React.useCallback(() => {
+            getChatsByUserId();
+        }, [])
+    );
+
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.head_search}>
+            <View style={[styles.head_search, { elevation: 9, marginBottom: 10 }]}>
                 {!focus ? (<>
                     <Text style={styles.title}>@{user.username}</Text>
                     <TouchableOpacity
@@ -141,7 +194,6 @@ const Message = ({ navigation }) => {
 
 
             {/* hiển thị danh sách tin nhắn */}
-
             {focus ? (
                 <View style={styles.listContainer}>
                     <FlatList
@@ -150,7 +202,7 @@ const Message = ({ navigation }) => {
                         showsHorizontalScrollIndicator={false}
                         renderItem={({ item }) => (
                             <TouchableOpacity
-                                onPress={() => getRoomChat(item)}
+                                onPress={() => getRoomChat(item, 0)}
                             >
                                 <View style={styles.item_chat_list}>
                                     <View style={{ flexDirection: 'row' }}>
@@ -164,7 +216,7 @@ const Message = ({ navigation }) => {
                                         />
                                         <View style={{ marginLeft: 5 }}>
                                             <Text style={{ fontSize: 17, fontWeight: '500', color: colors.black }}>{item.firstname} {item.lastname}</Text>
-                                            <Text style={styles.text_chat}>{item.user_name}</Text>
+                                            <Text style={styles.text_chat}>@{item.user_name}</Text>
                                         </View>
                                     </View>
                                     <View>
@@ -179,50 +231,63 @@ const Message = ({ navigation }) => {
             ) : (
                 <View style={styles.listContainer}>
                     <FlatList
-                        data={datachat}
+                        data={dataChat}
                         keyExtractor={(chat) => chat.id}
                         showsHorizontalScrollIndicator={false}
                         renderItem={({ item }) => (
                             <TouchableOpacity
-                                onPress={() => navigation.navigate("Chat", { 'userTarget': item })}>
+                                onPress={() => chat(item.id, item.avatar, item.username, item.idRoom)}>
                                 <View style={styles.item_chat_list}>
                                     <View style={{ flexDirection: 'row' }}>
                                         <Image
                                             style={styles.image_avatar}
-                                            source={{ uri: item.avatar }} />
+                                            source={{
+                                                uri: item.avatar === ''
+                                                    ? 'https://i.pinimg.com/564x/25/ee/de/25eedef494e9b4ce02b14990c9b5db2d.jpg'
+                                                    : item.avatar
+                                            }}
+                                        />
                                         <View style={{ marginLeft: 5 }}>
                                             <Text style={{ fontSize: 17, fontWeight: '500', color: colors.black }}>{item.username}</Text>
-                                            <Text style={styles.text_chat}>{item.text}</Text>
+                                            <Text style={styles.text_chat}>{item.lastText}</Text>
                                         </View>
                                     </View>
                                     <View>
-                                        <Text>{item.time}</Text>
+                                        <Text>{formatTime(item.time)}</Text>
                                     </View>
                                 </View>
                             </TouchableOpacity>
                         )}
                         ListHeaderComponent={
                             <>
-                                {/* danh sách nằm ngang */}
-                                <View style={{ height: 80 }}>
-                                    <FlatList
-                                        data={data}
-                                        keyExtractor={(item) => item.id}
-                                        horizontal={true}
-                                        showsHorizontalScrollIndicator={false}
-                                        renderItem={({ item }) => (
-                                            <TouchableOpacity>
-                                                <View style={{ marginLeft: 13, height: 100 }}>
-                                                    <Image
-                                                        style={styles.image_avatar}
-                                                        source={{ uri: item.image }} />
-                                                    <Text style={styles.name_user_folowing}>{item.username}</Text>
-                                                </View>
-                                            </TouchableOpacity>
-                                        )}
-                                        style={styles.flatList}
-                                    />
-                                </View>
+                                {listChat.length !== 0 &&
+                                    <View style={{ height: 70 }}>
+                                        <FlatList
+                                            data={listChat}
+                                            keyExtractor={(item) => item.id}
+                                            horizontal={true}
+                                            showsHorizontalScrollIndicator={false}
+                                            renderItem={({ item }) => (
+                                                <TouchableOpacity
+                                                    onPress={() => getRoomChat(item, 1)}
+                                                >
+                                                    <View style={{ marginLeft: 13, height: 100 }}>
+                                                        <Image
+                                                            style={styles.image_avatar}
+                                                            source={{
+                                                                uri: item.avatar === ''
+                                                                    ? 'https://i.pinimg.com/564x/25/ee/de/25eedef494e9b4ce02b14990c9b5db2d.jpg'
+                                                                    : item.avatar
+                                                            }}
+                                                        />
+                                                        <Text style={styles.name_user_folowing}>@{item.username}</Text>
+                                                    </View>
+                                                </TouchableOpacity>
+                                            )}
+                                            style={styles.flatList}
+                                        />
+                                    </View>
+                                }
 
                                 <View style={styles.head_search}>
                                     <Text style={styles.title}>Chats</Text>
@@ -271,7 +336,7 @@ const styles = StyleSheet.create({
         width: '100%',
         justifyContent: 'space-between',
         padding: 10,
-
+        backgroundColor: colors.light
     },
     image_avatar: {
         width: 50,

@@ -21,6 +21,8 @@ export const endpoints = {
     'get-my-post': (userId) => `/api/post/myposts?idUser=${userId}`,
     'my-medias': (userId, page) => `/api/media?userId=${userId}&pageable=${page}`,
     'get-room-chat': (firstUser, lastUser) => `/api/chat/room?firstUserId=${firstUser}&lastUserId=${lastUser}`,
+    'get-user-chat': (userId) => `/api/chat?userId=${userId}`,
+
 
 }
 
@@ -45,3 +47,14 @@ export const apiWithoutAuth = axios.create({
 });
 
 export default apiWithoutAuth;
+
+
+// try {
+//     const api = await authApi();
+//     const response = await api.post(endpoints['']());
+//     if (response.status === 200) {
+//     } else {
+//     }
+// } catch (error) {
+   
+// }

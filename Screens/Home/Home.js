@@ -509,7 +509,7 @@ const Home = forwardRef(({ navigation }, ref) => {
                             <Image
                                 style={{ width: 50, height: 50, borderRadius: 50 }}
                                 source={{
-                                    uri: item.avatar === null
+                                    uri: item.avatar === ''
                                         ? 'https://i.pinimg.com/564x/25/ee/de/25eedef494e9b4ce02b14990c9b5db2d.jpg'
                                         : item.avatar
                                 }} />
