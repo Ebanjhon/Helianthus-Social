@@ -205,7 +205,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingRight: 10,
 
-    }
+    },
+    contentContainer: {
+        // Giới hạn chiều cao của nội dung bên trong
+        paddingVertical: 10, // Điều chỉnh padding trên/dưới nếu cần
+    },
 
 });
 

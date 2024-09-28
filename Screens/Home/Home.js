@@ -275,7 +275,8 @@ const Home = forwardRef(({ navigation }, ref) => {
             // Kiểm tra nếu API trả về thành công
             if (response.status === 200) {
                 setCommentList(response.data); // Cập nhật dữ liệu bình luận
-                // console.log('Comments:', response.data);
+            } else {
+                setCommentList([]);
             }
         } catch (error) {
             console.error('Lỗi lấy bình luận:', error);
@@ -291,7 +292,7 @@ const Home = forwardRef(({ navigation }, ref) => {
     const reply = (item) => {
         setIdCommentParent(item.idComment);
         setRepname(item.firstname + item.lastname);
-        console.log(item.commentChild);
+        // console.log(item.commentChild);
     };
 
     useEffect(() => {
@@ -336,8 +337,6 @@ const Home = forwardRef(({ navigation }, ref) => {
         );
     };
 
-
-
     // xuất comments
     const renderComment = ({ item }) => (
         <View style={{ width: '100%', minHeight: 70, flexDirection: 'row' }}>
@@ -351,55 +350,77 @@ const Home = forwardRef(({ navigation }, ref) => {
             />
             <View style={{ minHeight: 40, paddingRight: 9, width: Dimensions.get('window').width * 0.95 - 50 }}>
                 <View style={{ paddingRight: 9 }}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Text style={{ fontSize: 15, fontWeight: '600' }}>{item.firstname} {item.lastname}</Text>
-                        <Text style={{ fontSize: 14, fontWeight: '400', marginLeft: 10 }}>{convertDateTime(item.commentDate)}</Text></View>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <Text style={{ fontSize: 15, fontWeight: '600', color: colors.black }}>{item.firstname} {item.lastname}</Text>
+                        <Text style={{ fontSize: 14, fontWeight: '400', marginLeft: 10 }}>{convertDateTime(item.commentDate)}</Text>
+                    </View>
                 </View>
-                <Text style={{ minHeight: 20 }}>{item.comment}</Text>
-                <View style={{ width: '100%', minHeight: 30, flexDirection: 'row', paddingTop: 2, justifyContent: 'space-between' }}>
+                <Text style={{ minHeight: 20, fontSize: 16 }}>{item.comment}</Text>
+                <View style={{ width: '100%', minHeight: 30, flexDirection: 'row', paddingTop: 2, justifyContent: 'flex-start' }}>
                     <TouchableOpacity
                         onPress={() => reply(item)}>
-                        <Text style={{ fontSize: 17, fontWeight: '500', color: colors.gray }}>Trả lời</Text>
+                        <Text style={{ fontSize: 17, fontWeight: '500', color: colors.info }}>Trả lời</Text>
                     </TouchableOpacity>
-                    <Text style={{ fontSize: 17, fontWeight: '500', color: colors.gray, marginRight: 5, color: colors.danger }}>Xóa</Text>
-                    {/* <Image /> */}
+                    {item.idUser === user.id &&
+                        <TouchableOpacity
+                            onPress={() => deleteComment(item.idComment)}>
+                            <Text style={{ fontSize: 17, fontWeight: '500', color: colors.gray, marginLeft: 50, color: colors.danger }}>Xóa</Text>
+                        </TouchableOpacity>
+                    }
                 </View>
                 {/* // bình luận con */}
                 <FlatList
                     data={item.commentChild}
                     keyExtractor={(child) => child.idComment.toString()}
                     nestedScrollEnabled={true}
+                    scrollEnabled={false}
                     renderItem={({ item: child }) => (
                         <View style={{ width: 'auto', minHeight: 70, flexDirection: 'row' }}>
                             <Image
                                 style={{ width: 40, height: 40, borderRadius: 50, margin: 5 }}
                                 source={{
-                                    uri: item.avatar === ''
+                                    uri: child.avatar === ''
                                         ? 'https://i.pinimg.com/564x/25/ee/de/25eedef494e9b4ce02b14990c9b5db2d.jpg'
-                                        : item.avatar
+                                        : child.avatar
                                 }}
                             />
                             <View style={{ minHeight: 40, paddingRight: 9, width: Dimensions.get('window').width * 0.8 - 50 }}>
                                 <View style={{ paddingRight: 9 }}>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Text style={{ fontSize: 15, fontWeight: '600' }}>{child.firstname} {child.lastname}</Text>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                        <Text style={{ fontSize: 15, fontWeight: '600', color: colors.black }}>{child.firstname} {child.lastname}</Text>
                                         <Text style={{ fontSize: 14, fontWeight: '400', marginLeft: 10 }}>{convertDateTime(child.commentDate)}</Text></View>
                                 </View>
-                                <Text style={{ minHeight: 20 }}>{child.comment}</Text>
+                                <Text style={{ minHeight: 20, fontSize: 16 }}>{child.comment}</Text>
                                 <View style={{ width: 'auto', minHeight: 30, flexDirection: 'row', paddingTop: 2, justifyContent: 'space-between' }}>
-                                    <Text></Text>
-                                    <Text style={{ fontSize: 17, fontWeight: '500', color: colors.gray, marginRight: 15, color: colors.danger }}>Xóa</Text>
-                                    {/* <Image /> */}
+                                    {child.idUser === user.id &&
+                                        <TouchableOpacity
+                                            onPress={() => deleteComment(child.idComment)}>
+                                            <Text style={{ fontSize: 17, fontWeight: '500', color: colors.gray, color: colors.danger }}>Xóa</Text>
+                                        </TouchableOpacity>
+                                    }
                                 </View>
                             </View>
                         </View>
                     )}
-                    style={{ paddingLeft: 0 }}
                 />
 
             </View>
         </View>
     );
+
+    // xoas cmt
+    const deleteComment = async (idCmt) => {
+        try {
+            const api = await authApi();
+            const response = await api.delete(endpoints['delete-cmt'](idCmt));
+            if (response.status === 200) {
+                fetchComment();
+                console.log("ok");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -439,6 +460,7 @@ const Home = forwardRef(({ navigation }, ref) => {
                                             renderItem={renderComment}
                                             nestedScrollEnabled={true}
                                             ListEmptyComponent={<Text>Chưa có bình luận!</Text>}
+                                            contentContainerStyle={styles.contentContainer}
                                             style={{ flex: 1 }}
                                         />
                                     </View>

@@ -1,7 +1,7 @@
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const HOST = 'http://192.168.1.35:8080'; //  IPv4 Address ios lỗi thì cú chạy lại 
+export const HOST = 'http://192.168.1.14:8080'; //  IPv4 Address ios lỗi thì cú chạy lại 
 
 export const endpoints = {
     'login': '/api/login',
@@ -22,7 +22,9 @@ export const endpoints = {
     'my-medias': (userId, page) => `/api/media?userId=${userId}&pageable=${page}`,
     'get-room-chat': (firstUser, lastUser) => `/api/chat/room?firstUserId=${firstUser}&lastUserId=${lastUser}`,
     'get-user-chat': (userId) => `/api/chat?userId=${userId}`,
-
+    'update-profile':'/api/users',
+    'delete-cmt':(cmtId)=> `/api/comment/${cmtId}`,
+    
 
 }
 

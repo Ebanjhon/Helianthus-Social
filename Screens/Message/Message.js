@@ -116,33 +116,46 @@ const Message = ({ navigation }) => {
 
     const getChatsByUserId = async () => {
         try {
-            // Thực hiện truy vấn đến Collection 'Chats' với điều kiện lọc là idUser
+            // Lấy tất cả các phòng chat
             const querySnapshot = await firestore()
-                .collection('Chats')                // Tên Collection là 'Chats'
-                .where('idUser', '==', user.id)       // Lọc theo trường 'idUser'
-                .get();                             // Lấy dữ liệu
-
-            // Kiểm tra xem dữ liệu có tồn tại hay không
-            if (querySnapshot.empty) {
-                // console.log('No matching documents found.');
-                setDataChat([]); // Đặt dataChat thành mảng rỗng nếu không có dữ liệu khớp
-                return;
-            }
+                .collection('Chats')
+                .get();
 
             // Chuyển đổi dữ liệu từ querySnapshot thành mảng
-            const chatRooms = querySnapshot.docs.map(doc => ({
+            const allChatRooms = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data(),
             }));
 
-            // Sắp xếp chatRooms theo thời gian giảm dần
-            const sortedChatRooms = chatRooms.sort((a, b) => {
-                const timeA = a.time ? a.time.toMillis() : 0; // Chuyển đổi timestamp sang milliseconds
-                const timeB = b.time ? b.time.toMillis() : 0;
+            // Lọc các phòng chat có idUser trong members và loại bỏ userId
+            const filteredChatRooms = allChatRooms.map(chatRoom => {
+                // Lọc members để loại bỏ đối tượng có idUser trùng với user.id
+                const filteredMembers = chatRoom.members.filter(member => member.idUser !== user.id);
+
+                return {
+                    ...chatRoom,
+                    members: filteredMembers // Cập nhật lại members với những người dùng còn lại
+                };
+            }).filter(chatRoom => chatRoom.members.length > 0); // Loại bỏ những phòng chat không còn thành viên
+
+            // Sắp xếp các phòng chat theo thời gian giảm dần
+            const sortedChatRooms = filteredChatRooms.sort((a, b) => {
+                const timeA = a.time ? a.time.seconds : 0; // Lấy seconds từ time
+                const timeB = b.time ? b.time.seconds : 0;
                 return timeB - timeA; // Sắp xếp theo thời gian giảm dần
             });
 
-            setDataChat(sortedChatRooms); // Cập nhật state với dữ liệu đã sắp xếp
+            // Kiểm tra xem có phòng chat nào đã được lọc hay không
+            if (sortedChatRooms.length === 0) {
+                setDataChat([]); // Nếu không có dữ liệu, cập nhật state là mảng rỗng
+                return;
+            }
+
+            // Log dữ liệu đã lọc được để kiểm tra
+            console.log('Filtered and Sorted Chat Rooms for User:', JSON.stringify(sortedChatRooms, null, 2));
+
+            // Cập nhật state với dữ liệu đã lọc và sắp xếp
+            setDataChat(sortedChatRooms);
         } catch (error) {
             console.error('Error fetching chat rooms by userId: ', error);
         }
@@ -236,19 +249,19 @@ const Message = ({ navigation }) => {
                         showsHorizontalScrollIndicator={false}
                         renderItem={({ item }) => (
                             <TouchableOpacity
-                                onPress={() => chat(item.id, item.avatar, item.username, item.idRoom)}>
+                                onPress={() => chat(item.members[0].id, item.members[0].avatar, item.members[0].username, item.idRoom)}>
                                 <View style={styles.item_chat_list}>
                                     <View style={{ flexDirection: 'row' }}>
                                         <Image
                                             style={styles.image_avatar}
                                             source={{
-                                                uri: item.avatar === ''
+                                                uri: item.members[0].avatar === ''
                                                     ? 'https://i.pinimg.com/564x/25/ee/de/25eedef494e9b4ce02b14990c9b5db2d.jpg'
-                                                    : item.avatar
+                                                    : item.members[0].avatar
                                             }}
                                         />
                                         <View style={{ marginLeft: 5 }}>
-                                            <Text style={{ fontSize: 17, fontWeight: '500', color: colors.black }}>{item.username}</Text>
+                                            <Text style={{ fontSize: 17, fontWeight: '500', color: colors.black }}>{item.members[0].username}</Text>
                                             <Text style={styles.text_chat}>{item.lastText}</Text>
                                         </View>
                                     </View>

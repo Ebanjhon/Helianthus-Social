@@ -82,15 +82,16 @@ const Chat = ({ route, navigation }) => {
     };
 
     // lưu dữ liệu last text
-
     const createChatRoom = async () => {
         try {
             // Chuyển roomId thành chuỗi 
             const roomIdString = String(roomId);
+
             // Truy cập vào Collection 'Chats' và Document với id là roomIdString
             const roomDocRef = firestore()
                 .collection('Chats')
                 .doc(roomIdString);
+
             // Kiểm tra sự tồn tại của document với ID này
             const roomDocSnapshot = await roomDocRef.get();
             if (roomDocSnapshot.exists) {
@@ -99,12 +100,22 @@ const Chat = ({ route, navigation }) => {
             } else {
                 // Nếu document chưa tồn tại, tạo mới document
                 await roomDocRef.set({
-                    idRoom: roomIdString,    // ID của phòng chat
-                    avatar: avatar,          // Ảnh đại diện của phòng chat hoặc người dùng
-                    idUser: user.id,
-                    username: username,      // Tên người dùng đang tham gia chat
+                    idRoom: roomIdString,            // ID của phòng chat
                     time: firestore.FieldValue.serverTimestamp(), // Thời gian hiện tại
-                    lastText: ''       // Nội dung tin nhắn cuối cùng
+                    lastText: '',                    // Nội dung tin nhắn cuối cùng
+                    // Mảng các thành viên trong phòng chat, gồm hai đối tượng user
+                    members: [
+                        {
+                            idUser: user.id,          // ID của người dùng đầu tiên
+                            username: user.username,       // Tên của người dùng đầu tiên
+                            avatar: user.avatar            // Ảnh đại diện của người dùng đầu tiên
+                        },
+                        {
+                            idUser: userId,   // ID của người dùng thứ hai (thay `anotherUser` bằng thông tin người dùng thứ hai của bạn)
+                            username: username, // Tên của người dùng thứ hai
+                            avatar: avatar // Ảnh đại diện của người dùng thứ hai
+                        }
+                    ]
                 });
                 console.log('Chat room created successfully!');
             }
@@ -112,6 +123,7 @@ const Chat = ({ route, navigation }) => {
             console.error('Error creating chat room: ', error);
         }
     };
+
 
     // cập nhật chat
     const updateChatRoom = async (newLastText) => {
@@ -230,7 +242,7 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         borderWidth: 2,
         borderStyle: 'solid',
-        borderColor: colors.gold
+        borderColor: colors.black
     },
     contai_chat: {
         width: '100%',

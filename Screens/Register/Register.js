@@ -19,7 +19,7 @@ const Register = ({ navigation }) => {
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
     const [passConfirm, setPassConfirm] = useState("");
-    const [gender, setGender] = useState("");
+    const [gender, setGender] = useState("MALE");
     const [showPass, setShowPass] = useState(false);
     // chọn ngày sinh
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
