@@ -1,4 +1,4 @@
-import { Text, StyleSheet, View, Image, TouchableOpacity, FlatList, TextInput, Alert } from 'react-native'
+import { Text, StyleSheet, View, Image, TouchableOpacity, FlatList, TextInput } from 'react-native'
 import colors from '../../assets/color/colors';
 import icons from '../../assets/iconApp/icons';
 import { UserContext } from '../../Configs/Context';

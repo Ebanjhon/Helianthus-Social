@@ -527,6 +527,7 @@ const Home = forwardRef(({ navigation }, ref) => {
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item }) => (
                     <View style={styles.contain}>
+                        {/* thông tin ng đăng */}
                         <View style={styles.post_infor}>
                             <Image
                                 style={{ width: 50, height: 50, borderRadius: 50 }}
@@ -540,8 +541,15 @@ const Home = forwardRef(({ navigation }, ref) => {
                                 <Text style={{ fontSize: 18, fontWeight: '500' }}>{item.username}</Text>
                                 <Text style={{ fontSize: 17, color: colors.gray }}>{formatDate(item.dateCreated)}</Text>
                             </View>
-                        </View>
 
+                        </View>
+                        <TouchableOpacity style={styles.menu}>
+                            <Image
+                                style={{ width: 20, height: 20, tintColor: colors.black, paddingRight: 5 }}
+                                source={{ uri: icons.icon_menu }}
+                            />
+                        </TouchableOpacity>
+                        {/* nội dung bài viết */}
                         <View style={{ width: 'auto', paddingLeft: 10, paddingRight: 10, marginTop: 5 }}>
                             <Text style={{ fontSize: 18, color: colors.dark }}>{item.content}</Text>
                         </View>
@@ -561,25 +569,34 @@ const Home = forwardRef(({ navigation }, ref) => {
                                     }}
                                 />
                             </View>
-
+                            {/* hien thi thoe doi */}
                             <View style={styles.contain_action}>
-                                {item.following ? (
-                                    <TouchableOpacity
-                                        onPress={() => unFollow(item)}
-                                        style={styles.btn_follow}
-                                        activeOpacity={0.3}>
+                                {item.idUser !== user.id ? (
+                                    item.following ? (
+                                        <TouchableOpacity
+                                            onPress={() => unFollow(item)}
+                                            style={styles.btn_follow}
+                                            activeOpacity={0.3}>
 
-                                        <Text style={{ fontSize: 18, fontWeight: '600', color: colors.info }}>following</Text>
-                                    </TouchableOpacity>
+                                            <Text style={{ fontSize: 18, fontWeight: '600', color: colors.info }}>following</Text>
+                                        </TouchableOpacity>
+                                    ) : (
+                                        <TouchableOpacity
+                                            onPress={() => following(item)}
+                                            style={styles.btn_follow}
+                                            activeOpacity={0.3}>
+
+                                            <Text style={{ fontSize: 18, fontWeight: '600', color: colors.info }}>follow</Text>
+                                        </TouchableOpacity>
+                                    )
                                 ) : (
                                     <TouchableOpacity
-                                        onPress={() => following(item)}
                                         style={styles.btn_follow}
                                         activeOpacity={0.3}>
-
-                                        <Text style={{ fontSize: 18, fontWeight: '600', color: colors.info }}>follow</Text>
+                                        <Text style={{ fontSize: 18, fontWeight: '600', color: colors.info }}>Cập nhật</Text>
                                     </TouchableOpacity>
                                 )}
+
 
                                 <TouchableOpacity
                                     onPress={() => popup(item.idPost)}

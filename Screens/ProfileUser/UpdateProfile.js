@@ -228,11 +228,12 @@ const UpdateProfile = ({ navigation }) => {
     };
 
     useEffect(() => {
-        if (firstname !== user.firstName || lastname !== user.lastName || phone !== user.phone || email !== user.email || birth !== user.birth, avatar !== user.avatar) {
+        if (firstname !== user.firstName || lastname !== user.lastName || phone !== user.phone || email !== user.email || birth !== user.birth || avatar !== user.avatar) {
             setIsChange(true);
-            console.log();
+            console.log("change");
         } else {
             setIsChange(false);
+            console.log("change!");
         }
     }, [avatar, email, phone, firstname, lastname, birth])
 

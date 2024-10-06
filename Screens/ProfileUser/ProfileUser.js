@@ -19,7 +19,7 @@ LogBox.ignoreLogs([
 const ProfileUser = ({ navigation }) => {
     const [user, dispatchUser] = useContext(UserContext);
     const [profile, setProfile] = useState(null);
-    // const [index, setIndex] = useState(0);
+    const [index, setIndex] = useState(0);
     const [indextab, setIndextab] = React.useState(0);
     const [hasReachedEnd, setHasReachedEnd] = useState(false);
     const [scroll, setScroll] = useState(true);
@@ -176,23 +176,28 @@ const ProfileUser = ({ navigation }) => {
     // các bài viết đã đăng
     const [showPostMoal, setShowPostModal] = useState(false);
     const [imagepost, setImagepost] = useState([]);
+    const [content, setContent] = useState('');
 
-    const showModalPost = (images) => {
+    const showModalPost = (data) => {
         setShowPostModal(true);
         setModalVisible(true);
-        setImagepost(images);
+        setImagepost(data.medias);
+        setContent(data.content);
     };
 
     const renderPost = ({ item }) => (
-        <View style={styling.imageContainer}>
-            <TouchableOpacity onPress={() => showModalPost(item.medias)}>
+
+        <TouchableOpacity
+            style={styling.imageContainer}
+            onPress={() => showModalPost(item)}>
+            <View >
                 {item.medias.length === 0 ? (
                     <Text style={{ fontSize: 17, fontWeight: '500' }}>{item.content}</Text>
                 ) : (
                     <Image source={{ uri: item.medias[0].mediaUrl }} style={styling.imageThumbnail} />
                 )}
-            </TouchableOpacity>
-        </View>
+            </View>
+        </TouchableOpacity>
     );
 
     const PostRoute = () => (
@@ -244,7 +249,7 @@ const ProfileUser = ({ navigation }) => {
                                 />
                             </View>
 
-                            <Text style={{ fontSize: 17, fontWeight: "500", color: colors.dark }}>hello?</Text>
+                            <Text style={{ fontSize: 17, fontWeight: "500", color: colors.dark }}>{content}</Text>
                             {imagepost.length !== 0 && <>
                                 <View style={{ width: '100%', aspectRatio: 3 / 4 }}>
                                     <Swiper

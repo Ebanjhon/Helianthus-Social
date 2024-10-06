@@ -1,4 +1,4 @@
-import { Button, FlatList, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import styles from "./PostStyle";
 import SlideUpView from "./SlideUp";
 import React, { useContext, useState } from "react";

@@ -5,6 +5,7 @@ const styles = StyleSheet.create({
     container: {
         width: '100%',
         height: '100%',
+        backgroundColor: colors.xamtrang
     },
     contai_head: {
         width: '100%',
@@ -104,7 +105,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '95%',
         height: 500,
-        // backgroundColor: colors.danger
     },
     imageContainer: {
         justifyContent: 'center',
@@ -210,6 +210,11 @@ const styles = StyleSheet.create({
         // Giới hạn chiều cao của nội dung bên trong
         paddingVertical: 10, // Điều chỉnh padding trên/dưới nếu cần
     },
+    menu: {
+        position: 'absolute',
+        right: 10,
+        top: 18
+    }
 
 });
 

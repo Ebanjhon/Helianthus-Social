@@ -1,4 +1,4 @@
-import { FlatList, Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, Keyboard, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import styles from "./SearchStyle";
 import colors from "../../assets/color/colors";

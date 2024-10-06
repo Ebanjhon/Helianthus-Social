@@ -1,8 +1,6 @@
-import React, { PureComponent, useContext, useEffect, useRef, useState } from 'react'
-import { Alert, Button, FlatList, Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import TabHeader from '../../Components/TabHeader';
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import { FlatList, Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import colors from '../../assets/color/colors';
-import { BlurView } from '@react-native-community/blur';
 import icons from '../../assets/iconApp/icons';
 import { UserContext } from '../../Configs/Context';
 import { authApi, endpoints } from '../../Configs/APIs';
@@ -128,15 +126,22 @@ const Message = ({ navigation }) => {
             }));
 
             // Lọc các phòng chat có idUser trong members và loại bỏ userId
-            const filteredChatRooms = allChatRooms.map(chatRoom => {
-                // Lọc members để loại bỏ đối tượng có idUser trùng với user.id
-                const filteredMembers = chatRoom.members.filter(member => member.idUser !== user.id);
+            const filteredChatRooms = allChatRooms
+                .filter(chatRoom => {
+                    const hasUserInMembers = chatRoom.members.some(member => String(member.idUser) === String(user.id));
+                    return hasUserInMembers;
+                })
+                // Bước 2: Loại bỏ các thành viên có idUser trùng với user.id trong members
+                .map(chatRoom => {
+                    // Lọc danh sách members, loại bỏ những người có idUser trùng với user.id
+                    const filteredMembers = chatRoom.members.filter(member => String(member.idUser) !== String(user.id));
 
-                return {
-                    ...chatRoom,
-                    members: filteredMembers // Cập nhật lại members với những người dùng còn lại
-                };
-            }).filter(chatRoom => chatRoom.members.length > 0); // Loại bỏ những phòng chat không còn thành viên
+                    // Trả về phòng chat với danh sách members đã được lọc
+                    return {
+                        ...chatRoom,
+                        members: filteredMembers
+                    };
+                });
 
             // Sắp xếp các phòng chat theo thời gian giảm dần
             const sortedChatRooms = filteredChatRooms.sort((a, b) => {
@@ -152,7 +157,7 @@ const Message = ({ navigation }) => {
             }
 
             // Log dữ liệu đã lọc được để kiểm tra
-            console.log('Filtered and Sorted Chat Rooms for User:', JSON.stringify(sortedChatRooms, null, 2));
+            // console.log('Filtered and Sorted Chat Rooms for User:', JSON.stringify(sortedChatRooms, null, 2));
 
             // Cập nhật state với dữ liệu đã lọc và sắp xếp
             setDataChat(sortedChatRooms);

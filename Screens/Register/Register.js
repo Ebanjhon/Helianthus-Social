@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, TouchableHighlight, TouchableOpacity } from 'react-native';
+import { Button, Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { Text, View } from 'react-native'
 import colors from '../../assets/color/colors';
 import icons from '../../assets/iconApp/icons';

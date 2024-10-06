@@ -19,10 +19,9 @@ const styles = StyleSheet.create({
     },
     textNameApp: {
         fontSize: 60,
-        fontWeight: '700',
         color: colors.gold,
         marginBottom: 10,
-        // textTransform: 'capitalize',
+        fontFamily: 'Pacifico-Regular',
     },
     image_gif: {
         height: 300,

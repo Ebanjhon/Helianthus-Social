@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Image, Text, View } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { Text, View } from 'react-native';
 import styles from './IntroStyle';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import colors from '../../assets/color/colors';
@@ -35,7 +34,7 @@ export class IntroApp extends Component {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.footer}>
-                    <Text style={{ color: colors.dark }}>Design by ÊBan</Text>
+                    <Text style={{ color: colors.dark }}>Design by Êban</Text>
                 </View>
             </View >
         )

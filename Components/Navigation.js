@@ -1,6 +1,6 @@
-import React, { Component, forwardRef, useEffect, useReducer, useRef } from 'react';
+import React, { forwardRef, useEffect, useReducer, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Image, Text, Touchable, TouchableOpacity, View } from 'react-native';
+import { Image, PermissionsAndroid, TouchableOpacity, View } from 'react-native';
 import IntroApp from '../Screens/Intro/IntroApp';
 import { StyleSheet } from 'react-native';
 import colors from '../assets/color/colors';
@@ -22,9 +22,10 @@ import ProfileUser from '../Screens/ProfileUser/ProfileUser';
 import Post from '../Screens/Post/Post';
 import UpdateProfile from '../Screens/ProfileUser/UpdateProfile';
 import Message from '../Screens/Message/Message';
-import { BlurView } from '@react-native-community/blur';
 import Chat from '../Screens/Message/Chat';
 import Toast from 'react-native-toast-message';
+import notifee, { AndroidImportance } from '@notifee/react-native';
+
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -170,20 +171,101 @@ const Navigation = () => {
     const loadUserData = async () => {
         try {
             const userData = await AsyncStorage.getItem('user');
-            if (userData) {
+            if (userData !== null) {
                 dispatch({
                     type: 'login',
                     payload: JSON.parse(userData),
                 });
             }
         } catch (error) {
-            console.error('Error loading user data:', error);
         }
+
     };
 
     useEffect(() => {
         loadUserData();
     }, []);
+
+    useEffect(() => {
+        if (user) {
+            // Thiết lập WebSocket khi user đã đăng nhập
+            ws.current = new WebSocket(`ws://192.168.1.24:8080/ws?userId=${user.id}`);
+
+            ws.current.onopen = () => {
+                console.log('WebSocket connected');
+            };
+
+            ws.current.onmessage = async (e) => {
+                const message = e.data;
+                console.log('Message from server:', message);
+
+                // Hiển thị thông báo khi nhận tin nhắn
+                await notifee.displayNotification({
+                    title: 'Helianthus',
+                    body: message,
+                    android: {
+                        channelId: 'default',
+                        importance: AndroidImportance.HIGH,
+                    },
+                });
+            };
+
+            ws.current.onerror = (e) => {
+                console.error('WebSocket error:', e.message);
+            };
+
+            ws.current.onclose = (e) => {
+                console.log('WebSocket closed:', e.code, e.reason);
+            };
+
+            return () => {
+                // Đóng WebSocket khi component unmount hoặc khi user logout
+                if (ws.current) {
+                    ws.current.close();
+                }
+            };
+        }
+    }, [user]);
+
+    const ws = useRef(null); // Tạo tham chiếu WebSocket
+    // Tạo channel cho thông báo Android và yêu cầu quyền thông báo
+    useEffect(() => {
+        async function setup() {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+                {
+                    title: 'Thông báo quyền truy cập.',
+                    message: 'Ứng dụng cần quyền truy cập thông báo để hoạt động.',
+                    buttonPositive: 'Đồng ý',
+                },
+            );
+
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                // console.log('Đã được cấp quyền thông báo');
+                await notifee.createChannel({
+                    id: 'default',
+                    name: 'Default Channel',
+                    importance: AndroidImportance.HIGH,
+                });
+            } else {
+                console.log('Không được cấp quyền thông báo');
+            }
+        }
+
+        setup();
+    }, []);
+
+    // Hàm hiển thị thông báo thủ công
+    async function onDisplayNotification() {
+        await notifee.displayNotification({
+            title: 'Thông báo từ ứng dụng',
+            body: 'Đây là thông báo khi nhấn nút!',
+            android: {
+                channelId: 'default',
+                importance: AndroidImportance.HIGH,
+            },
+        });
+    }
 
     return (
         <>

@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import React, { useRef } from 'react';
+import { StyleSheet, Animated } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import colors from '../../assets/color/colors';
 
