@@ -36,14 +36,21 @@ const Login = ({ navigation }) => {
                 // Lấy token từ AsyncStorage và gọi API để lấy thông tin người dùng
                 const api = await authApi(); // Đợi authApi hoàn thành và lấy instance axios
                 const userResponse = await api.get(endpoints['current-user']);
+
+                // console.log(userResponse.data.active);
+                if (!userResponse.data.active) {
+                    setLoading(false);
+                    navigation.navigate('Active', { userData: userResponse.data });
+                    return;
+                }
                 // Lưu user vào AsyncStorage
                 await AsyncStorage.setItem('user', JSON.stringify(userResponse.data));
-                console.log(userResponse.data);
                 // Cập nhật trạng thái ứng dụng
                 dispatch({
                     type: 'login',
                     payload: userResponse.data,
                 });
+
                 setLoading(false);
             } else {
                 showToast('error', 'Đăng nhập thất bại!', 'Sai thông tin đăng nhập!');

@@ -46,7 +46,7 @@ const Notification = () => {
             { title: 'Hôm nay', data: todayMessages },
             { title: 'Hôm qua', data: yesterdayMessages },
             { title: 'Khác', data: otherMessages }
-        ];
+        ].filter(section => section.data.length > 0); // Lọc các nhóm không có dữ liệu
     };
 
     const [notifi, setNotifi] = useState([]);
@@ -72,8 +72,11 @@ const Notification = () => {
     return (
         <SafeAreaView style={styles.container}>
             <TabHeader title={title} />
+            {notifi.length === 0 && <>
+                <Text style={{ marginTop: "70%" }}>Bạn chưa có thông báo nào!</Text>
+            </>}
             <SectionList
-                style={{ width: '100%', padding: 10, backgroundColor: colors.gold }}
+                style={{ width: '100%', padding: 10, backgroundColor: colors.xamtrang }}
                 sections={groupedData}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (

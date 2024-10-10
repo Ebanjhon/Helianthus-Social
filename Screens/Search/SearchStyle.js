@@ -5,11 +5,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
+        backgroundColor: colors.xamtrang
     },
     contai_search: {
         width: 320,
         height: 40,
-        backgroundColor: colors.xamtrang,
+        backgroundColor: colors.gold,
         borderRadius: 20,
         paddingLeft: 10,
         margin: 5,

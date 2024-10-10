@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { FlatList, Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { FlatList, Image, LogBox, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import colors from '../../assets/color/colors';
 import icons from '../../assets/iconApp/icons';
 import { UserContext } from '../../Configs/Context';
 import { authApi, endpoints } from '../../Configs/APIs';
 import firestore from '@react-native-firebase/firestore';
 import { useFocusEffect } from '@react-navigation/native';
+LogBox.ignoreAllLogs();
 
 const Message = ({ navigation }) => {
     const inputRef = useRef(null);

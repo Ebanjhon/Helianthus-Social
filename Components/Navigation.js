@@ -25,6 +25,7 @@ import Message from '../Screens/Message/Message';
 import Chat from '../Screens/Message/Chat';
 import Toast from 'react-native-toast-message';
 import notifee, { AndroidImportance } from '@notifee/react-native';
+import ActiveAccount from '../Screens/OTP/ActiveAccount';
 
 
 const Stack = createStackNavigator();
@@ -189,7 +190,7 @@ const Navigation = () => {
     useEffect(() => {
         if (user) {
             // Thiết lập WebSocket khi user đã đăng nhập
-            ws.current = new WebSocket(`ws://192.168.1.24:8080/ws?userId=${user.id}`);
+            ws.current = new WebSocket(`ws://192.168.1.26:8080/ws?userId=${user.id}`);
 
             ws.current.onopen = () => {
                 console.log('WebSocket connected');
@@ -279,6 +280,7 @@ const Navigation = () => {
                                 <Stack.Screen name="Intro" component={IntroApp} />
                                 <Stack.Screen name="Login" component={Login} />
                                 <Stack.Screen name="Register" component={Register} />
+                                <Stack.Screen name="Active" component={ActiveAccount} />
                             </>) : (<>
                                 <Stack.Screen name="HomeTabs" component={HomeTabs} />
                                 <Stack.Screen name="Logout" component={Logout} />

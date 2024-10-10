@@ -159,12 +159,16 @@ const ProfileUser = ({ navigation }) => {
                 if (response.data.content.length !== 0) {
                     setPageMedia(pageMedia + 1);
                 }
-                setImages(transformImages(listImage));
             }
         } catch (error) {
             console.log("Lỗi lấy dữ liệu!", error);
         }
     };
+
+    // Sử dụng useEffect để cập nhật images khi listImage thay đổi
+    useEffect(() => {
+        setImages(transformImages(listImage));
+    }, [listImage]); // Lắng nghe thay đổi của listImage
 
     useEffect(() => {
         fetchDetailProfile();
@@ -270,7 +274,7 @@ const ProfileUser = ({ navigation }) => {
                                 </View>
                             </>}
                             <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 10 }}>
-                                <Text style={{ fontSize: 15, fontWeight: "600", color: colors.black }}>Like 1</Text>
+                                <Text style={{ fontSize: 15, fontWeight: "600", color: colors.black }}>Like</Text>
                                 <Text style={{ fontSize: 15, fontWeight: "600", color: colors.black }}>Comment</Text>
                             </View>
                         </View>
@@ -281,17 +285,18 @@ const ProfileUser = ({ navigation }) => {
     );
 
     // hiển thị các hình ảnh
-    const handleCloseModal = () => {
-        setModalVisible(false);
-        setSelectedImage(null);
-    };
     const [selectedImage, setSelectedImage] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
-    const [images, setImages] = useState();
+    const [modalImage, setModalImage] = useState(false);
+    const [images, setImages] = useState([]);
+    const [indexImages, setIndexImages] = useState(null);
 
     const handleItemPress = (index) => {
-        setSelectedImage(index);
-        setModalVisible(true); // Mở modal hiển thị hình ảnh phóng to
+        console.log(index);
+        console.log(images);
+        setModalImage(true);
+        setIndexImages(index);
+        // Mở modal hiển thị hình ảnh phóng to
     };
 
     const renderItem = ({ item, index }) => (
@@ -302,11 +307,11 @@ const ProfileUser = ({ navigation }) => {
         </View>
     );
 
-    const closeModalMedia = () => {
-        setModalVisible(false);
-        setSelectedImage(null);
+    const CloseModalImages = () => {
+        setModalImage(false);
     };
 
+    // hiển thị ảnh
     const MediaRoute = () => (
         <View style={{ flex: 1 }} >
             <FlatList
@@ -323,20 +328,21 @@ const ProfileUser = ({ navigation }) => {
                 onEndReachedThreshold={0.5} // Gọi khi cuộn đến 50% trước khi hết danh sách
             />
 
-            {selectedImage && (
+            {modalImage && (
                 <Modal
                     visible={true}
                     transparent={true}
-                    onRequestClose={handleCloseModal}
+                    onRequestClose={CloseModalImages}
                 >
                     <ImageViewer
                         imageUrls={images}
-                        index={selectedImage}
-                        onSwipeDown={closeModalMedia}
+                        index={indexImages}
+                        onSwipeDown={CloseModalImages}
                         enableSwipeDown={true}
                     />
                 </Modal>
             )}
+
         </View>
     );
 
