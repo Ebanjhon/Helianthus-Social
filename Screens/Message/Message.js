@@ -29,11 +29,6 @@ const Message = ({ navigation }) => {
     const [search, setSearch] = useState('');
     const [result, setResult] = useState([]);
     const searchUser = async () => {
-        if (!search) {
-            setResult([]);
-            return;
-        }
-
         const api = await authApi();
 
         try {
@@ -161,6 +156,7 @@ const Message = ({ navigation }) => {
             // console.log('Filtered and Sorted Chat Rooms for User:', JSON.stringify(sortedChatRooms, null, 2));
 
             // Cập nhật state với dữ liệu đã lọc và sắp xếp
+            console.log(sortedChatRooms[0].members);
             setDataChat(sortedChatRooms);
         } catch (error) {
             console.error('Error fetching chat rooms by userId: ', error);

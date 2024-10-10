@@ -24,13 +24,7 @@ const Search = () => {
     const [isFocused, setIsFocused] = useState(false);
 
     const searchUser = async () => {
-        if (!text) {
-            setResult([]);
-            return;
-        }
-
         const api = await authApi();
-
         try {
             const response = await api.get(endpoints['search-user'](text, user.id));
             if (response.status === 200) {
@@ -45,17 +39,6 @@ const Search = () => {
             setResult([]);
         }
     };
-
-    // lấy dữ liệu
-    // Lấy mảng đối tượng
-    // const getArrayData = async (key) => {
-    //     try {
-    //         const jsonValue = await AsyncStorage.getItem(key); // Lấy chuỗi JSON từ AsyncStorage
-    //         return jsonValue != null ? JSON.parse(jsonValue) : null; // Chuyển chuỗi JSON trở lại thành mảng đối tượng
-    //     } catch (error) {
-    //         console.error('Error retrieving data:', error);
-    //     }
-    // };
 
     // Khởi tạo hook chạy đầu tiên
     useEffect(() => {

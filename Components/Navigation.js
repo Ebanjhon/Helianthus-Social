@@ -190,7 +190,7 @@ const Navigation = () => {
     useEffect(() => {
         if (user) {
             // Thiết lập WebSocket khi user đã đăng nhập
-            ws.current = new WebSocket(`ws://192.168.1.26:8080/ws?userId=${user.id}`);
+            ws.current = new WebSocket(`ws://172.16.0.2:8080/ws?userId=${user.id}`);
 
             ws.current.onopen = () => {
                 console.log('WebSocket connected');

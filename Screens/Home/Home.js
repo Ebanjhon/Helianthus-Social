@@ -1,5 +1,5 @@
 import React, { forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { Image, Text, TouchableOpacity, View, FlatList, RefreshControl, Modal, Button, SafeAreaView, TextInput, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Dimensions, LogBox } from 'react-native'
+import { Image, Text, TouchableOpacity, View, FlatList, RefreshControl, Modal, Button, SafeAreaView, TextInput, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Dimensions, LogBox, Alert } from 'react-native'
 import colors from '../../assets/color/colors';
 import icons from '../../assets/iconApp/icons';
 import styles from './HomeStyle';
@@ -8,6 +8,8 @@ import { authApi, endpoints } from '../../Configs/APIs';
 import { UserContext } from '../../Configs/Context';
 import { BlurView } from '@react-native-community/blur';
 import { useRoute } from '@react-navigation/native';
+import { showToast, toastConfigExport } from '../../Configs/ToastConfig';
+import Toast from 'react-native-toast-message';
 
 LogBox.ignoreLogs(['Function components cannot be given refs']);
 
@@ -25,6 +27,50 @@ const Home = forwardRef(({ navigation }, ref) => {
     const [idCommentParent, setIdCommentParent] = useState(0);
     const [postId, setPostId] = useState(0);
     const [commentList, setCommentList] = useState([]);
+    const [post, setPost] = useState(null);
+
+    // xóa bài viết
+    const confirmDeletePost = (id) => {
+        Alert.alert(
+            "Xác nhận xóa bài viết",
+            "Bạn có chắc chắn muốn xóa bài viết này không?",
+            [
+                {
+                    text: "Không",
+                    onPress: () => setPost(null),
+                    style: "cancel",
+                },
+                {
+                    text: "Có",
+                    onPress: () => deletePost(id)
+                }
+            ]
+        );
+    };
+
+    // hàm cập nhật danh sách
+    const updatePost = (idPost) => {
+        setPosts(prevPosts =>
+            prevPosts.filter(post => post.idPost !== idPost)  // Lọc bỏ bài viết có idPost tương ứng
+        );
+    };
+
+    const deletePost = async (id) => {
+        try {
+            const api = await authApi();
+            const response = await api.delete(endpoints['delete-post'](id));
+            if (response.status === 200) {
+                showToast('success', 'Thông báo!', 'Đã xóa bài viết thành công!');
+                updatePost(id);
+                setPost(null);
+                // cập nhật danh sách
+            } else {
+                showToast('error', 'Thông báo!', 'Xóa bài viết không thành công!');
+            }
+        } catch (error) {
+            showToast('error', 'Thông báo!', 'Xóa bài viết không thành công!');
+        }
+    };
 
     // Hàm sẽ được gọi khi người dùng cuộn
     const [lastOffsetY, setLastOffsetY] = useState(0); // Vị trí cuộn trước đó
@@ -82,7 +128,7 @@ const Home = forwardRef(({ navigation }, ref) => {
         // Khi bắt đầu kéo để refresh, đặt trạng thái refreshing thành true
         setRefreshing(true);
 
-        // Giả lập việc tải lại dữ liệu trong 2 giây
+        // Giả lập việc tải lại dữ liệu trong 1 giây
         setTimeout(() => {
             // Khi đã tải lại xong, đặt lại refreshing thành false
             setRefreshing(false);
@@ -424,6 +470,8 @@ const Home = forwardRef(({ navigation }, ref) => {
 
     return (
         <SafeAreaView style={styles.container}>
+
+            {/* hiện thị bainh luận */}
             <Modal
                 animationType="slide"
                 transparent={true} // Đặt transparent thành true để làm nền trong suốt
@@ -514,7 +562,7 @@ const Home = forwardRef(({ navigation }, ref) => {
                     />
                 }
                 onEndReached={loadMorePosts}
-                onEndReachedThreshold={0.7} // Tỉ lệ danh sách còn lại trước khi gọi hàm (0.5 = 50%)
+                onEndReachedThreshold={0.5} // Tỉ lệ danh sách còn lại trước khi gọi hàm (0.5 = 50%)
                 ListFooterComponent={
                     <View style={{ padding: 10 }}>
                         {/* {loading ? (
@@ -543,12 +591,39 @@ const Home = forwardRef(({ navigation }, ref) => {
                             </View>
 
                         </View>
-                        <TouchableOpacity style={styles.menu}>
+                        <TouchableOpacity
+                            onPress={() => setPost(item.idPost)}
+                            style={styles.menu}>
                             <Image
                                 style={{ width: 20, height: 20, tintColor: colors.black, paddingRight: 5 }}
                                 source={{ uri: icons.icon_menu }}
                             />
                         </TouchableOpacity>
+                        {/* Menu chọn */}
+                        {post === item.idPost && <>
+                            <View style={styles.menu_box}>
+                                {user.id === item.idUser ? (
+                                    <TouchableOpacity
+                                        onPress={() => confirmDeletePost(item.idPost)}
+                                        style={styles.item_menu}
+                                    >
+                                        <Text>Xóa bài viết</Text>
+                                    </TouchableOpacity>
+                                ) : (
+                                    <TouchableOpacity
+                                        style={styles.item_menu}
+                                    >
+                                        <Text>Báo cáo bài viết</Text>
+                                    </TouchableOpacity>
+                                )}
+                                <TouchableOpacity
+                                    style={styles.item_menu}
+                                    onPress={() => setPost(null)}
+                                >
+                                    <Text>Hủy</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </>}
                         {/* nội dung bài viết */}
                         <View style={{ width: 'auto', paddingLeft: 10, paddingRight: 10, marginTop: 5 }}>
                             <Text style={{ fontSize: 18, color: colors.dark }}>{item.content}</Text>
@@ -657,6 +732,8 @@ const Home = forwardRef(({ navigation }, ref) => {
                 onScroll={handleScroll}
                 scrollEventThrottle={16} // Điều chỉnh tốc độ gửi sự kiện scroll
             />
+            {/* thông báo */}
+            <Toast config={toastConfigExport} />
         </SafeAreaView>
     );
 });

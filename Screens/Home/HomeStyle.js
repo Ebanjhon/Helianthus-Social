@@ -214,7 +214,22 @@ const styles = StyleSheet.create({
         position: 'absolute',
         right: 10,
         top: 18
+    },
+    menu_box: {
+        backgroundColor: colors.xamtrang,
+        position: 'absolute',
+        top: 10,
+        right: 10,
+        padding: 3,
+        elevation: 5,
+        zIndex: 20,
+    },
+    item_menu: {
+        backgroundColor: colors.light,
+        padding: 1,
+        marginBottom: 1
     }
+
 
 });
 

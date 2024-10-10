@@ -12,6 +12,7 @@ const toastConfig = {
             borderRadius: 10,
             padding: 10,
             justifyContent: 'center',
+            zIndex: 100,
         }}>
             <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>{text1}</Text>
             <Text style={{ color: 'white', fontSize: 14 }}>{text2}</Text>
