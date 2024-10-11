@@ -228,6 +228,56 @@ const styles = StyleSheet.create({
         backgroundColor: colors.light,
         padding: 1,
         marginBottom: 1
+    },
+    contain_edit_post: {
+        backgroundColor: colors.light,
+        width: '100%',
+        height: '95%',
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        marginTop: '10%',
+        paddingLeft: 10,
+        paddingRight: 10
+    },
+    head_edit: {
+        width: '100%',
+        height: 50,
+        alignContent: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+        alignItems: "center",
+        justifyContent: 'space-between',
+        paddingLeft: 30,
+        paddingRight: 30,
+
+    },
+    text_head: {
+        fontSize: 18,
+        color: colors.black
+    },
+    text_name: {
+        paddingLeft: 10,
+        fontSize: 18,
+        color: colors.dark
+    },
+    textInput: {
+        width: '100%',
+        fontSize: 16,
+        height: "auto",
+        textAlignVertical: 'top',
+    },
+    media_edit: {
+        width: '100%',
+        aspectRatio: 3 / 4,
+
+    },
+    remove: {
+        position: 'absolute',
+        zIndex: 10,
+        right: 10,
+        top: 10,
+        borderRadius: 50,
+        backgroundColor: 'rgba(250, 250, 250, 0.4)',
     }
 
 

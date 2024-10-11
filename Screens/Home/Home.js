@@ -66,8 +66,10 @@ const Home = forwardRef(({ navigation }, ref) => {
                 // cập nhật danh sách
             } else {
                 showToast('error', 'Thông báo!', 'Xóa bài viết không thành công!');
+                console.log(response.status);
             }
         } catch (error) {
+            console.log(error);
             showToast('error', 'Thông báo!', 'Xóa bài viết không thành công!');
         }
     };
@@ -468,18 +470,138 @@ const Home = forwardRef(({ navigation }, ref) => {
         }
     };
 
+    // update nội dung bài viết
+    const [showEditPost, setShowEditPost] = useState(false);
+    const [postEdit, setPostEdit] = useState(null);
+    const [contentPost, setContentPost] = useState('');
+    const [idRemoveImg, setIdRemoveImg] = useState([]);
+
+    const addIDImg = (id) => {
+        setIdRemoveImg((prevIds) => [...prevIds, id]);
+
+        if (postEdit && postEdit.medias) {
+            // Lọc ra các media không có mediaId cần xóa
+            const updatedMedias = postEdit.medias.filter((media) => media.mediaId !== id);
+
+            // Cập nhật lại postEdit với danh sách medias mới
+            setPostEdit((prevPostEdit) => ({
+                ...prevPostEdit,
+                medias: updatedMedias,
+            }));
+        }
+    };
+
+    const pickPostEdit = (post) => {
+        setShowEditPost(true);
+        setPostEdit(post);
+        setContentPost(post.content);
+        console.log(post);
+    };
+
+    const closeEdit = () => {
+        setShowEditPost(false);
+        setPostEdit(null);
+    };
+
     return (
         <SafeAreaView style={styles.container}>
 
-            {/* hiện thị bainh luận */}
+            {/* hiển thị cập nhật bài viết */}
             <Modal
+                animationType="slide" // Kiểu animation khi Modal hiển thị
+                transparent={true} // Làm nền phía sau Modal mờ đi
+                visible={showEditPost} // hiển thị
+                onRequestClose={() => {
+                    // Hành động khi Modal bị đóng
+                    setModalVisible(!showEditPost);
+                }}
+            >
+                {/* Phần nền mờ */}
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <View style={{ flex: 1 }}>
+                        <BlurView
+                            style={{ position: 'absolute', top: 0, left: 0, bottom: 0, right: 0 }}
+                            blurType="dark" // Các kiểu blur: light, dark, extraDark, regular, prominent
+                            blurAmount={1}  // Độ mạnh của hiệu ứng blur
+                            reducedTransparencyFallbackColor="white" // Màu nền khi blur không khả dụng
+                        />
+
+                        <KeyboardAvoidingView
+                            keyboardVerticalOffset={0}
+                            behavior={Platform.OS === "ios" ? "padding" : "height"}>
+                            <View style={styles.contain_edit_post}>
+                                <View style={styles.head_edit}>
+                                    <TouchableOpacity
+                                        onPress={closeEdit}>
+                                        <Text style={styles.text_head}>Hủy</Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity>
+                                        <Text style={styles.text_head}>Cập nhật</Text>
+                                    </TouchableOpacity>
+                                </View>
+
+                                <View style={{ marginBottom: 7, flexDirection: 'row' }}>
+                                    <Image
+                                        style={{ width: 50, height: 50, borderRadius: 50 }}
+
+                                        source={{
+                                            uri: user.avatar === ''
+                                                ? 'https://i.pinimg.com/564x/25/ee/de/25eedef494e9b4ce02b14990c9b5db2d.jpg'
+                                                : user.avatar
+                                        }} />
+                                    <View>
+                                        <Text style={styles.text_name}>{user.firstName} {user.lastName}</Text>
+                                        <Text style={{ marginLeft: 10, color: colors.gray }}>Bài viết đang ở chế độ công khai</Text>
+                                    </View>
+                                </View>
+
+                                <TextInput
+                                    style={styles.textInput}
+                                    multiline={true}
+                                    numberOfLines={3} // Số dòng hiển thị mặc định (có thể tuỳ chỉnh)
+                                    value={contentPost}
+                                    onChangeText={(e) => setContentPost(e)}
+                                    placeholder="Hãy nhập nội dung tại đây..."
+                                />
+
+                                {/* hiển thị ảnh */}
+                                {postEdit != null && <>
+                                    <FlatList
+                                        showsVerticalScrollIndicator={false}
+                                        style={{ width: '100%', minHeight: 90 }}
+                                        data={postEdit.medias}
+                                        keyExtractor={(item, index) => index.toString()}  // Đảm bảo mỗi ảnh có key duy nhất
+                                        renderItem={({ item, index }) => (
+                                            <View style={{ marginBottom: 10, position: 'relative' }}>
+                                                <TouchableOpacity style={styles.remove}
+                                                    onPress={() => addIDImg(item.mediaId)}
+                                                >
+                                                    <Image style={{ width: 30, height: 30 }} source={{ uri: icons.remove }} />
+                                                </TouchableOpacity>
+                                                <Image
+                                                    style={styles.media}
+                                                    source={{ uri: item.mediaUrl }}
+                                                />
+                                            </View>
+                                        )}
+                                    />
+                                </>}
+                            </View>
+                        </KeyboardAvoidingView>
+                    </View>
+                </TouchableWithoutFeedback>
+            </Modal >
+
+            {/* hiện thị binh luận */}
+            < Modal
                 animationType="slide"
                 transparent={true} // Đặt transparent thành true để làm nền trong suốt
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}>
 
                 {/* Phần nền mờ */}
-                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                < TouchableWithoutFeedback onPress={Keyboard.dismiss} >
                     <View style={{ flex: 1 }}>
                         <BlurView
                             style={{ position: 'absolute', top: 0, left: 0, bottom: 0, right: 0 }}
@@ -547,8 +669,8 @@ const Home = forwardRef(({ navigation }, ref) => {
                             </View>
                         </KeyboardAvoidingView>
                     </View>
-                </TouchableWithoutFeedback>
-            </Modal>
+                </TouchableWithoutFeedback >
+            </Modal >
 
             <FlatList
                 ref={flatListRef}
@@ -666,6 +788,7 @@ const Home = forwardRef(({ navigation }, ref) => {
                                     )
                                 ) : (
                                     <TouchableOpacity
+                                        onPress={() => pickPostEdit(item)}
                                         style={styles.btn_follow}
                                         activeOpacity={0.3}>
                                         <Text style={{ fontSize: 18, fontWeight: '600', color: colors.info }}>Cập nhật</Text>
@@ -734,7 +857,7 @@ const Home = forwardRef(({ navigation }, ref) => {
             />
             {/* thông báo */}
             <Toast config={toastConfigExport} />
-        </SafeAreaView>
+        </SafeAreaView >
     );
 });
 
