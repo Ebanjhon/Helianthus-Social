@@ -26,8 +26,9 @@ export const endpoints = {
     'delete-cmt':(cmtId)=> `/api/comment/${cmtId}`,
     'notification': (userId)=>`/api/notification?userId=${userId}`,
     'create_otp':(userId)=>`/api/OTP?userId=${userId}`,
-    'checking-otp':(userId, otp) =>`/api/OTP/active?userId=${userId}&otp=${otp}`,
-
+    'checking-otp':'/api/OTP/active',
+    'report':'/api/report',
+    'post': '/api/post',
 }
 
 export const authApi = async () => {

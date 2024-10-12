@@ -208,7 +208,7 @@ const Message = ({ navigation }) => {
             </View>
 
 
-            {/* hiển thị danh sách tin nhắn */}
+            {/* hiển thị danh sách phong chat*/}
             {focus ? (
                 <View style={styles.listContainer}>
                     <FlatList

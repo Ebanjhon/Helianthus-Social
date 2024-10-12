@@ -45,7 +45,10 @@ const ActiveAccount = ({ route }) => {
     const sendOTP = async () => {
         const api = await authApi();
         try {
-            const response = await api.post(endpoints['checking-otp'](userData.id, otp));
+            const response = await api.post(endpoints['checking-otp'], {
+                userId: userData.id,
+                otp: otp
+            });
             if (response.status === 200) {
                 showToast('success', 'Thông báo!', 'Xác nhận tài khoản thành công');
                 // Lưu user vào AsyncStorage

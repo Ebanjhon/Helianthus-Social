@@ -491,6 +491,25 @@ const Home = forwardRef(({ navigation }, ref) => {
         }
     };
 
+    const postUpdate = async () => {
+        try {
+            const api = await authApi(); // Tạo instance axios với token
+            const response = await api.put('/api/post', {
+                postId: postEdit.idPost,
+                content: contentPost,
+                idMedias: idRemoveImg
+            });
+            if (response.status === 200) {
+                showToast('success', 'Thông báo!', 'Gử báo cáo thành công!');
+                closeEdit();
+                setPost(null);
+            }
+        } catch (error) {
+            console.error('Error updating post:', error);
+            throw error; // Đảm bảo xử lý lỗi ở cấp trên
+        }
+    };
+
     const pickPostEdit = (post) => {
         setShowEditPost(true);
         setPostEdit(post);
@@ -503,9 +522,116 @@ const Home = forwardRef(({ navigation }, ref) => {
         setPostEdit(null);
     };
 
+    // tạo báo cáo
+    const [showReport, setShowReport] = useState(false);
+    const [textReport, setTextReport] = useState('');
+    const [idReport, setIdReport] = useState(null);
+
+    const hienThiBaoCao = (postId) => {
+        setShowReport(true);
+        setIdReport(postId);
+    };
+
+    const createReport = async () => {
+        try {
+            const api = await authApi();
+            const response = await api.post(endpoints['report'], {
+                userId: user.id,
+                postId: idReport,
+                content: textReport
+            });
+
+            if (response.status === 201) {
+                setShowReport(false);
+                setTextReport('');
+                setIdReport(null);
+                showToast('success', 'Thông báo!', 'Gử báo cáo thành công!');
+            }
+        } catch (error) {
+            setShowReport(false);
+            setTextReport('');
+            setIdReport(null);
+            showToast('error', 'Thông báo!', 'Báo cáo không thành công!');
+        }
+    };
+
+    const closeReport = () => {
+        setShowReport(false);
+        setIdReport(null);
+        setTextReport('');
+    };
+
+    // một số nội dung báo cáo
+    const reportContent = ["Bài viết chứa nội dung không phù hợp",
+        "Bài viết đăng tải hình ảnh không phù hợp",
+        "Tin giả", "Bài viết chứa nội dung nhảy cảm",
+        "Bài viết mang tính bạo lực, thù ghét",
+        "Tôi không muốn xem nội dung này", "Nội dung quấy rối hoặc lăng mạ"];
+
     return (
         <SafeAreaView style={styles.container}>
+            {/* hiển thị báo cáo bài viết */}
 
+            <Modal
+                animationType="slide" // Kiểu animation khi Modal hiển thị
+                transparent={true} // Làm nền phía sau Modal mờ đi
+                visible={showReport} // hiển thị
+                onRequestClose={() => {
+                    // Hành động khi Modal bị đóng
+                    setModalVisible(!showReport);
+                }}
+            >
+                {/* Phần nền mờ */}
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <View style={{ flex: 1, backgroundColor: colors.light }}>
+
+                        <KeyboardAvoidingView
+                            keyboardVerticalOffset={0}
+                            behavior={Platform.OS === "ios" ? "padding" : "height"}>
+                            <View style={{ alignItems: 'center' }}>
+                                <View style={[styles.head_edit, { backgroundColor: colors.gold }]}>
+
+
+                                    <TouchableOpacity
+                                        onPress={closeReport}>
+                                        <Text style={styles.text_head}>Hủy</Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity
+                                        onPress={createReport}>
+                                        <Text style={styles.text_head}>Gửi</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <TextInput
+                                    style={styles.input_report}
+                                    multiline={true}
+                                    numberOfLines={1} // Số dòng hiển thị mặc định (có thể tuỳ chỉnh)
+                                    value={textReport}
+                                    onChangeText={(e) => setTextReport(e)}
+                                    placeholder="Nhập nội dung báo cáo..."
+                                />
+
+                                <View style={styles.border_bot} />
+                                <Text style={{ fontSize: 17, backgroundColor: colors.light, position: "absolute", top: 110 }}>Lựa chọn nội dung</Text>
+                                <View style={{ width: '100%', padding: 10 }}>
+
+                                    <FlatList
+                                        data={reportContent}
+                                        renderItem={({ item }) => (      // Render trực tiếp bên trong FlatList
+                                            <TouchableOpacity
+                                                onPress={() => setTextReport(item)}
+                                            >
+                                                <Text style={styles.item_report}>{item}</Text>
+                                            </TouchableOpacity>
+                                        )}
+                                        keyExtractor={(item, index) => index.toString()}  // Khóa duy nhất cho mỗi item
+                                    />
+                                </View>
+                            </View>
+                        </KeyboardAvoidingView>
+                    </View>
+                </TouchableWithoutFeedback>
+            </Modal >
             {/* hiển thị cập nhật bài viết */}
             <Modal
                 animationType="slide" // Kiểu animation khi Modal hiển thị
@@ -536,7 +662,8 @@ const Home = forwardRef(({ navigation }, ref) => {
                                         <Text style={styles.text_head}>Hủy</Text>
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={postUpdate}>
                                         <Text style={styles.text_head}>Cập nhật</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -645,7 +772,8 @@ const Home = forwardRef(({ navigation }, ref) => {
 
                                             <TouchableOpacity
                                                 onPress={createCmt}
-                                                style={{ backgroundColor: colors.xamtrang, width: 40, height: 40, borderRadius: 30, justifyContent: 'center', alignItems: 'center' }}>
+                                                style={styles.send}
+                                            >
                                                 <Image
                                                     style={{ width: 30, height: 30, transform: [{ rotate: '270deg' }], top: -1 }}
                                                     source={{ uri: icons.send_cmt }} />
@@ -733,6 +861,7 @@ const Home = forwardRef(({ navigation }, ref) => {
                                     </TouchableOpacity>
                                 ) : (
                                     <TouchableOpacity
+                                        onPress={() => hienThiBaoCao(item.idPost)}
                                         style={styles.item_menu}
                                     >
                                         <Text>Báo cáo bài viết</Text>

@@ -110,6 +110,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    send: {
+        position: 'absolute',
+        backgroundColor: colors.xamtrang,
+        width: 40, height: 40,
+        borderRadius: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        right: 5
+    },
     image: {
         width: 250,
         height: 330,
@@ -190,7 +199,8 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '88%',
         fontSize: 20,
-        color: colors.dark
+        color: colors.dark,
+        position: 'relative'
     },
     reply: {
         width: 'auto',
@@ -278,8 +288,36 @@ const styles = StyleSheet.create({
         top: 10,
         borderRadius: 50,
         backgroundColor: 'rgba(250, 250, 250, 0.4)',
-    }
+    },
+    input_report: {
+        borderColor: colors.black,
+        borderWidth: 1,
+        fontSize: 17,
+        width: "95%",
+        borderRadius: 90,
+        paddingLeft: 20,
+        height: 50,
+        marginTop: 10,
 
+    },
+    border_bot: {
+        borderColor: colors.black,
+        borderWidth: 0.7,
+        width: '90%',
+        margin: 10,
+    },
+    item_report: {
+        fontSize: 16,
+        fontWeight: '400',
+        width: 'auto',
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: colors.black,
+        padding: 5,
+        backgroundColor: colors.xamtrang,
+        alignSelf: 'flex-start',
+        marginBottom: 5
+    }
 
 });
 
