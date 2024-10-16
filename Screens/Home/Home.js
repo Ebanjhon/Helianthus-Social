@@ -463,7 +463,7 @@ const Home = forwardRef(({ navigation }, ref) => {
             const response = await api.delete(endpoints['delete-cmt'](idCmt));
             if (response.status === 200) {
                 fetchComment();
-                console.log("ok");
+                // console.log("ok");
             }
         } catch (error) {
             console.log(error);

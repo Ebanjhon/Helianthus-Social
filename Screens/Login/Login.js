@@ -37,7 +37,7 @@ const Login = ({ navigation }) => {
                 const api = await authApi(); // Đợi authApi hoàn thành và lấy instance axios
                 const userResponse = await api.get(endpoints['current-user']);
 
-                // console.log(userResponse.data.active);
+                console.log(userResponse.data.active);
                 if (!userResponse.data.active) {
                     setLoading(false);
                     navigation.navigate('Active', { userData: userResponse.data });

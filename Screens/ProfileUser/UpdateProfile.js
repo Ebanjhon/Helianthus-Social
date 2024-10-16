@@ -164,7 +164,7 @@ const UpdateProfile = ({ navigation }) => {
 
         try {
             const api = await authApi();
-            const response = await api.put(endpoints['update-avatar'], formData, {
+            const response = await api.post(endpoints['update-avatar'], formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -203,10 +203,12 @@ const UpdateProfile = ({ navigation }) => {
             phone: phone,
             role: 'ROLE_USER',
             birth: birth,
+            active: true,
         };
 
         try {
             setLoading(true);
+            console.log("1");
             const api = await authApi();
             const response = await api.put(endpoints['update-profile'], userData, {
                 headers: {
