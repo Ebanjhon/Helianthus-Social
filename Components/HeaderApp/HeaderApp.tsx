@@ -29,7 +29,7 @@ const HeaderApp: React.FC<HeaderAppProps> = ({
         <TouchableOpacity
           onPress={Navigation.goBack}
           style={[styles.itemHeader]}>
-          <IconBack height={35} width={35} />
+          <IconBack height={40} width={40} />
         </TouchableOpacity>
       ) : (
         <View style={styles.itemHeader} />
@@ -37,7 +37,7 @@ const HeaderApp: React.FC<HeaderAppProps> = ({
       <Text style={{fontSize: 19, fontWeight: '600'}}>{title}</Text>
       {isShowrightAction ? (
         <TouchableOpacity style={[styles.itemHeader, {}]}>
-          <IconMenu height={35} width={35} />
+          <IconMenu height={40} width={40} />
         </TouchableOpacity>
       ) : (
         <View style={styles.itemHeader} />

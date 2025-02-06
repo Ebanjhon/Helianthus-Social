@@ -1,16 +1,22 @@
 /* eslint-disable react/react-in-jsx-scope */
 import styles from './LoginStyle';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useContext, useState} from 'react';
-import FloatingLabelInput from '../../Components/FloatingLabelInput';
 import apiWithoutAuth, {authApi, endpoints} from '../../Configs/APIs';
 import {UserContext} from '../../Configs/Context';
-import {KeyboardAvoidingView, ScrollView, Text, View} from 'react-native';
+import {
+  Image,
+  KeyboardAvoidingView,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import LottieView from 'lottie-react-native';
 import Toast from 'react-native-toast-message';
 import {showToast, toastConfigExport} from '../../Configs/ToastConfig';
 import HeaderApp from '../../Components/HeaderApp/HeaderApp';
+import {AppInputFloat} from '../../Components/AppInputFloating/AppInputFloat';
 
 const Login = ({navigation}) => {
   const [username, setUsername] = useState('');
@@ -65,23 +71,21 @@ const Login = ({navigation}) => {
       <ScrollView
         style={styles.container}
         contentContainerStyle={{alignItems: 'center'}}>
-        <LottieView
-          source={require('../../assets/animations/Animation - 1726832984119.json')}
-          autoPlay
-          loop
-          style={{width: 200, height: 200, marginTop: 10}}
+        <Image
+          source={require('../../assets/images/sun.png')}
+          style={styles.imgLogin}
         />
         <Toast config={toastConfigExport} />
-        <Text style={styles.title}>Đăng nhập</Text>
+        <Text style={styles.titleLogin}>Đăng nhập</Text>
         <View style={{padding: 16, width: '95%'}}>
-          <FloatingLabelInput
-            label="Username"
+          <AppInputFloat
+            label="Tên đăng nhập"
             value={username}
             setValue={setUsername}
             isPassword={false}
           />
-          <FloatingLabelInput
-            label="Password"
+          <AppInputFloat
+            label="Mật khẩu"
             value={password}
             setValue={setPassword}
             isPassword={true}
@@ -95,14 +99,14 @@ const Login = ({navigation}) => {
             style={{width: 100, height: 100}}
           />
         ) : (
-          <TouchableOpacity style={styles.button} onPress={loginPress}>
-            <Text style={styles.buttonText}>Đăng Nhập</Text>
+          <TouchableOpacity style={styles.buttonLogin} onPress={loginPress}>
+            <Text style={styles.buttonText}>Xác nhận</Text>
           </TouchableOpacity>
         )}
         <TouchableOpacity
           onPress={() => navigation.navigate('Register')}
           style={{marginTop: 10}}>
-          <Text>Đăng ký tài khoản</Text>
+          <Text style={styles.registerText}>Đăng ký tài khoản</Text>
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>

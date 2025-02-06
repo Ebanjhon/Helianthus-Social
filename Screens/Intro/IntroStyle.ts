@@ -1,69 +1,43 @@
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
 import colors from '../../assets/color/colors';
 
 const styles = StyleSheet.create({
-    container: {
-        width: '100%',
-        height: '100%',
-        backgroundColor: colors.trang,
-        justifyContent: 'space-evenly'
-    },
-    test: {
-        color: 'red'
-    },
-    content_img: {
-        width: '100%',
-        height: '50%',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    textNameApp: {
-        fontSize: 60,
-        color: colors.gold,
-        marginBottom: 10,
-        fontFamily: 'Pacifico-Regular',
-    },
-    image_gif: {
-        height: 300,
-        width: 'auto',
-        backgroundColor: colors.danger
-    },
-    btnLogin: {
-        backgroundColor: '#4CAF50',
-        paddingVertical: 15,
-        paddingHorizontal: 30,
-        borderRadius: 5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 3,
-        elevation: 5,
-    },
-    button_login: {
-        backgroundColor: colors.black,
-        paddingVertical: 20,
-        paddingHorizontal: 30,
-        borderRadius: 50,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 3,
-        elevation: 5,
-        alignItems: 'center',
-        margin: 10
-    },
-    buttonText: {
-        color: '#fff',
-        fontSize: 25,
-        fontWeight: 'bold',
-        textTransform: 'uppercase',
-    },
-    footer: {
-        display: 'flex',
-        alignItems: 'center'
-    }
-
+  container: {
+    flex: 1,
+    backgroundColor: colors.gold,
+    alignItems: 'center',
+  },
+  textNameApp: {
+    fontSize: 60,
+    color: colors.dark,
+    fontFamily: 'Pacifico-Regular',
+  },
+  button_login: {
+    paddingVertical: 15,
+    borderRadius: 40,
+    alignItems: 'center',
+    margin: 10,
+    borderWidth: 4,
+    borderColor: colors.dark,
+  },
+  buttonText: {
+    color: colors.dark,
+    fontSize: 22,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+  },
+  footer: {
+    paddingTop: 10,
+    color: colors.dark,
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  imgIntro: {
+    width: '100%',
+    height: undefined,
+    aspectRatio: 1,
+    marginBottom: -37,
+  },
 });
 
 export default styles;
-

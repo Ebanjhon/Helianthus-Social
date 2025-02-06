@@ -16,6 +16,7 @@
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		33D5F73B31DD41268F0ED4AE /* Pacifico-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9BC505D277DB4C4FA9CAEF7D /* Pacifico-Regular.ttf */; };
 		FDCE675B2C1E42FDB41B58FA /* SpaceMono-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FD93EAE1B3D04DA1AEB3CD3F /* SpaceMono-Regular.ttf */; };
+		8776F9E9502D4A04A4BDAFEA /* FrancoisOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EAE1E96F353B4A7DABFC3508 /* FrancoisOne-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		9BC505D277DB4C4FA9CAEF7D /* Pacifico-Regular.ttf */ = {isa = PBXFileReference; name = "Pacifico-Regular.ttf"; path = "../assets/fonts/Pacifico-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		FD93EAE1B3D04DA1AEB3CD3F /* SpaceMono-Regular.ttf */ = {isa = PBXFileReference; name = "SpaceMono-Regular.ttf"; path = "../assets/fonts/SpaceMono-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		EAE1E96F353B4A7DABFC3508 /* FrancoisOne-Regular.ttf */ = {isa = PBXFileReference; name = "FrancoisOne-Regular.ttf"; path = "../assets/fonts/FrancoisOne-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,6 +162,7 @@
 			children = (
 				9BC505D277DB4C4FA9CAEF7D /* Pacifico-Regular.ttf */,
 				FD93EAE1B3D04DA1AEB3CD3F /* SpaceMono-Regular.ttf */,
+				EAE1E96F353B4A7DABFC3508 /* FrancoisOne-Regular.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -262,6 +265,7 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				33D5F73B31DD41268F0ED4AE /* Pacifico-Regular.ttf in Resources */,
 				FDCE675B2C1E42FDB41B58FA /* SpaceMono-Regular.ttf in Resources */,
+				8776F9E9502D4A04A4BDAFEA /* FrancoisOne-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

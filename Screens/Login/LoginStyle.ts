@@ -6,14 +6,28 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
     width: '100%',
-    backgroundColor: colors.white,
+    backgroundColor: colors.gold,
     position: 'relative',
   },
-  title: {
-    fontWeight: '800',
+  titleLogin: {
     fontSize: 50,
+    color: colors.dark,
+    fontFamily: 'FrancoisOne-Regular',
   },
-  button: {
+  imgLogin: {
+    width: '70%',
+    height: undefined,
+    aspectRatio: 1,
+    marginBottom: -37,
+  },
+  animatedImg: {
+    width: 200,
+    height: 200,
+    marginTop: 180,
+    position: 'absolute',
+    zIndex: -1,
+  },
+  buttonLogin: {
     width: 330,
     height: 70,
     backgroundColor: colors.gold,
@@ -21,13 +35,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 10,
     borderStyle: 'solid',
-    borderWidth: 0,
-    // Shadow for Android
+    borderWidth: 3,
     elevation: 3,
   },
   buttonText: {
     fontSize: 38,
-    fontWeight: '600',
+    fontWeight: '800',
+    color: colors.dark,
   },
   input: {
     fontSize: 20,
@@ -36,6 +50,12 @@ const styles = StyleSheet.create({
     width: 350,
     borderRadius: 30,
     marginBottom: 20,
+  },
+  registerText: {
+    paddingTop: 10,
+    color: colors.dark,
+    fontSize: 21,
+    fontWeight: '700',
   },
 });
 
