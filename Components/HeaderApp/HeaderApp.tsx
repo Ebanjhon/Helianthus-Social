@@ -9,22 +9,18 @@ export type HeaderAppProps = {
   title: string;
   isShowleftAction: boolean;
   isShowrightAction: boolean;
-  enableBackground: boolean;
+  bgColor?: string;
 };
 
 const HeaderApp: React.FC<HeaderAppProps> = ({
   title,
   isShowleftAction = true,
   isShowrightAction = false,
-  enableBackground = false,
+  bgColor,
 }) => {
   const Navigation = useNavigation();
   return (
-    <View
-      style={[
-        styles.Container,
-        enableBackground && {backgroundColor: 'white'},
-      ]}>
+    <View style={[styles.Container, {backgroundColor: bgColor}]}>
       {isShowleftAction ? (
         <TouchableOpacity
           onPress={Navigation.goBack}

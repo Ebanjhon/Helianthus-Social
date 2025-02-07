@@ -56,36 +56,34 @@ export const AppInputFloat: React.FC<AppInputFloatProps> = ({
     }),
     backgroundColor: labelAnimation.interpolate({
       inputRange: [0, 1],
-      outputRange: ['transparent', colors.gold], // Thay đổi màu nền khi placeholder chuyển động
+      outputRange: ['transparent', colors.gold],
     }),
   };
 
   return (
-    <KeyboardAvoidingView>
-      <View style={styles.container}>
-        <Animated.Text style={labelStyle}>{label}</Animated.Text>
-        <TextInput
-          style={styles.input}
-          value={value}
-          onChangeText={setValue}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          secureTextEntry={!isShowPass}
+    <View style={styles.container}>
+      <Animated.Text style={labelStyle}>{label}</Animated.Text>
+      <TextInput
+        style={styles.input}
+        value={value}
+        onChangeText={setValue}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        secureTextEntry={!isShowPass && isPassword}
+      />
+      <TouchableOpacity
+        style={styles.ShowPass}
+        onPress={() => setIsShowPass(!isShowPass)}>
+        <Image
+          style={[styles.icon, {display: isPassword ? 'flex' : 'none'}]}
+          source={
+            isShowPass
+              ? require('../../assets/images/iconhide.png')
+              : require('../../assets/images/iconsee.png')
+          }
         />
-        <TouchableOpacity
-          style={styles.ShowPass}
-          onPress={() => setIsShowPass(!isShowPass)}>
-          <Image
-            style={[styles.icon, {display: isPassword ? 'flex' : 'none'}]}
-            source={
-              isShowPass
-                ? require('../../assets/images/iconhide.png')
-                : require('../../assets/images/iconsee.png')
-            }
-          />
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -99,6 +97,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     justifyContent: 'flex-start',
     paddingRight: 30,
+    width: '100%',
   },
   input: {
     paddingHorizontal: 16,

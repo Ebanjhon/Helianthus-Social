@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {Text, View} from 'react-native';
-import colors from '../../assets/color/colors';
+import colors, {colorsGradient} from '../../assets/color/colors';
 import icons from '../../assets/iconApp/icons';
 import {Picker} from '@react-native-picker/picker';
 import apiWithoutAuth, {endpoints} from '../../Configs/APIs';
@@ -24,6 +24,7 @@ import {
 } from '../../Configs/ToastConfig';
 import HeaderApp from '../../Components/HeaderApp/HeaderApp';
 import styles from './Style';
+import AppBackground from '../../Components/AppBackground/AppBackground';
 
 const Register = ({navigation}) => {
   const [loading, setLoading] = useState(false);
@@ -97,24 +98,24 @@ const Register = ({navigation}) => {
     }
 
     if (!validateEmail(email)) {
-      newErrors.email = 'email nhập chưa chính xác!';
+      newErrors.email = 'Email nhập chưa chính xác!';
     }
 
     if (email.length === 0) {
-      newErrors.email = 'email không được bỏ trống!';
+      newErrors.email = 'Email không được bỏ trống!';
     }
 
     if (password !== passConfirm) {
-      newErrors.pass1 = 'mật khẩu không khớp!';
-      newErrors.pass2 = 'mật khẩu không khớp!';
+      newErrors.pass1 = 'Mật khẩu không khớp!';
+      newErrors.pass2 = 'Mật khẩu không khớp!';
     }
 
     if (password.length === 0) {
-      newErrors.pass1 = 'vui lòng nhập mật khẩu!';
+      newErrors.pass1 = 'Vui lòng nhập mật khẩu!';
     }
 
     if (passConfirm.length === 0) {
-      newErrors.pass2 = 'vui lòng nhập mật khẩu!';
+      newErrors.pass2 = 'Vui lòng nhập mật khẩu!';
     }
 
     if (selectedDate === null) {
@@ -122,8 +123,6 @@ const Register = ({navigation}) => {
     }
 
     setErrors(newErrors);
-
-    // Nếu không có lỗi nào, thực hiện hành động tiếp theo
     if (Object.keys(newErrors).length === 0) {
       return true;
     }
@@ -190,7 +189,6 @@ const Register = ({navigation}) => {
       };
       try {
         setLoading(true);
-        // Gọi API để đăng nhập
         const response = await apiWithoutAuth.post(
           endpoints.register,
           userData,
@@ -222,245 +220,254 @@ const Register = ({navigation}) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior="padding"
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0} // Điều chỉnh khoảng cách cho bàn phím
-      style={{flex: 1, backgroundColor: 'transparent'}}>
-      <HeaderApp enableBackground={true} />
-      <ScrollView
-        contentContainerStyle={{flexGrow: 1}}
-        keyboardShouldPersistTaps="handled"
-        style={styles.background}>
-        <View style={styles.container}>
-          <Text style={styles.logo}>Đăng ký</Text>
-          <Text style={styles.text}>{displayText}</Text>
-        </View>
-        <View style={styles.contai_form}>
-          <View style={{width: '90%', marginBottom: 5}}>
-            <Text style={styles.text_show}>UserName</Text>
-            <View style={styles.input_contai}>
-              <Image
-                style={{width: 30, height: 30}}
-                source={{uri: icons.username}}
-              />
-              <TextInput
-                value={userName}
-                onChangeText={setUserName}
-                placeholder="Tên người dùng"
-                style={styles.text_input}
-              />
-            </View>
-            {errors.userName ? (
-              <Text style={styles.text_error}>{errors.userName}</Text>
-            ) : null}
+    <AppBackground groupColor={colorsGradient.GY}>
+      <HeaderApp />
+      <KeyboardAvoidingView
+        behavior="padding"
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0} // Điều chỉnh khoảng cách cho bàn phím
+        style={{flex: 1, backgroundColor: 'transparent'}}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{flexGrow: 1}}
+          keyboardShouldPersistTaps="handled"
+          style={styles.background}>
+          <View style={styles.container}>
+            <Text style={styles.logo}>Đăng ký</Text>
+            <Text style={styles.text}>{displayText}</Text>
           </View>
-
-          <View style={{width: '90%', marginBottom: 5}}>
-            <Text style={styles.text_show}>FirstName</Text>
-            <View style={styles.input_contai}>
-              <Image
-                style={{width: 30, height: 30}}
-                source={{uri: icons.firstname}}
-              />
-              <TextInput
-                value={firstName}
-                onChangeText={setFirstName}
-                placeholder="Tên"
-                style={styles.text_input}
-              />
-            </View>
-            {errors.firstName ? (
-              <Text style={styles.text_error}>{errors.firstName}</Text>
-            ) : null}
-          </View>
-
-          <View style={{width: '90%', marginBottom: 5}}>
-            <Text style={styles.text_show}>LastName</Text>
-            <View style={styles.input_contai}>
-              <Image
-                style={{width: 30, height: 30}}
-                source={{uri: icons.lastname}}
-              />
-              <TextInput
-                value={lastName}
-                onChangeText={setLastName}
-                placeholder="Họ"
-                style={styles.text_input}
-              />
-            </View>
-            {errors.lastName ? (
-              <Text style={styles.text_error}>{errors.lastName}</Text>
-            ) : null}
-          </View>
-
-          <View style={{width: '90%', marginBottom: 5}}>
-            <Text style={styles.text_show}>Email</Text>
-            <View style={styles.input_contai}>
-              <Image
-                style={{width: 30, height: 30}}
-                source={{uri: icons.email}}
-              />
-              <TextInput
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                placeholder="Email liên hệ"
-                style={styles.text_input}
-              />
-            </View>
-            {errors.email ? (
-              <Text style={styles.text_error}>{errors.email}</Text>
-            ) : null}
-          </View>
-
-          <View style={{width: '90%', marginBottom: 5}}>
-            <Text style={styles.text_show}>Phone</Text>
-            <View style={styles.input_contai}>
-              <Image
-                style={{width: 30, height: 30}}
-                source={{uri: icons.phone}}
-              />
-              <TextInput
-                value={phone}
-                onChangeText={setPhone}
-                keyboardType="phone-pad"
-                maxLength={10}
-                placeholder="Số điện thoại"
-                style={styles.text_input}
-              />
-            </View>
-          </View>
-
-          <View style={{width: 'auto', marginBottom: 5}}>
-            <Text style={styles.text_show}>Gender</Text>
-            <View style={styles.input_contai}>
-              <Picker
-                selectedValue={gender}
-                style={styles.picker}
-                onValueChange={(itemValue, itemIndex) => setGender(itemValue)}>
-                <Picker.Item label="Nam" value="MALE" />
-                <Picker.Item label="Nữ" value="FEMALE" />
-                <Picker.Item label="Khác" value="OTHER" />
-              </Picker>
-            </View>
-          </View>
-
-          <View style={{width: '90%', marginBottom: 5}}>
-            <Text style={styles.text_show}>Birth</Text>
-            <View style={[styles.input_contai, {padding: 5}]}>
-              <TouchableOpacity onPress={showDatePicker}>
+          <View style={styles.contai_form}>
+            <View style={{width: '90%', marginBottom: 5}}>
+              <Text style={styles.text_show}>UserName</Text>
+              <View style={styles.input_contai}>
                 <Image
                   style={{width: 30, height: 30}}
-                  source={require('../../assets/images/icondate.png')}
+                  source={{uri: icons.username}}
                 />
-              </TouchableOpacity>
-
-              <Text style={{fontSize: 17, fontWeight: '500'}}>
-                {selectedDate
-                  ? selectedDate.toDateString()
-                  : 'Chưa chọn ngày sinh'}
-              </Text>
-
-              <DateTimePickerModal
-                isVisible={isDatePickerVisible}
-                mode="date"
-                maximumDate={new Date()} // Giới hạn ngày tối đa là hôm nay
-                date={new Date(2000, 0, 1)} // Ngày mặc định (1/1/2000)
-                onConfirm={handleConfirm}
-                onCancel={hideDatePicker}
-              />
+                <TextInput
+                  value={userName}
+                  onChangeText={setUserName}
+                  placeholder="Tên người dùng"
+                  style={styles.text_input}
+                />
+              </View>
+              {errors.userName ? (
+                <Text style={styles.text_error}>{errors.userName}</Text>
+              ) : null}
             </View>
-            {errors.birth ? (
-              <Text style={styles.text_error}>{errors.birth}</Text>
-            ) : null}
-          </View>
 
-          <View style={{width: '90%', marginBottom: 5}}>
-            <Text style={styles.text_show}>Password</Text>
-            <View style={styles.input_contai}>
-              <Image
-                style={{width: 25, height: 25}}
-                source={{uri: icons.pass}}
-              />
-              <TextInput
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry={showPass}
-                placeholder="Nhập mật khẩu"
-                style={styles.text_input}
-              />
-              <TouchableOpacity
-                onPress={() => setShowPass(prevShowPass => !prevShowPass)}>
+            <View style={{width: '90%', marginBottom: 5}}>
+              <Text style={styles.text_show}>FirstName</Text>
+              <View style={styles.input_contai}>
                 <Image
                   style={{width: 30, height: 30}}
-                  source={
-                    !showPass
-                      ? require('../../assets/images/iconhide.png') // Nếu showPass là true
-                      : require('../../assets/images/iconsee.png') // Nếu showPass là false
-                  }
+                  source={{uri: icons.firstname}}
                 />
-              </TouchableOpacity>
+                <TextInput
+                  value={firstName}
+                  onChangeText={setFirstName}
+                  placeholder="Tên"
+                  style={styles.text_input}
+                />
+              </View>
+              {errors.firstName ? (
+                <Text style={styles.text_error}>{errors.firstName}</Text>
+              ) : null}
             </View>
-            {errors.pass1 ? (
-              <Text style={styles.text_error}>{errors.pass1}</Text>
-            ) : null}
-          </View>
 
-          <View style={{width: '90%', marginBottom: 5}}>
-            <Text style={styles.text_show}>Password Again</Text>
-            <View style={styles.input_contai}>
-              <Image
-                style={{width: 25, height: 25}}
-                source={{uri: icons.pass}}
-              />
-              <TextInput
-                value={passConfirm}
-                onChangeText={setPassConfirm}
-                returnKeyType="done"
-                secureTextEntry={showPass}
-                placeholder="Nhập lại mật khẩu"
-                style={styles.text_input}
-              />
-              <TouchableOpacity
-                onPress={() => setShowPass(prevShowPass => !prevShowPass)}>
+            <View style={{width: '90%', marginBottom: 5}}>
+              <Text style={styles.text_show}>LastName</Text>
+              <View style={styles.input_contai}>
                 <Image
                   style={{width: 30, height: 30}}
-                  source={
-                    !showPass
-                      ? require('../../assets/images/iconhide.png') // Nếu showPass là true
-                      : require('../../assets/images/iconsee.png') // Nếu showPass là false
-                  }
+                  source={{uri: icons.lastname}}
                 />
-              </TouchableOpacity>
+                <TextInput
+                  value={lastName}
+                  onChangeText={setLastName}
+                  placeholder="Họ"
+                  style={styles.text_input}
+                />
+              </View>
+              {errors.lastName ? (
+                <Text style={styles.text_error}>{errors.lastName}</Text>
+              ) : null}
             </View>
-            {errors.pass2 ? (
-              <Text style={styles.text_error}>{errors.pass2}</Text>
-            ) : null}
+
+            <View style={{width: '90%', marginBottom: 5}}>
+              <Text style={styles.text_show}>Email</Text>
+              <View style={styles.input_contai}>
+                <Image
+                  style={{width: 30, height: 30}}
+                  source={{uri: icons.email}}
+                />
+                <TextInput
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  placeholder="Email liên hệ"
+                  style={styles.text_input}
+                />
+              </View>
+              {errors.email ? (
+                <Text style={styles.text_error}>{errors.email}</Text>
+              ) : null}
+            </View>
+
+            <View style={{width: '90%', marginBottom: 5}}>
+              <Text style={styles.text_show}>Phone</Text>
+              <View style={styles.input_contai}>
+                <Image
+                  style={{width: 30, height: 30}}
+                  source={{uri: icons.phone}}
+                />
+                <TextInput
+                  value={phone}
+                  onChangeText={setPhone}
+                  keyboardType="phone-pad"
+                  maxLength={10}
+                  placeholder="Số điện thoại"
+                  style={styles.text_input}
+                />
+              </View>
+            </View>
+
+            <View style={{width: 'auto', marginBottom: 5}}>
+              <Text style={styles.text_show}>Gender</Text>
+              <View style={styles.input_contai}>
+                <Picker
+                  selectedValue={gender}
+                  style={styles.picker}
+                  onValueChange={(itemValue, itemIndex) =>
+                    setGender(itemValue)
+                  }>
+                  <Picker.Item label="Nam" value="MALE" />
+                  <Picker.Item label="Nữ" value="FEMALE" />
+                  <Picker.Item label="Khác" value="OTHER" />
+                </Picker>
+              </View>
+            </View>
+
+            <View style={{width: '90%', marginBottom: 5}}>
+              <Text style={styles.text_show}>Birth</Text>
+              <View style={[styles.input_contai, {padding: 5}]}>
+                <TouchableOpacity onPress={showDatePicker}>
+                  <Image
+                    style={{width: 30, height: 30}}
+                    source={require('../../assets/images/icondate.png')}
+                  />
+                </TouchableOpacity>
+
+                <Text style={{fontSize: 17, fontWeight: '500'}}>
+                  {selectedDate
+                    ? selectedDate.toDateString()
+                    : 'Chưa chọn ngày sinh'}
+                </Text>
+
+                <DateTimePickerModal
+                  isVisible={isDatePickerVisible}
+                  mode="date"
+                  maximumDate={new Date()} // Giới hạn ngày tối đa là hôm nay
+                  date={new Date(2000, 0, 1)} // Ngày mặc định (1/1/2000)
+                  onConfirm={handleConfirm}
+                  onCancel={hideDatePicker}
+                />
+              </View>
+              {errors.birth ? (
+                <Text style={styles.text_error}>{errors.birth}</Text>
+              ) : null}
+            </View>
+
+            <View style={{width: '90%', marginBottom: 5}}>
+              <Text style={styles.text_show}>Password</Text>
+              <View style={styles.input_contai}>
+                <Image
+                  style={{width: 25, height: 25}}
+                  source={{uri: icons.pass}}
+                />
+                <TextInput
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={showPass}
+                  placeholder="Nhập mật khẩu"
+                  style={styles.text_input}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPass(prevShowPass => !prevShowPass)}>
+                  <Image
+                    style={{width: 30, height: 30}}
+                    source={
+                      !showPass
+                        ? require('../../assets/images/iconhide.png') // Nếu showPass là true
+                        : require('../../assets/images/iconsee.png') // Nếu showPass là false
+                    }
+                  />
+                </TouchableOpacity>
+              </View>
+              {errors.pass1 ? (
+                <Text style={styles.text_error}>{errors.pass1}</Text>
+              ) : null}
+            </View>
+
+            <View style={{width: '90%', marginBottom: 5}}>
+              <Text style={styles.text_show}>Password Again</Text>
+              <View style={styles.input_contai}>
+                <Image
+                  style={{width: 25, height: 25}}
+                  source={{uri: icons.pass}}
+                />
+                <TextInput
+                  value={passConfirm}
+                  onChangeText={setPassConfirm}
+                  returnKeyType="done"
+                  secureTextEntry={showPass}
+                  placeholder="Nhập lại mật khẩu"
+                  style={styles.text_input}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPass(prevShowPass => !prevShowPass)}>
+                  <Image
+                    style={{width: 30, height: 30}}
+                    source={
+                      !showPass
+                        ? require('../../assets/images/iconhide.png') // Nếu showPass là true
+                        : require('../../assets/images/iconsee.png') // Nếu showPass là false
+                    }
+                  />
+                </TouchableOpacity>
+              </View>
+              {errors.pass2 ? (
+                <Text style={styles.text_error}>{errors.pass2}</Text>
+              ) : null}
+            </View>
+            {!loading ? (
+              <TouchableOpacity style={styles.btn_register} onPress={register}>
+                <Text
+                  style={{
+                    fontSize: 21,
+                    fontWeight: '700',
+                    color: colors.black,
+                  }}>
+                  Đăng Ký
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <LottieView
+                source={require('../../assets/animations/Animation - 1726832285926.json')} // Đường dẫn tới file Lottie
+                autoPlay
+                loop
+                style={{width: 100, height: 100}}
+              />
+            )}
+            <Toast config={toastConfigExport} />
           </View>
-          {!loading ? (
-            <TouchableOpacity style={styles.btn_register} onPress={register}>
-              <Text
-                style={{fontSize: 21, fontWeight: '700', color: colors.black}}>
-                Đăng Ký
-              </Text>
-            </TouchableOpacity>
-          ) : (
-            <LottieView
-              source={require('../../assets/animations/Animation - 1726832285926.json')} // Đường dẫn tới file Lottie
-              autoPlay
-              loop
-              style={{width: 100, height: 100}}
-            />
-          )}
-          <Toast config={toastConfigExport} />
-        </View>
-        <TouchableOpacity
-          style={{width: '100%', alignItems: 'center'}}
-          onPress={() => navigation.navigate('Login')}>
-          <Text style={{color: colors.dark}}>Bạn đã có tài khoản</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </KeyboardAvoidingView>
+          <TouchableOpacity
+            style={{width: '100%', alignItems: 'center'}}
+            onPress={() => navigation.navigate('Login')}>
+            <Text style={{color: colors.dark}}>Bạn đã có tài khoản</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </AppBackground>
   );
 };
 

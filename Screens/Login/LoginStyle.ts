@@ -2,23 +2,21 @@ import {StyleSheet} from 'react-native';
 import colors from '../../assets/color/colors';
 
 const styles = StyleSheet.create({
-  cont: {flex: 1},
   container: {
-    height: '100%',
-    width: '100%',
-    backgroundColor: colors.gold,
-    position: 'relative',
+    // backgroundColor: colors.gold,
   },
   titleLogin: {
     fontSize: 50,
     color: colors.dark,
     fontFamily: 'FrancoisOne-Regular',
+    alignSelf: 'center',
   },
   imgLogin: {
     width: '70%',
     height: undefined,
     aspectRatio: 1,
     marginBottom: -37,
+    alignSelf: 'center',
   },
   animatedImg: {
     width: 200,
@@ -56,6 +54,13 @@ const styles = StyleSheet.create({
     color: colors.dark,
     fontSize: 21,
     fontWeight: '700',
+    alignSelf: 'center',
+  },
+  loginGoogle: {
+    width: 50,
+    height: 50,
+    alignSelf: 'center',
+    marginVertical: 50,
   },
 });
 

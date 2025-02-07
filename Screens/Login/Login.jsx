@@ -17,6 +17,8 @@ import Toast from 'react-native-toast-message';
 import {showToast, toastConfigExport} from '../../Configs/ToastConfig';
 import HeaderApp from '../../Components/HeaderApp/HeaderApp';
 import {AppInputFloat} from '../../Components/AppInputFloating/AppInputFloat';
+import AppBackground from '../../Components/AppBackground/AppBackground';
+import {colorsGradient} from '../../assets/color/colors';
 
 const Login = ({navigation}) => {
   const [username, setUsername] = useState('');
@@ -64,52 +66,58 @@ const Login = ({navigation}) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior="padding"
-      style={{position: 'relative', flex: 1}}>
+    <AppBackground groupColor={colorsGradient.GY}>
       <HeaderApp />
       <ScrollView
         style={styles.container}
         contentContainerStyle={{alignItems: 'center'}}>
-        <Image
-          source={require('../../assets/images/sun.png')}
-          style={styles.imgLogin}
-        />
-        <Toast config={toastConfigExport} />
-        <Text style={styles.titleLogin}>Đăng nhập</Text>
-        <View style={{padding: 16, width: '95%'}}>
-          <AppInputFloat
-            label="Tên đăng nhập"
-            value={username}
-            setValue={setUsername}
-            isPassword={false}
+        <KeyboardAvoidingView behavior="position" style={{height: 600}}>
+          <Image
+            source={require('../../assets/images/sun.png')}
+            style={styles.imgLogin}
           />
-          <AppInputFloat
-            label="Mật khẩu"
-            value={password}
-            setValue={setPassword}
-            isPassword={true}
-          />
-        </View>
-        {loading ? (
-          <LottieView
-            source={require('../../assets/animations/Animation - 1726832285926.json')} // Đường dẫn tới file Lottie
-            autoPlay
-            loop
-            style={{width: 100, height: 100}}
-          />
-        ) : (
-          <TouchableOpacity style={styles.buttonLogin} onPress={loginPress}>
-            <Text style={styles.buttonText}>Xác nhận</Text>
+          <Toast config={toastConfigExport} />
+          <Text style={styles.titleLogin}>Đăng nhập</Text>
+          <View style={{marginVertical: 23}}>
+            <AppInputFloat
+              label="Tên đăng nhập"
+              value={username}
+              setValue={setUsername}
+              isPassword={false}
+            />
+            <AppInputFloat
+              label="Mật khẩu"
+              value={password}
+              setValue={setPassword}
+              isPassword={true}
+            />
+          </View>
+          {loading ? (
+            <LottieView
+              source={require('../../assets/animations/Animation - 1726832285926.json')} // Đường dẫn tới file Lottie
+              autoPlay
+              loop
+              style={{width: 100, height: 100}}
+            />
+          ) : (
+            <TouchableOpacity style={styles.buttonLogin} onPress={loginPress}>
+              <Text style={styles.buttonText}>Xác nhận</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Register')}
+            style={{marginTop: 10}}>
+            <Text style={styles.registerText}>Đăng ký tài khoản</Text>
           </TouchableOpacity>
-        )}
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Register')}
-          style={{marginTop: 10}}>
-          <Text style={styles.registerText}>Đăng ký tài khoản</Text>
+        </KeyboardAvoidingView>
+        <TouchableOpacity onPress={() => {}}>
+          <Image
+            source={require('../../assets/images/googleIcon.png')}
+            style={styles.loginGoogle}
+          />
         </TouchableOpacity>
       </ScrollView>
-    </KeyboardAvoidingView>
+    </AppBackground>
   );
 };
 

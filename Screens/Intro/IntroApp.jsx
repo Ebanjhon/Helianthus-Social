@@ -7,12 +7,7 @@ import LinearGradient from 'react-native-linear-gradient';
 export class IntroApp extends Component {
   render() {
     const {navigation} = this.props;
-    const handleLoginPress = () => {
-      navigation.navigate('Login');
-    };
-    const handleRegisterPress = () => {
-      navigation.navigate('Register');
-    };
+    const handleRegisterPress = () => {};
 
     return (
       <View style={styles.container}>
@@ -23,7 +18,11 @@ export class IntroApp extends Component {
           source={require('./../../assets/images/imageIntro.png')}
         />
         <Text style={styles.textNameApp}>Helianthus</Text>
-        <TouchableOpacity onPress={handleLoginPress} style={{width: '100%'}}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('Login');
+          }}
+          style={{width: '100%'}}>
           <LinearGradient
             start={{x: 0, y: 0}}
             end={{x: 0, y: 1}}
@@ -33,15 +32,15 @@ export class IntroApp extends Component {
           </LinearGradient>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={handleRegisterPress} style={{width: '100%'}}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Register')}
+          style={{width: '100%'}}>
           <LinearGradient
             start={{x: 0, y: 0}}
             end={{x: 0, y: 1}}
             colors={['#EFEB77', '#F6AF04']}
             style={styles.button_login}>
-            <TouchableOpacity onPress={handleLoginPress}>
-              <Text style={styles.buttonText}>Đăng ký tài khoản</Text>
-            </TouchableOpacity>
+            <Text style={styles.buttonText}>Đăng ký tài khoản</Text>
           </LinearGradient>
         </TouchableOpacity>
 

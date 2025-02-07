@@ -3,7 +3,6 @@ import colors from '../../assets/color/colors';
 
 const styles = StyleSheet.create({
   background: {
-    backgroundColor: colors.white,
     paddingTop: 20,
   },
   container: {
@@ -16,7 +15,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     fontSize: 43,
-    color: colors.gold,
+    color: colors.dark,
     fontWeight: '900',
   },
   text: {
