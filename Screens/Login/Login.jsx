@@ -1,8 +1,6 @@
-/* eslint-disable react/react-in-jsx-scope */
 import styles from './LoginStyle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useContext, useState} from 'react';
-import apiWithoutAuth, {authApi, endpoints} from '../../Configs/APIs';
+import {useContext, useEffect, useState} from 'react';
 import {UserContext} from '../../Configs/Context';
 import {
   Image,
@@ -19,66 +17,81 @@ import HeaderApp from '../../Components/HeaderApp/HeaderApp';
 import {AppInputFloat} from '../../Components/AppInputFloating/AppInputFloat';
 import AppBackground from '../../Components/AppBackground/AppBackground';
 import {colorsGradient} from '../../assets/color/colors';
+import useFetchApi from '../../CallAPI/api_fetch_data/AuthApp';
+import {URL_API} from '../../CallAPI';
 
 const Login = ({navigation}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [user, dispatch] = useContext(UserContext);
+  const [dispatch] = useContext(UserContext);
   const [loading, setLoading] = useState(false);
 
-  const loginPress = async () => {
-    if (username.length === 0 || password.length === 0) {
-      showToast('warning', 'Vui lòng điền đầy đủ thông tin!');
-      return;
-    }
-    try {
-      setLoading(true);
-      const response = await apiWithoutAuth.post(endpoints.login, {
-        username,
-        password,
-      });
-
-      if (response.status === 200) {
-        await AsyncStorage.setItem('token', response.data.jwtToken);
-        const api = await authApi(); // Đợi authApi hoàn thành và lấy instance axios
-        const userResponse = await api.get(endpoints['current-user']);
-        console.log(userResponse.data.active);
-        if (!userResponse.data.active) {
-          setLoading(false);
-          navigation.navigate('Active', {userData: userResponse.data});
-          return;
-        }
-        await AsyncStorage.setItem('user', JSON.stringify(userResponse.data));
-        dispatch({
-          type: 'login',
-          payload: userResponse.data,
-        });
-        setLoading(false);
-      } else {
-        showToast('error', 'Đăng nhập thất bại!', 'Sai thông tin đăng nhập!');
-        setLoading(false);
-        throw new Error(`Login failed with status ${response.status}`);
-      }
-    } catch (error) {
-      showToast('error', 'Đăng nhập thất bại!', 'Sai thông tin đăng nhập!');
-      setLoading(false);
-    }
+  const handleSaveToken = async () => {
+    await AsyncStorage.setItem('token', data);
+    handleSubmitUserProfile();
   };
 
+  const handleGetProfile = () => {
+    setLoading(false);
+    console.log(userData);
+    // navigation.navigate('Active', {userData: userResponse.data});
+    // dispatch({
+    //   type: 'login',
+    //   payload: userData,
+    // });
+  };
+
+  const {
+    data,
+    submit: handleSubmitLogin,
+    error: errorFetchToken,
+  } = useFetchApi({
+    url: URL_API.LOGIN,
+    method: 'POST',
+    body: {username: username, password: password},
+    handleDonefetch: handleSaveToken,
+  });
+
+  const {
+    data: userData,
+    submit: handleSubmitUserProfile,
+    error: errorFetchUser,
+  } = useFetchApi({
+    url: URL_API.GET_PROFILE,
+    method: 'GET',
+    params: {username: username},
+    handleDonefetch: handleGetProfile,
+  });
+
+  useEffect(() => {
+    setLoading(false);
+    errorFetchUser &&
+      showToast('error', 'Đăng nhập thất bại!', errorFetchUser.response.data);
+    errorFetchToken &&
+      showToast('error', 'Đăng nhập thất bại!', errorFetchToken.response.data);
+  }, [errorFetchUser, errorFetchToken]);
+
   return (
-    <AppBackground groupColor={colorsGradient.GY}>
+    <AppBackground groupColor={colorsGradient.GC}>
+      <Toast config={toastConfigExport} />
       <HeaderApp />
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={{alignItems: 'center'}}>
-        <KeyboardAvoidingView behavior="position" style={{height: 600}}>
-          <Image
-            source={require('../../assets/images/sun.png')}
-            style={styles.imgLogin}
-          />
-          <Toast config={toastConfigExport} />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{
+          flex: 1,
+          height: '100%',
+          width: '100%',
+          justifyContent: 'center',
+        }}>
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          style={styles.container}
+          contentContainerStyle={{justifyContent: 'center', flex: 1}}>
           <Text style={styles.titleLogin}>Đăng nhập</Text>
-          <View style={{marginVertical: 23}}>
+          <View
+            style={{
+              marginVertical: 23,
+            }}>
             <AppInputFloat
               label="Tên đăng nhập"
               value={username}
@@ -94,29 +107,44 @@ const Login = ({navigation}) => {
           </View>
           {loading ? (
             <LottieView
-              source={require('../../assets/animations/Animation - 1726832285926.json')} // Đường dẫn tới file Lottie
+              source={require('../../assets/animations/Animation - 1726832285926.json')}
               autoPlay
               loop
-              style={{width: 100, height: 100}}
+              style={{width: 100, height: 100, alignSelf: 'center'}}
             />
           ) : (
-            <TouchableOpacity style={styles.buttonLogin} onPress={loginPress}>
-              <Text style={styles.buttonText}>Xác nhận</Text>
-            </TouchableOpacity>
+            <>
+              <TouchableOpacity
+                style={styles.buttonLogin}
+                onPress={() => {
+                  handleSubmitLogin();
+                  setLoading(true);
+                }}>
+                <Text style={styles.buttonText}>Xác nhận</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('Register')}
+                style={{
+                  marginTop: 10,
+                  alignSelf: 'center',
+                }}>
+                <Text style={styles.registerText}>Đăng ký tài khoản</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {}}
+                style={{
+                  width: 50,
+                  alignSelf: 'center',
+                }}>
+                <Image
+                  source={require('../../assets/images/googleIcon.png')}
+                  style={styles.loginGoogle}
+                />
+              </TouchableOpacity>
+            </>
           )}
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Register')}
-            style={{marginTop: 10}}>
-            <Text style={styles.registerText}>Đăng ký tài khoản</Text>
-          </TouchableOpacity>
-        </KeyboardAvoidingView>
-        <TouchableOpacity onPress={() => {}}>
-          <Image
-            source={require('../../assets/images/googleIcon.png')}
-            style={styles.loginGoogle}
-          />
-        </TouchableOpacity>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </AppBackground>
   );
 };

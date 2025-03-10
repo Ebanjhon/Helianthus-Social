@@ -15,12 +15,12 @@ const styles = StyleSheet.create({
   },
   logo: {
     fontSize: 43,
-    color: colors.dark,
+    color: colors.gold,
     fontWeight: '900',
   },
   text: {
     fontSize: 18,
-    color: colors.black,
+    color: colors.trang,
   },
   contai: {
     justifyContent: 'flex-end',
@@ -40,17 +40,19 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     borderColor: colors.gold,
     alignItems: 'center',
+    backgroundColor: colors.dark,
   },
   text_input: {
     fontSize: 19,
     width: '80%',
     paddingLeft: 5,
     fontWeight: '500',
+    color: colors.trang,
   },
   text_show: {
     fontSize: 17,
     fontWeight: '500',
-    color: colors.dark,
+    color: colors.gray,
   },
   picker: {
     width: 200,

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Image, Text, TouchableOpacity, View} from 'react-native';
+import {Image, Pressable, Text, TouchableOpacity, View} from 'react-native';
 import styles from './IntroStyle';
 import colors from '../../assets/color/colors';
 import LinearGradient from 'react-native-linear-gradient';
@@ -11,14 +11,14 @@ export class IntroApp extends Component {
 
     return (
       <View style={styles.container}>
-        <Image
+        {/* <Image
           height={9}
           resizeMode="contain"
           style={styles.imgIntro}
           source={require('./../../assets/images/imageIntro.png')}
-        />
+        /> */}
         <Text style={styles.textNameApp}>Helianthus</Text>
-        <TouchableOpacity
+        <Pressable
           onPress={() => {
             navigation.navigate('Login');
           }}
@@ -30,9 +30,9 @@ export class IntroApp extends Component {
             style={styles.button_login}>
             <Text style={styles.buttonText}>Đăng nhập</Text>
           </LinearGradient>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity
+        <Pressable
           onPress={() => navigation.navigate('Register')}
           style={{width: '100%'}}>
           <LinearGradient
@@ -42,7 +42,7 @@ export class IntroApp extends Component {
             style={styles.button_login}>
             <Text style={styles.buttonText}>Đăng ký tài khoản</Text>
           </LinearGradient>
-        </TouchableOpacity>
+        </Pressable>
 
         <Text style={styles.footer}>Design by Êban</Text>
       </View>

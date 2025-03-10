@@ -4,12 +4,13 @@ import colors from '../../assets/color/colors';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.gold,
+    backgroundColor: colors.darkBG,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   textNameApp: {
     fontSize: 60,
-    color: colors.dark,
+    color: colors.gold,
     fontFamily: 'Pacifico-Regular',
   },
   button_login: {
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     paddingTop: 10,
-    color: colors.dark,
+    color: colors.gold2,
     fontSize: 18,
     fontWeight: '700',
   },

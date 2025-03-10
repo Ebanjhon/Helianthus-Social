@@ -36,7 +36,7 @@ const Register = ({navigation}) => {
   const [password, setPassword] = useState('');
   const [passConfirm, setPassConfirm] = useState('');
   const [gender, setGender] = useState('MALE');
-  const [showPass, setShowPass] = useState(false);
+  const [isShowPass, setIsShowPass] = useState(false);
   // chọn ngày sinh
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -220,15 +220,15 @@ const Register = ({navigation}) => {
   };
 
   return (
-    <AppBackground groupColor={colorsGradient.GY}>
+    <AppBackground groupColor={colorsGradient.GC}>
       <HeaderApp />
       <KeyboardAvoidingView
         behavior="padding"
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0} // Điều chỉnh khoảng cách cho bàn phím
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}
         style={{flex: 1, backgroundColor: 'transparent'}}>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{flexGrow: 1}}
+          contentContainerStyle={{flexGrow: 1, paddingBottom: 20}}
           keyboardShouldPersistTaps="handled"
           style={styles.background}>
           <View style={styles.container}>
@@ -247,6 +247,7 @@ const Register = ({navigation}) => {
                   value={userName}
                   onChangeText={setUserName}
                   placeholder="Tên người dùng"
+                  placeholderTextColor={colors.gray}
                   style={styles.text_input}
                 />
               </View>
@@ -267,6 +268,7 @@ const Register = ({navigation}) => {
                   onChangeText={setFirstName}
                   placeholder="Tên"
                   style={styles.text_input}
+                  placeholderTextColor={colors.gray}
                 />
               </View>
               {errors.firstName ? (
@@ -285,6 +287,7 @@ const Register = ({navigation}) => {
                   value={lastName}
                   onChangeText={setLastName}
                   placeholder="Họ"
+                  placeholderTextColor={colors.gray}
                   style={styles.text_input}
                 />
               </View>
@@ -306,13 +309,14 @@ const Register = ({navigation}) => {
                   keyboardType="email-address"
                   placeholder="Email liên hệ"
                   style={styles.text_input}
+                  placeholderTextColor={colors.gray}
                 />
               </View>
               {errors.email ? (
                 <Text style={styles.text_error}>{errors.email}</Text>
               ) : null}
             </View>
-
+            {/* 
             <View style={{width: '90%', marginBottom: 5}}>
               <Text style={styles.text_show}>Phone</Text>
               <View style={styles.input_contai}>
@@ -329,9 +333,9 @@ const Register = ({navigation}) => {
                   style={styles.text_input}
                 />
               </View>
-            </View>
+            </View> */}
 
-            <View style={{width: 'auto', marginBottom: 5}}>
+            {/* <View style={{width: 'auto', marginBottom: 5}}>
               <Text style={styles.text_show}>Gender</Text>
               <View style={styles.input_contai}>
                 <Picker
@@ -345,9 +349,9 @@ const Register = ({navigation}) => {
                   <Picker.Item label="Khác" value="OTHER" />
                 </Picker>
               </View>
-            </View>
+            </View> */}
 
-            <View style={{width: '90%', marginBottom: 5}}>
+            {/* <View style={{width: '90%', marginBottom: 5}}>
               <Text style={styles.text_show}>Birth</Text>
               <View style={[styles.input_contai, {padding: 5}]}>
                 <TouchableOpacity onPress={showDatePicker}>
@@ -375,7 +379,7 @@ const Register = ({navigation}) => {
               {errors.birth ? (
                 <Text style={styles.text_error}>{errors.birth}</Text>
               ) : null}
-            </View>
+            </View> */}
 
             <View style={{width: '90%', marginBottom: 5}}>
               <Text style={styles.text_show}>Password</Text>
@@ -387,16 +391,17 @@ const Register = ({navigation}) => {
                 <TextInput
                   value={password}
                   onChangeText={setPassword}
-                  secureTextEntry={showPass}
+                  secureTextEntry={isShowPass}
                   placeholder="Nhập mật khẩu"
+                  placeholderTextColor={colors.gray}
                   style={styles.text_input}
                 />
                 <TouchableOpacity
-                  onPress={() => setShowPass(prevShowPass => !prevShowPass)}>
+                  onPress={() => setIsShowPass(prevShowPass => !prevShowPass)}>
                   <Image
                     style={{width: 30, height: 30}}
                     source={
-                      !showPass
+                      !isShowPass
                         ? require('../../assets/images/iconhide.png') // Nếu showPass là true
                         : require('../../assets/images/iconsee.png') // Nếu showPass là false
                     }
@@ -419,16 +424,17 @@ const Register = ({navigation}) => {
                   value={passConfirm}
                   onChangeText={setPassConfirm}
                   returnKeyType="done"
-                  secureTextEntry={showPass}
+                  secureTextEntry={isShowPass}
                   placeholder="Nhập lại mật khẩu"
                   style={styles.text_input}
+                  placeholderTextColor={colors.gray}
                 />
                 <TouchableOpacity
-                  onPress={() => setShowPass(prevShowPass => !prevShowPass)}>
+                  onPress={() => setIsShowPass(prevShowPass => !prevShowPass)}>
                   <Image
                     style={{width: 30, height: 30}}
                     source={
-                      !showPass
+                      !isShowPass
                         ? require('../../assets/images/iconhide.png') // Nếu showPass là true
                         : require('../../assets/images/iconsee.png') // Nếu showPass là false
                     }
@@ -461,9 +467,11 @@ const Register = ({navigation}) => {
             <Toast config={toastConfigExport} />
           </View>
           <TouchableOpacity
-            style={{width: '100%', alignItems: 'center'}}
+            style={{width: '100%', alignItems: 'center', paddingBottom: 10}}
             onPress={() => navigation.navigate('Login')}>
-            <Text style={{color: colors.dark}}>Bạn đã có tài khoản</Text>
+            <Text style={{color: colors.gray, fontSize: 16}}>
+              Bạn đã có tài khoản
+            </Text>
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>

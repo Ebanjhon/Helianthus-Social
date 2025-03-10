@@ -3,11 +3,11 @@ import colors from '../../assets/color/colors';
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: colors.gold,
+    paddingHorizontal: 20,
   },
   titleLogin: {
     fontSize: 50,
-    color: colors.dark,
+    color: '#BFBFBF',
     fontFamily: 'FrancoisOne-Regular',
     alignSelf: 'center',
   },
@@ -35,6 +35,7 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderWidth: 3,
     elevation: 3,
+    alignSelf: 'center',
   },
   buttonText: {
     fontSize: 38,
@@ -60,7 +61,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     alignSelf: 'center',
-    marginVertical: 50,
+    marginTop: 20,
   },
 });
 

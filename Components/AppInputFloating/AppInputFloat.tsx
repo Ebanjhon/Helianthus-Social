@@ -4,20 +4,11 @@ import {
   TextInput,
   View,
   Animated,
-  KeyboardAvoidingView,
   Image,
   TouchableOpacity,
 } from 'react-native';
 import colors from '../../assets/color/colors';
-
-type AppInputFloatProps = {
-  label: string,
-  value: string,
-  setValue: (text: string) => void,
-  isPassword?: boolean,
-};
-
-export const AppInputFloat: React.FC<AppInputFloatProps> = ({
+export const AppInputFloat: React.FC<import('./types').AppInputFloatProps> = ({
   label,
   value,
   setValue,
@@ -48,7 +39,7 @@ export const AppInputFloat: React.FC<AppInputFloatProps> = ({
     }),
     color: labelAnimation.interpolate({
       inputRange: [0, 1],
-      outputRange: [colors.black, colors.black], // Màu khi placeholder chuyển động
+      outputRange: [colors.gold2, colors.gold2], // Màu khi placeholder chuyển động
     }),
     fontWeight: labelAnimation.interpolate({
       inputRange: [0, 1],
@@ -56,7 +47,7 @@ export const AppInputFloat: React.FC<AppInputFloatProps> = ({
     }),
     backgroundColor: labelAnimation.interpolate({
       inputRange: [0, 1],
-      outputRange: ['transparent', colors.gold],
+      outputRange: ['transparent', colors.darkBG],
     }),
   };
 
@@ -92,7 +83,7 @@ const styles = StyleSheet.create({
     height: 50,
     marginVertical: 12,
     borderWidth: 2,
-    borderColor: colors.black,
+    borderColor: colors.gold2,
     borderRadius: 10,
     textAlign: 'center',
     justifyContent: 'flex-start',
@@ -102,7 +93,7 @@ const styles = StyleSheet.create({
   input: {
     paddingHorizontal: 16,
     fontSize: 20,
-    color: colors.black,
+    color: colors.gold2,
   },
   ShowPass: {
     position: 'absolute',

@@ -18,6 +18,7 @@ const colors = {
   xam: '#696969',
   vang: '#FBD046',
   gold2: '#F6AF04',
+  darkBG: '#191820',
 };
 
 export default colors;
@@ -27,4 +28,5 @@ export const colorsGradient = {
   GU: ['#f5d105', '#F6AF04'],
   GF: ['#ffffff', '#F6AF04'],
   GG: ['#F6AF04', '#F6AF04'],
+  GC: ['#191820', '#191820'],
 };

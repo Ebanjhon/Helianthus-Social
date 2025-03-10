@@ -301,7 +301,7 @@ const Navigation = () => {
                 gestureEnabled: true,
                 gestureDirection: 'horizontal',
               }}>
-              {user !== null ? (
+              {user === null ? (
                 <>
                   <Stack.Screen
                     name="Intro"
