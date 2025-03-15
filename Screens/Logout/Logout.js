@@ -1,10 +1,9 @@
 import { useContext, useEffect } from "react"
-import { UserContext } from "../../Configs/Context";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const Logout = ({ navigation }) => {
-    const [userCurrent, dispatch] = useContext(UserContext);
+    const [userCurrent, dispatch] = useContext();
 
     useEffect(() => {
         const handleLogout = async () => {

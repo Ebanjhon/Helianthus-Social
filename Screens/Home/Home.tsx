@@ -27,24 +27,24 @@ import {
 import colors from '../../assets/color/colors';
 import icons from '../../assets/iconApp/icons';
 import styles from './HomeStyle';
-import {useTabBar} from '../../Configs/TabBarContext';
-import {authApi, endpoints} from '../../Configs/APIs';
-import {UserContext} from '../../Configs/Context';
-import {BlurView} from '@react-native-community/blur';
-import {useRoute} from '@react-navigation/native';
-import {showToast, toastConfigExport} from '../../Configs/ToastConfig';
+import { useTabBar } from '../../Configs/TabBarContext';
+import { authApi, endpoints } from '../../Configs/APIs';
+import { BlurView } from '@react-native-community/blur';
+import { useRoute } from '@react-navigation/native';
+import { showToast, toastConfigExport } from '../../Configs/ToastConfig';
 import Toast from 'react-native-toast-message';
+import { UserContext } from '../../Configs/UserReducer';
 
 LogBox.ignoreLogs(['Function components cannot be given refs']);
 
-const Home = forwardRef(({navigation}, ref) => {
+const Home = forwardRef(({ navigation }, ref) => {
+  const { user, dispatch: userDispatch } = useContext(UserContext);
   const flatListRef = useRef(null);
   const [refreshing, setRefreshing] = useState(false);
-  const {state, dispatch} = useTabBar();
+  const { state, dispatch } = useTabBar();
   const [posts, setPosts] = useState([]);
-  const [user, dispatchUser] = useContext(UserContext);
   const [page, setPage] = useState(0);
-  const [loading, setLoading] = useState(false); // Trạng thái tải dữ liệu
+  const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [comment, setComment] = useState('');
   const [repname, setRepname] = useState('');
@@ -52,6 +52,9 @@ const Home = forwardRef(({navigation}, ref) => {
   const [postId, setPostId] = useState(0);
   const [commentList, setCommentList] = useState([]);
   const [post, setPost] = useState(null);
+  const [showReport, setShowReport] = useState(false);
+  const [textReport, setTextReport] = useState('');
+  const [idReport, setIdReport] = useState(null);
 
   // xóa bài viết
   const confirmDeletePost = id => {
@@ -123,15 +126,15 @@ const Home = forwardRef(({navigation}, ref) => {
   );
 
   const hideTabBar = () => {
-    dispatch({type: 'HIDE_TAB_BAR'});
+    dispatch({ type: 'HIDE_TAB_BAR' });
   };
 
   const showTabBar = () => {
-    dispatch({type: 'SHOW_TAB_BAR'});
+    dispatch({ type: 'SHOW_TAB_BAR' });
   };
 
-  const renderItem = ({item}) => (
-    <Image source={{uri: item.mediaUrl}} style={styles.image} />
+  const renderItem = ({ item }) => (
+    <Image source={{ uri: item.mediaUrl }} style={styles.image} />
   );
 
   const route = useRoute();
@@ -204,9 +207,8 @@ const Home = forwardRef(({navigation}, ref) => {
     const year = date.getFullYear();
 
     // Định dạng thành chuỗi như mong muốn "phút:giờ yyyy-mm-dd"
-    const formattedDate = `${hours}:${minutes} ${year}-${
-      month < 10 ? '0' : ''
-    }${month}-${day < 10 ? '0' : ''}${day}`;
+    const formattedDate = `${hours}:${minutes} ${year}-${month < 10 ? '0' : ''
+      }${month}-${day < 10 ? '0' : ''}${day}`;
 
     return formattedDate;
   };
@@ -336,7 +338,7 @@ const Home = forwardRef(({navigation}, ref) => {
   const handleFollowPost = (idUser, followStatus) => {
     setPosts(prevPosts =>
       prevPosts.map(post =>
-        post.idUser === idUser ? {...post, following: followStatus} : post,
+        post.idUser === idUser ? { ...post, following: followStatus } : post,
       ),
     );
   };
@@ -371,7 +373,7 @@ const Home = forwardRef(({navigation}, ref) => {
     // console.log(item.commentChild);
   };
 
-  useEffect(() => {}, [idCommentParent]);
+  useEffect(() => { }, [idCommentParent]);
 
   // hàm thích bài viết
   const likePost = async postId => {
@@ -409,17 +411,17 @@ const Home = forwardRef(({navigation}, ref) => {
       prevPosts.map(
         post =>
           post.idPost === idPost
-            ? {...post, likes: newLikes, liked: likedStatus} // Cập nhật likes và liked cho post tương ứng
+            ? { ...post, likes: newLikes, liked: likedStatus } // Cập nhật likes và liked cho post tương ứng
             : post, // Giữ nguyên các post khác
       ),
     );
   };
 
   // xuất comments
-  const renderComment = ({item}) => (
-    <View style={{width: '100%', minHeight: 70, flexDirection: 'row'}}>
+  const renderComment = ({ item }) => (
+    <View style={{ width: '100%', minHeight: 70, flexDirection: 'row' }}>
       <Image
-        style={{width: 40, height: 40, borderRadius: 50, margin: 5}}
+        style={{ width: 40, height: 40, borderRadius: 50, margin: 5 }}
         source={{
           uri:
             item.avatar === ''
@@ -433,18 +435,18 @@ const Home = forwardRef(({navigation}, ref) => {
           paddingRight: 9,
           width: Dimensions.get('window').width * 0.95 - 50,
         }}>
-        <View style={{paddingRight: 9}}>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <View style={{ paddingRight: 9 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text
-              style={{fontSize: 15, fontWeight: '600', color: colors.black}}>
+              style={{ fontSize: 15, fontWeight: '600', color: colors.black }}>
               {item.firstname} {item.lastname}
             </Text>
-            <Text style={{fontSize: 14, fontWeight: '400', marginLeft: 10}}>
+            <Text style={{ fontSize: 14, fontWeight: '400', marginLeft: 10 }}>
               {convertDateTime(item.commentDate)}
             </Text>
           </View>
         </View>
-        <Text style={{minHeight: 20, fontSize: 16}}>{item.comment}</Text>
+        <Text style={{ minHeight: 20, fontSize: 16 }}>{item.comment}</Text>
         <View
           style={{
             width: '100%',
@@ -454,7 +456,7 @@ const Home = forwardRef(({navigation}, ref) => {
             justifyContent: 'flex-start',
           }}>
           <TouchableOpacity onPress={() => reply(item)}>
-            <Text style={{fontSize: 17, fontWeight: '500', color: colors.info}}>
+            <Text style={{ fontSize: 17, fontWeight: '500', color: colors.info }}>
               Trả lời
             </Text>
           </TouchableOpacity>
@@ -479,10 +481,10 @@ const Home = forwardRef(({navigation}, ref) => {
           keyExtractor={child => child.idComment.toString()}
           nestedScrollEnabled={true}
           scrollEnabled={false}
-          renderItem={({item: child}) => (
-            <View style={{width: 'auto', minHeight: 70, flexDirection: 'row'}}>
+          renderItem={({ item: child }) => (
+            <View style={{ width: 'auto', minHeight: 70, flexDirection: 'row' }}>
               <Image
-                style={{width: 40, height: 40, borderRadius: 50, margin: 5}}
+                style={{ width: 40, height: 40, borderRadius: 50, margin: 5 }}
                 source={{
                   uri:
                     child.avatar === ''
@@ -496,7 +498,7 @@ const Home = forwardRef(({navigation}, ref) => {
                   paddingRight: 9,
                   width: Dimensions.get('window').width * 0.8 - 50,
                 }}>
-                <View style={{paddingRight: 9}}>
+                <View style={{ paddingRight: 9 }}>
                   <View
                     style={{
                       flexDirection: 'row',
@@ -511,12 +513,12 @@ const Home = forwardRef(({navigation}, ref) => {
                       {child.firstname} {child.lastname}
                     </Text>
                     <Text
-                      style={{fontSize: 14, fontWeight: '400', marginLeft: 10}}>
+                      style={{ fontSize: 14, fontWeight: '400', marginLeft: 10 }}>
                       {convertDateTime(child.commentDate)}
                     </Text>
                   </View>
                 </View>
-                <Text style={{minHeight: 20, fontSize: 16}}>
+                <Text style={{ minHeight: 20, fontSize: 16 }}>
                   {child.comment}
                 </Text>
                 <View
@@ -619,9 +621,6 @@ const Home = forwardRef(({navigation}, ref) => {
   };
 
   // tạo báo cáo
-  const [showReport, setShowReport] = useState(false);
-  const [textReport, setTextReport] = useState('');
-  const [idReport, setIdReport] = useState(null);
 
   const hienThiBaoCao = postId => {
     setShowReport(true);
@@ -668,10 +667,12 @@ const Home = forwardRef(({navigation}, ref) => {
     'Nội dung quấy rối hoặc lăng mạ',
   ];
 
+  const dataTemp = {
+
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* hiển thị báo cáo bài viết */}
-
       <Modal
         animationType="slide" // Kiểu animation khi Modal hiển thị
         transparent={true} // Làm nền phía sau Modal mờ đi
@@ -682,13 +683,13 @@ const Home = forwardRef(({navigation}, ref) => {
         }}>
         {/* Phần nền mờ */}
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={{flex: 1, backgroundColor: colors.light}}>
+          <View style={{ flex: 1, backgroundColor: colors.light }}>
             <KeyboardAvoidingView
               keyboardVerticalOffset={0}
               behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-              <View style={{alignItems: 'center'}}>
+              <View style={{ alignItems: 'center' }}>
                 <View
-                  style={[styles.head_edit, {backgroundColor: colors.gold}]}>
+                  style={[styles.head_edit, { backgroundColor: colors.gold }]}>
                   <TouchableOpacity onPress={closeReport}>
                     <Text style={styles.text_head}>Hủy</Text>
                   </TouchableOpacity>
@@ -716,11 +717,11 @@ const Home = forwardRef(({navigation}, ref) => {
                   }}>
                   Lựa chọn nội dung
                 </Text>
-                <View style={{width: '100%', padding: 10}}>
+                <View style={{ width: '100%', padding: 10 }}>
                   <FlatList
                     data={reportContent}
                     renderItem={(
-                      {item}, // Render trực tiếp bên trong FlatList
+                      { item }, // Render trực tiếp bên trong FlatList
                     ) => (
                       <TouchableOpacity onPress={() => setTextReport(item)}>
                         <Text style={styles.item_report}>{item}</Text>
@@ -745,7 +746,7 @@ const Home = forwardRef(({navigation}, ref) => {
         }}>
         {/* Phần nền mờ */}
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             <BlurView
               style={{
                 position: 'absolute',
@@ -773,7 +774,7 @@ const Home = forwardRef(({navigation}, ref) => {
                   </TouchableOpacity>
                 </View>
 
-                <View style={{marginBottom: 7, flexDirection: 'row'}}>
+                <View style={{ marginBottom: 7, flexDirection: 'row' }}>
                   {/* <Image
                     style={{width: 50, height: 50, borderRadius: 50}}
                     source={{
@@ -787,7 +788,7 @@ const Home = forwardRef(({navigation}, ref) => {
                     {/* <Text style={styles.text_name}>
                       {user.firstName} {user.lastName}
                     </Text> */}
-                    <Text style={{marginLeft: 10, color: colors.gray}}>
+                    <Text style={{ marginLeft: 10, color: colors.gray }}>
                       Bài viết đang ở chế độ công khai
                     </Text>
                   </View>
@@ -807,22 +808,22 @@ const Home = forwardRef(({navigation}, ref) => {
                   <>
                     <FlatList
                       showsVerticalScrollIndicator={false}
-                      style={{width: '100%', minHeight: 90}}
+                      style={{ width: '100%', minHeight: 90 }}
                       data={postEdit.medias}
                       keyExtractor={(item, index) => index.toString()} // Đảm bảo mỗi ảnh có key duy nhất
-                      renderItem={({item, index}) => (
-                        <View style={{marginBottom: 10, position: 'relative'}}>
+                      renderItem={({ item, index }) => (
+                        <View style={{ marginBottom: 10, position: 'relative' }}>
                           <TouchableOpacity
                             style={styles.remove}
                             onPress={() => addIDImg(item.mediaId)}>
                             <Image
-                              style={{width: 30, height: 30}}
-                              source={{uri: icons.remove}}
+                              style={{ width: 30, height: 30 }}
+                              source={{ uri: icons.remove }}
                             />
                           </TouchableOpacity>
                           <Image
                             style={styles.media}
-                            source={{uri: item.mediaUrl}}
+                            source={{ uri: item.mediaUrl }}
                           />
                         </View>
                       )}
@@ -843,7 +844,7 @@ const Home = forwardRef(({navigation}, ref) => {
         onRequestClose={() => setModalVisible(false)}>
         {/* Phần nền mờ */}
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             <BlurView
               style={{
                 position: 'absolute',
@@ -862,11 +863,11 @@ const Home = forwardRef(({navigation}, ref) => {
               behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
               <View style={styles.contai_popup}>
                 <TouchableOpacity onPress={unpop}>
-                  <View style={{width: '100%', height: '20%'}}></View>
+                  <View style={{ width: '100%', height: '20%' }}></View>
                 </TouchableOpacity>
 
                 <View style={styles.contain_cmt_view}>
-                  <Text style={{fontSize: 19, fontWeight: '600'}}>Comment</Text>
+                  <Text style={{ fontSize: 19, fontWeight: '600' }}>Comment</Text>
                   <View
                     style={{
                       width: '95%',
@@ -884,7 +885,7 @@ const Home = forwardRef(({navigation}, ref) => {
                       nestedScrollEnabled={true}
                       ListEmptyComponent={<Text>Chưa có bình luận!</Text>}
                       contentContainerStyle={styles.contentContainer}
-                      style={{flex: 1}}
+                      style={{ flex: 1 }}
                     />
                   </View>
 
@@ -902,10 +903,10 @@ const Home = forwardRef(({navigation}, ref) => {
                           style={{
                             width: 30,
                             height: 30,
-                            transform: [{rotate: '270deg'}],
+                            transform: [{ rotate: '270deg' }],
                             top: -1,
                           }}
-                          source={{uri: icons.send_cmt}}
+                          source={{ uri: icons.send_cmt }}
                         />
                       </TouchableOpacity>
 
@@ -931,8 +932,8 @@ const Home = forwardRef(({navigation}, ref) => {
                           <TouchableOpacity
                             onPress={() => setIdCommentParent(0)}>
                             <Image
-                              style={{width: 20, height: 20, marginLeft: 10}}
-                              source={{uri: icons.remove}}
+                              style={{ width: 20, height: 20, marginLeft: 10 }}
+                              source={{ uri: icons.remove }}
                             />
                           </TouchableOpacity>
                         </View>
@@ -948,19 +949,19 @@ const Home = forwardRef(({navigation}, ref) => {
 
       <FlatList
         ref={flatListRef}
-        data={posts}
+        data={[{}]}
         showsVerticalScrollIndicator={false} // Tắt thanh cuộn dọc
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={onRefresh} // Gọi hàm refresh khi kéo xuống
-            colors={[colors.primary]} // Màu của biểu tượng khi refresh
+            onRefresh={onRefresh}
+            colors={[colors.primary]}
           />
         }
         onEndReached={loadMorePosts}
         onEndReachedThreshold={0.5} // Tỉ lệ danh sách còn lại trước khi gọi hàm (0.5 = 50%)
         ListFooterComponent={
-          <View style={{padding: 10}}>
+          <View style={{ padding: 10 }}>
             {/* {loading ? (
                             <ActivityIndicator size="small" />
                         ) : (
@@ -969,12 +970,12 @@ const Home = forwardRef(({navigation}, ref) => {
           </View>
         }
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <View style={styles.contain}>
             {/* thông tin ng đăng */}
             <View style={styles.post_infor}>
               <Image
-                style={{width: 50, height: 50, borderRadius: 50}}
+                style={{ width: 50, height: 50, borderRadius: 50 }}
                 source={{
                   uri:
                     item.avatar === ''
@@ -983,11 +984,11 @@ const Home = forwardRef(({navigation}, ref) => {
                 }}
               />
 
-              <View style={{marginLeft: 10}}>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>
+              <View style={{ marginLeft: 10 }}>
+                <Text style={{ fontSize: 18, fontWeight: '500' }}>
                   {item.username}
                 </Text>
-                <Text style={{fontSize: 17, color: colors.gray}}>
+                <Text style={{ fontSize: 17, color: colors.gray }}>
                   {formatDate(item.dateCreated)}
                 </Text>
               </View>
@@ -1002,7 +1003,7 @@ const Home = forwardRef(({navigation}, ref) => {
                   tintColor: colors.black,
                   paddingRight: 5,
                 }}
-                source={{uri: icons.icon_menu}}
+                source={{ uri: icons.icon_menu }}
               />
             </TouchableOpacity>
             {/* Menu chọn */}
@@ -1030,7 +1031,6 @@ const Home = forwardRef(({navigation}, ref) => {
                 </View>
               </>
             )}
-            {/* nội dung bài viết */}
             <View
               style={{
                 width: 'auto',
@@ -1038,7 +1038,7 @@ const Home = forwardRef(({navigation}, ref) => {
                 paddingRight: 10,
                 marginTop: 5,
               }}>
-              <Text style={{fontSize: 18, color: colors.dark}}>
+              <Text style={{ fontSize: 18, color: colors.dark }}>
                 {item.content}
               </Text>
             </View>
@@ -1136,8 +1136,8 @@ const Home = forwardRef(({navigation}, ref) => {
                       onPress={() => disLikePost(item.idPost)}
                       activeOpacity={0.3}>
                       <Image
-                        style={{width: 35, height: 35, tintColor: colors.gold}}
-                        source={{uri: icons.like}}
+                        style={{ width: 35, height: 35, tintColor: colors.gold }}
+                        source={{ uri: icons.like }}
                       />
                     </TouchableOpacity>
                   ) : (
@@ -1145,8 +1145,8 @@ const Home = forwardRef(({navigation}, ref) => {
                       onPress={() => likePost(item.idPost)}
                       activeOpacity={0.3}>
                       <Image
-                        style={{width: 35, height: 35, tintColor: colors.black}}
-                        source={{uri: icons.like}}
+                        style={{ width: 35, height: 35, tintColor: colors.black }}
+                        source={{ uri: icons.like }}
                       />
                     </TouchableOpacity>
                   )}
@@ -1166,13 +1166,12 @@ const Home = forwardRef(({navigation}, ref) => {
                 <TouchableOpacity
                   onPress={() => navigation.navigate('Message')}>
                   <Image
-                    style={{width: 30, height: 30, tintColor: colors.dark}}
-                    source={{uri: icons.mess_icon}}
+                    style={{ width: 30, height: 30, tintColor: colors.dark }}
+                    source={{ uri: icons.mess_icon }}
                   />
                 </TouchableOpacity>
               </View>
             </View>
-            {/* <View style={styles.line_border} /> */}
           </>
         }
         contentContainerStyle={{
@@ -1182,9 +1181,8 @@ const Home = forwardRef(({navigation}, ref) => {
           paddingBottom: 90,
         }}
         onScroll={handleScroll}
-        scrollEventThrottle={16} // Điều chỉnh tốc độ gửi sự kiện scroll
+        scrollEventThrottle={16}
       />
-      {/* thông báo */}
       <Toast config={toastConfigExport} />
     </SafeAreaView>
   );

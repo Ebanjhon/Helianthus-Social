@@ -1,7 +1,6 @@
 import { Alert, Button, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import colors from "../../assets/color/colors";
 import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../Configs/Context";
 import icons from "../../assets/iconApp/icons";
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import ImageCropPicker from "react-native-image-crop-picker";
@@ -12,7 +11,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const UpdateProfile = ({ navigation }) => {
-    const [user, dispatch] = useContext(UserContext);
+    // const [user, dispatch] = useContext(UserContext);
     const [firstname, setFirstName] = useState("");
     const [lastname, setLastName] = useState("");
     const [phone, setPhone] = useState("");

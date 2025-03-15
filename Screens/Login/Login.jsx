@@ -1,7 +1,6 @@
 import styles from './LoginStyle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useContext, useEffect, useState} from 'react';
-import {UserContext} from '../../Configs/Context';
+import { useContext, useState } from 'react';
 import {
   Image,
   KeyboardAvoidingView,
@@ -12,64 +11,42 @@ import {
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import Toast from 'react-native-toast-message';
-import {showToast, toastConfigExport} from '../../Configs/ToastConfig';
+import { showToast, toastConfigExport } from '../../Configs/ToastConfig';
 import HeaderApp from '../../Components/HeaderApp/HeaderApp';
-import {AppInputFloat} from '../../Components/AppInputFloating/AppInputFloat';
+import { AppInputFloat } from '../../Components/AppInputFloating/AppInputFloat';
 import AppBackground from '../../Components/AppBackground/AppBackground';
-import {colorsGradient} from '../../assets/color/colors';
-import useFetchApi from '../../CallAPI/api_fetch_data/AuthApp';
-import {URL_API} from '../../CallAPI';
+import { colorsGradient } from '../../assets/color/colors';
+import { useGetTokenMutation, useGetUserProfileMutation } from '../../RTKQuery/Slides/slide';
+import { UserContext } from '../../Configs/UserReducer';
 
-const Login = ({navigation}) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [dispatch] = useContext(UserContext);
-  const [loading, setLoading] = useState(false);
-
-  const handleSaveToken = async () => {
-    await AsyncStorage.setItem('token', data);
-    handleSubmitUserProfile();
+const Login = ({ navigation }) => {
+  const [username, setUsername] = useState('eban123');
+  const [password, setPassword] = useState('123456');
+  const [fetchToken, { data, error, isLoading }] = useGetTokenMutation();
+  const [fetchProfileUser, { data: userData, isLoading: isFetchUserLoading }] = useGetUserProfileMutation();
+  const { dispatch } = useContext(UserContext);
+  const getUserProfile = async () => {
+    try {
+      await fetchProfileUser(username).unwrap();
+      if (userData.active) {
+        navigation.navigate('Active', { userData: userData });
+      }
+      await AsyncStorage.setItem('user', JSON.stringify(userData));
+      dispatch({ type: "login", payload: userData });
+    } catch (err) {
+      showToast('error', 'Đăng nhập thất bại!', error.data);
+    }
   };
 
-  const handleGetProfile = () => {
-    setLoading(false);
-    console.log(userData);
-    // navigation.navigate('Active', {userData: userResponse.data});
-    // dispatch({
-    //   type: 'login',
-    //   payload: userData,
-    // });
+  const handleLogin = async () => {
+    try {
+      await fetchToken({ username, password }).unwrap();
+      await AsyncStorage.setItem('token', data.token);
+      getUserProfile();
+    } catch (err) {
+      showToast('error', 'Đăng nhập thất bại!', error.data);
+    }
   };
-
-  const {
-    data,
-    submit: handleSubmitLogin,
-    error: errorFetchToken,
-  } = useFetchApi({
-    url: URL_API.LOGIN,
-    method: 'POST',
-    body: {username: username, password: password},
-    handleDonefetch: handleSaveToken,
-  });
-
-  const {
-    data: userData,
-    submit: handleSubmitUserProfile,
-    error: errorFetchUser,
-  } = useFetchApi({
-    url: URL_API.GET_PROFILE,
-    method: 'GET',
-    params: {username: username},
-    handleDonefetch: handleGetProfile,
-  });
-
-  useEffect(() => {
-    setLoading(false);
-    errorFetchUser &&
-      showToast('error', 'Đăng nhập thất bại!', errorFetchUser.response.data);
-    errorFetchToken &&
-      showToast('error', 'Đăng nhập thất bại!', errorFetchToken.response.data);
-  }, [errorFetchUser, errorFetchToken]);
 
   return (
     <AppBackground groupColor={colorsGradient.GC}>
@@ -86,7 +63,7 @@ const Login = ({navigation}) => {
         <ScrollView
           keyboardShouldPersistTaps="handled"
           style={styles.container}
-          contentContainerStyle={{justifyContent: 'center', flex: 1}}>
+          contentContainerStyle={{ justifyContent: 'center', flex: 1 }}>
           <Text style={styles.titleLogin}>Đăng nhập</Text>
           <View
             style={{
@@ -105,20 +82,19 @@ const Login = ({navigation}) => {
               isPassword={true}
             />
           </View>
-          {loading ? (
+          {isLoading || isFetchUserLoading ? (
             <LottieView
               source={require('../../assets/animations/Animation - 1726832285926.json')}
               autoPlay
               loop
-              style={{width: 100, height: 100, alignSelf: 'center'}}
+              style={{ width: 100, height: 100, alignSelf: 'center' }}
             />
           ) : (
             <>
               <TouchableOpacity
                 style={styles.buttonLogin}
                 onPress={() => {
-                  handleSubmitLogin();
-                  setLoading(true);
+                  handleLogin();
                 }}>
                 <Text style={styles.buttonText}>Xác nhận</Text>
               </TouchableOpacity>
@@ -131,7 +107,7 @@ const Login = ({navigation}) => {
                 <Text style={styles.registerText}>Đăng ký tài khoản</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => {}}
+                onPress={() => { }}
                 style={{
                   width: 50,
                   alignSelf: 'center',

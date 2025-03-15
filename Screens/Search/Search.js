@@ -4,13 +4,12 @@ import styles from "./SearchStyle";
 import colors from "../../assets/color/colors";
 import { useTabBar } from "../../Configs/TabBarContext";
 import { authApi, endpoints } from "../../Configs/APIs";
-import { UserContext } from "../../Configs/Context";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const Search = () => {
     const { state, dispatch } = useTabBar();
     const title = "Tìm kiếm";
     const [text, setText] = useState('');
-    const [user, dispatchUser] = useContext(UserContext);
+    // const [user, dispatchUser] = useContext(UserContext);
     const [result, setResult] = useState([]);
 
     const hideTabBar = () => {

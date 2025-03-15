@@ -2,13 +2,12 @@ import React, { useContext, useEffect, useState } from 'react';
 import { SafeAreaView, Text, View, Image, SectionList, TouchableOpacity } from 'react-native';
 import TabHeader from "../../Components/TabHeader";
 import styles from "./NotifiStyle";
-import { UserContext } from '../../Configs/Context';
 import colors from '../../assets/color/colors';
 import { authApi, endpoints } from '../../Configs/APIs';
 
 const Notification = () => {
     const title = 'Thông báo';
-    const [user, dispatchUser] = useContext(UserContext);
+    // const [user, dispatchUser] = useContext(UserContext);
 
     const groupMessagesByDate = (data) => {
         const today = new Date();

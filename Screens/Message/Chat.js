@@ -1,12 +1,11 @@
 import { Text, StyleSheet, View, Image, TouchableOpacity, FlatList, TextInput } from 'react-native'
 import colors from '../../assets/color/colors';
 import icons from '../../assets/iconApp/icons';
-import { UserContext } from '../../Configs/Context';
 import { useContext, useEffect, useState } from 'react';
 import firestore from '@react-native-firebase/firestore';
 
 const Chat = ({ route, navigation }) => {
-    const [user, dispatchUser] = useContext(UserContext);
+    const [user, dispatchUser] = useContext();
     const { userId, avatar, username, roomId } = route.params;
     const [text, setText] = useState('');
     const [messages, setMessages] = useState([]);

@@ -4,11 +4,11 @@ import styles from './ProfileStyle';
 import colors from '../../assets/color/colors';
 import icons from '../../assets/iconApp/icons';
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
-import { UserContext } from '../../Configs/Context';
 import { authApi, endpoints } from '../../Configs/APIs';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { BlurView } from '@react-native-community/blur';
 import Swiper from 'react-native-swiper';
+import { UserContext } from '../../Configs/UserReducer';
 LogBox.ignoreLogs([
     'VirtualizedLists should never be nested inside plain ScrollViews', // Thông báo cảnh báo bạn muốn bỏ qua
 ]);
@@ -17,7 +17,7 @@ LogBox.ignoreLogs([
 ]);
 
 const ProfileUser = ({ navigation }) => {
-    const [user, dispatchUser] = useContext(UserContext);
+    const { user, dispatch } = useContext(UserContext);
     const [profile, setProfile] = useState(null);
     const [index, setIndex] = useState(0);
     const [indextab, setIndextab] = React.useState(0);

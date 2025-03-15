@@ -4,7 +4,6 @@ import SlideUpView from "./SlideUp";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import colors from "../../assets/color/colors";
 import icons from '../../assets/iconApp/icons';
-import { UserContext } from "../../Configs/Context";
 import ImagePicker from 'react-native-image-crop-picker';
 import { authApi, endpoints } from "../../Configs/APIs";
 import Toast from 'react-native-toast-message';
@@ -29,12 +28,13 @@ import {
     brightness
 } from 'react-native-color-matrix-image-filters';
 import filter from "../../assets/color/filter";
+import { UserContext } from "../../Configs/UserReducer";
 
 const Post = ({ navigation }) => {
     const [content, setContent] = React.useState('');
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [user, dispatch] = useContext(UserContext);
+    const { user, dispatch } = useContext(UserContext);
     const [showEditor, setShowEditor] = useState(false);
     const [loadUpdate, setLoadUpdate] = useState(true);
     const [imageUri, setImageUri] = useState(null);

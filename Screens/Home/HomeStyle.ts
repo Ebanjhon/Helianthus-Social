@@ -256,7 +256,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         flexDirection: 'row',
         alignItems: "center",
-        justifyContent: 'space-between',
         paddingLeft: 30,
         paddingRight: 30,
 
@@ -269,12 +268,6 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         fontSize: 18,
         color: colors.dark
-    },
-    textInput: {
-        width: '100%',
-        fontSize: 16,
-        height: "auto",
-        textAlignVertical: 'top',
     },
     media_edit: {
         width: '100%',

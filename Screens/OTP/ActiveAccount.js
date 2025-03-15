@@ -5,13 +5,12 @@ import { useContext, useEffect, useState } from "react";
 import { authApi, endpoints } from "../../Configs/APIs";
 import Toast from "react-native-toast-message";
 import { showToast, toastConfigExport } from '../../Configs/ToastConfig';
-import { UserContext } from "../../Configs/Context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ActiveAccount = ({ route }) => {
     const [timeLeft, setTimeLeft] = useState(60); // Đặt thời gian bắt đầu là 60 giây
     const [showSendOTP, setShowSendOTP] = useState(false);
-    const [u, dispatch] = useContext(UserContext);
+    // const [u, dispatch] = useContext(UserContext);
     const { userData } = route.params;
     const [user, setUser] = useState(userData);
     const [otp, setOTP] = useState('');

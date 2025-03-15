@@ -1,12 +1,16 @@
-import React, {forwardRef, useEffect, useReducer, useRef} from 'react';
+import React, { forwardRef, useEffect, useReducer, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Image, PermissionsAndroid, TouchableOpacity, View} from 'react-native';
+import {
+  Image,
+  PermissionsAndroid,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import IntroApp from '../../Screens/Intro/IntroApp';
-import {StyleSheet} from 'react-native';
+import { Provider } from 'react-redux';
 import colors from '../../assets/color/colors';
-import UserReducer from '../../Configs/UserReducer';
-import {UserContext} from '../../Configs/Context';
-import {TabBarProvider, useTabBar} from '../../Configs/TabBarContext';
+import UserReducer, { UserContext } from '../../Configs/UserReducer';
+import { TabBarProvider, useTabBar } from '../../Configs/TabBarContext';
 import {
   NavigationContainer,
   useNavigation,
@@ -23,7 +27,7 @@ import Search from '../../Screens/Search/Search';
 import Notification from '../../Screens/Notification/Notification';
 import UserSeting from '../../Screens/ProfileUser/UserSetting';
 import Logout from '../../Screens/Logout/Logout';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import icons from '../../assets/iconApp/icons';
 import ProfileUser from '../../Screens/ProfileUser/ProfileUser';
 import Post from '../../Screens/Post/Post';
@@ -31,14 +35,16 @@ import UpdateProfile from '../../Screens/ProfileUser/UpdateProfile';
 import Message from '../../Screens/Message/Message';
 import Chat from '../../Screens/Message/Chat';
 import Toast from 'react-native-toast-message';
-import notifee, {AndroidImportance} from '@notifee/react-native';
+import notifee, { AndroidImportance } from '@notifee/react-native';
 import ActiveAccount from '../../Screens/OTP/ActiveAccount';
+import { store } from '../../RTKQuery/Stores/store';
+import { styles } from './style';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const HomeTabs = forwardRef(() => {
-  const {state} = useTabBar();
+  const { state } = useTabBar();
   const navigation = useNavigation();
   const route = useRoute();
 
@@ -55,7 +61,7 @@ const HomeTabs = forwardRef(() => {
     };
   }, [navigation, route.name]);
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
@@ -69,13 +75,13 @@ const HomeTabs = forwardRef(() => {
           name="Home"
           component={Home}
           options={{
-            tabBarIcon: ({focused}) => (
+            tabBarIcon: ({ focused }) => (
               <View style={styles.tabBarIconText}>
                 <Image
                   source={icons.home_full}
                   resizeMode="contain"
                   style={[
-                    {tintColor: focused ? colors.gold : colors.secondary},
+                    { tintColor: focused ? colors.gold : colors.secondary },
                     styles.icon,
                   ]}
                 />
@@ -87,13 +93,13 @@ const HomeTabs = forwardRef(() => {
           name="Search"
           component={Search}
           options={{
-            tabBarIcon: ({focused}) => (
+            tabBarIcon: ({ focused }) => (
               <View style={styles.tabBarIconText}>
                 <Image
                   source={icons.search}
                   resizeMode="contain"
                   style={[
-                    {tintColor: focused ? colors.gold : colors.secondary},
+                    { tintColor: focused ? colors.gold : colors.secondary },
                     styles.icon,
                   ]}
                 />
@@ -105,8 +111,8 @@ const HomeTabs = forwardRef(() => {
           name="Post"
           component={Post}
           options={{
-            tabBarStyle: {display: 'none'},
-            tabBarIcon: ({focused}) => (
+            tabBarStyle: { display: 'none' },
+            tabBarIcon: ({ focused }) => (
               <View style={styles.tabBarIconText}>
                 <Image
                   source={icons.add}
@@ -125,13 +131,13 @@ const HomeTabs = forwardRef(() => {
           name="Notification"
           component={Notification}
           options={{
-            tabBarIcon: ({focused}) => (
+            tabBarIcon: ({ focused }) => (
               <View style={styles.tabBarIconText}>
                 <Image
                   source={icons.notifi}
                   resizeMode="contain"
                   style={[
-                    {tintColor: focused ? colors.gold : colors.secondary},
+                    { tintColor: focused ? colors.gold : colors.secondary },
                     styles.icon,
                   ]}
                 />
@@ -143,13 +149,13 @@ const HomeTabs = forwardRef(() => {
           name="Profile"
           component={UserProfile}
           options={{
-            tabBarIcon: ({focused}) => (
+            tabBarIcon: ({ focused }) => (
               <View style={styles.tabBarIconText}>
                 <Image
                   source={icons.profile}
                   resizeMode="contain"
                   style={[
-                    {tintColor: focused ? colors.gold : colors.secondary},
+                    { tintColor: focused ? colors.gold : colors.secondary },
                     styles.icon,
                   ]}
                 />
@@ -186,8 +192,8 @@ function UserProfile() {
               }}>
               <TouchableOpacity onPress={() => navigation.navigate('Setting')}>
                 <Image
-                  style={{width: 40, height: 40, tintColor: colors.black}}
-                  source={{uri: icons.menu}}
+                  style={{ width: 40, height: 40, tintColor: colors.black }}
+                  source={{ uri: icons.menu }}
                 />
               </TouchableOpacity>
             </View>
@@ -209,7 +215,7 @@ const Navigation = () => {
           payload: JSON.parse(userData),
         });
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   useEffect(() => {
@@ -264,7 +270,6 @@ const Navigation = () => {
       );
 
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        // console.log('Đã được cấp quyền thông báo');
         await notifee.createChannel({
           id: 'default',
           name: 'Default Channel',
@@ -274,7 +279,6 @@ const Navigation = () => {
         console.log('Không được cấp quyền thông báo');
       }
     }
-
     setup();
   }, []);
 
@@ -289,97 +293,72 @@ const Navigation = () => {
     });
   }
 
+  useEffect(() => {
+    console.log("alo");
+  }, [user])
+
   return (
     <>
-      <NavigationContainer independent={true}>
-        <UserContext.Provider value={[user, dispatch]}>
-          <TabBarProvider>
-            <Stack.Navigator
-              initialRouteName="HomeTabs"
-              screenOptions={{
-                headerShown: false,
-                gestureEnabled: true,
-                gestureDirection: 'horizontal',
-              }}>
-              {user === null ? (
-                <>
-                  <Stack.Screen
-                    name="Intro"
-                    component={IntroApp}
-                    options={{
-                      cardStyleInterpolator:
-                        CardStyleInterpolators.forHorizontalIOS,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="Login"
-                    component={Login}
-                    options={{
-                      cardStyleInterpolator:
-                        CardStyleInterpolators.forHorizontalIOS,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="Register"
-                    component={Register}
-                    options={{
-                      cardStyleInterpolator:
-                        CardStyleInterpolators.forFadeFromCenter,
-                    }}
-                  />
-                  <Stack.Screen name="Active" component={ActiveAccount} />
-                </>
-              ) : (
-                <>
-                  <Stack.Screen name="HomeTabs" component={HomeTabs} />
-                  <Stack.Screen name="Logout" component={Logout} />
-                  <Stack.Screen name="Message" component={Message} />
-                  <Stack.Screen name="Chat" component={Chat} />
-                  <Stack.Screen name="Setting" component={UserSeting} />
-                  <Stack.Screen
-                    name="UpdatePrifile"
-                    component={UpdateProfile}
-                  />
-                </>
-              )}
-            </Stack.Navigator>
-          </TabBarProvider>
-        </UserContext.Provider>
-      </NavigationContainer>
+      <Provider store={store}>
+        <NavigationContainer independent={true}>
+          <UserContext.Provider value={{ user, dispatch }}>
+            <TabBarProvider>
+              <Stack.Navigator
+                initialRouteName="HomeTabs"
+                screenOptions={{
+                  headerShown: false,
+                  gestureEnabled: true,
+                  gestureDirection: 'horizontal',
+                }}>
+                {user === null ? (
+                  <>
+                    <Stack.Screen
+                      name="Intro"
+                      component={IntroApp}
+                      options={{
+                        cardStyleInterpolator:
+                          CardStyleInterpolators.forHorizontalIOS,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="Login"
+                      component={Login}
+                      options={{
+                        cardStyleInterpolator:
+                          CardStyleInterpolators.forHorizontalIOS,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="Register"
+                      component={Register}
+                      options={{
+                        cardStyleInterpolator:
+                          CardStyleInterpolators.forFadeFromCenter,
+                      }}
+                    />
+                    <Stack.Screen name="Active" component={ActiveAccount} />
+                  </>
+                ) : (
+                  <>
+                    <Stack.Screen name="HomeTabs" component={HomeTabs} />
+                    <Stack.Screen name="Logout" component={Logout} />
+                    <Stack.Screen name="Message" component={Message} />
+                    <Stack.Screen name="Chat" component={Chat} />
+                    <Stack.Screen name="Setting" component={UserSeting} />
+                    <Stack.Screen
+                      name="UpdatePrifile"
+                      component={UpdateProfile}
+                    />
+                  </>
+                )}
+              </Stack.Navigator>
+            </TabBarProvider>
+          </UserContext.Provider>
+        </NavigationContainer>
+      </Provider>
       <Toast ref={ref => Toast.setRef(ref)} />
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  tabBarStyle: {
-    position: 'absolute',
-    bottom: 10,
-    left: 15,
-    right: 15,
-    backgroundColor: colors.light,
-    borderRadius: 50,
-    height: 50,
-    zIndex: 2,
-  },
-  tabBarIconText: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    top: '10',
-  },
-  icon: {
-    width: 40,
-    height: 40,
-  },
-  title_top_screen: {
-    marginBottom: 0,
-    fontSize: 20,
-    lineHeight: 23,
-  },
-  fullname: {
-    fontSize: 18,
-    color: colors.black,
-  },
-});
 
 export default Navigation;
