@@ -1,27 +1,26 @@
-import { StyleSheet } from "react-native";
-import colors from "../../../../assets/color/colors";
+import {StyleSheet} from 'react-native';
+import colors from '../../../../assets/color/colors';
 
 export const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        marginBottom: 5
-    },
-    itemUser: {
-        flexDirection: 'column',
-        alignItems: 'center',
-        // maxWidth: 170,
-        padding: 5,
-        borderRadius: 5
-    },
-    newUser: {
-        fontSize: 10,
-        padding: 2,
-        position: 'absolute',
-        backgroundColor: colors.danger,
-        color: colors.white,
-        zIndex: 1,
-        borderRadius: 5,
-        top: 5,
-    }
-
-})
+  container: {
+    flex: 1,
+    marginBottom: 5,
+    backgroundColor: colors.white,
+  },
+  itemUser: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: 5,
+    borderRadius: 5,
+  },
+  newUser: {
+    fontSize: 10,
+    padding: 2,
+    position: 'absolute',
+    backgroundColor: colors.danger,
+    color: colors.white,
+    zIndex: 1,
+    borderRadius: 5,
+    top: 5,
+  },
+});

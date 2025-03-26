@@ -1,8 +1,13 @@
 import React from 'react';
 import {Svg, Path} from 'react-native-svg';
 
-const BaseIcon = ({width = 24, height = 24, fill = 'black'}) => (
-  <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
+const BaseIcon = ({width = 24, height = 24, fill = 'black', style}) => (
+  <Svg
+    width={width}
+    height={height}
+    viewBox="0 0 24 24"
+    fill="none"
+    style={style}>
     <Path
       fillRule="evenodd"
       clipRule="evenodd"
