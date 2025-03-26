@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: 'http://192.168.9.82:8888',
+  baseUrl: 'http://192.168.9.218:8888',
   prepareHeaders: async (headers) => {
     const token = await AsyncStorage.getItem('token');
     if (token) {

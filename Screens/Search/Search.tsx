@@ -5,6 +5,10 @@ import colors from "../../assets/color/colors";
 import { useTabBar } from "../../Configs/TabBarContext";
 import { authApi, endpoints } from "../../Configs/APIs";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import FastImage from "react-native-fast-image";
+import React from "react";
+import AppBackground from "../../Components/AppBackground/AppBackground";
+import HeaderApp from "../../Components/HeaderApp/HeaderApp";
 const Search = () => {
     const { state, dispatch } = useTabBar();
     const title = "Tìm kiếm";
@@ -116,59 +120,56 @@ const Search = () => {
 
     return (
         <View style={styles.container}>
-            <View style={{ width: '100%' }}>
-                <FlatList
-                    data={result}
-                    keyExtractor={(item) => item.user_id}
-                    showsHorizontalScrollIndicator={false}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity
-                            onPress={viewUser}
-                            style={styles.item_notifi}>
-
-                            <Image
-                                style={styles.image_avatar}
-                                source={{
-                                    uri: item.avatar === ''
-                                        ? 'https://i.pinimg.com/564x/25/ee/de/25eedef494e9b4ce02b14990c9b5db2d.jpg'
-                                        : item.avatar
-                                }} />
-                            <View>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Text style={styles.fullname}>{item.firstname} {item.lastname}</Text>
-                                    {item.folow ? (
-                                        <TouchableOpacity
-                                            style={{ marginLeft: 10 }}
-                                        >
-                                            <Text style={{ fontSize: 16, color: colors.info }}>Following</Text>
-                                        </TouchableOpacity>
-                                    ) : (
-                                        <TouchableOpacity
-                                            onPress={() => following(item.user_id)}
-                                            style={{ marginLeft: 10 }}
-                                        >
-                                            <Text style={{ fontSize: 16, color: colors.info }}>Follow</Text>
-                                        </TouchableOpacity>
-                                    )}
-                                </View>
-                                <Text>@{item.user_name} - Có {item.countFollow} người theo giỏi</Text>
-                            </View>
-                        </TouchableOpacity>
-                    )}
-                    ListHeaderComponent={
-                        <View style={{ width: '100%', alignItems: 'center', backgroundColor: colors.light, elevation: 9, }}>
-                            <View style={styles.contai_search}>
-                                <TextInput
-                                    style={{ fontSize: 16 }}
-                                    placeholder="Tìm kiếm..."
-                                    onChange={(e) => setText(e.nativeEvent.text)}
-                                    multiline={true}
-                                />
-                            </View>
-                        </View>
-                    }
-                />
+            <HeaderApp title={"Tìm kiếm"} isShowleftAction={false} isShowrightAction={false} />
+            <View style={styles.searchContent}>
+                <View style={styles.contai_search}>
+                    <TextInput
+                        style={{ fontSize: 16 }}
+                        placeholder="nhập nội dung cần tìm kiếm..."
+                        onChange={(e) => setText(e.nativeEvent.text)}
+                        multiline={true}
+                    />
+                </View>
             </View>
+            <FlatList
+                style={{ marginTop: 40 }}
+                data={result}
+                keyExtractor={(item) => item.user_id}
+                showsHorizontalScrollIndicator={false}
+                renderItem={({ item }) => (
+                    <TouchableOpacity
+                        onPress={viewUser}
+                        style={styles.item_notifi}>
+                        <Image
+                            style={styles.image_avatar}
+                            source={{
+                                uri: item.avatar === ''
+                                    ? 'https://i.pinimg.com/564x/25/ee/de/25eedef494e9b4ce02b14990c9b5db2d.jpg'
+                                    : item.avatar
+                            }} />
+                        <View>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Text style={styles.fullname}>{item.firstname} {item.lastname}</Text>
+                                {item.folow ? (
+                                    <TouchableOpacity
+                                        style={{ marginLeft: 10 }}
+                                    >
+                                        <Text style={{ fontSize: 16, color: colors.info }}>Following</Text>
+                                    </TouchableOpacity>
+                                ) : (
+                                    <TouchableOpacity
+                                        onPress={() => following(item.user_id)}
+                                        style={{ marginLeft: 10 }}
+                                    >
+                                        <Text style={{ fontSize: 16, color: colors.info }}>Follow</Text>
+                                    </TouchableOpacity>
+                                )}
+                            </View>
+                            <Text>@{item.user_name} - Có {item.countFollow} người theo giỏi</Text>
+                        </View>
+                    </TouchableOpacity>
+                )}
+            />
         </View>
     )
 };

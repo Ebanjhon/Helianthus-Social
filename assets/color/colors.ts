@@ -19,6 +19,7 @@ const colors = {
   vang: '#FBD046',
   gold2: '#F6AF04',
   darkBG: '#191820',
+  milk: '#E0E0E0'
 };
 
 export default colors;

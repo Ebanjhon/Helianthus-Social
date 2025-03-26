@@ -7,15 +7,21 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: colors.xamtrang
     },
+    searchContent: {
+        width: '100%', alignItems: 'center', top: 35,
+        backgroundColor: colors.gold2,
+        borderBottomWidth: 2,
+        borderTopWidth: 2,
+        paddingBottom: 5,
+    },
     contai_search: {
-        width: 320,
+        width: '95%',
         height: 40,
         backgroundColor: colors.gold,
         borderRadius: 20,
         paddingLeft: 10,
         margin: 5,
         justifyContent: 'center',
-        justifyContent: 'center'
     },
     item_notifi: {
         width: '100%',
@@ -26,7 +32,7 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         flexDirection: 'row',
         flex: 1,
-        justifyContent: 'flex-start', // Căn giữa theo chiều cao
+        justifyContent: 'flex-start',
         alignItems: 'center',
     },
     image_avatar: {
@@ -44,16 +50,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: colors.black
     },
-    title_top_screen: {
-        marginBottom: 0,
-        fontSize: 20,
-        lineHeight: 23,
-    },
-    fullname: {
-        fontSize: 18,
-        color: colors.black
-    }
-
 });
 
 export default styles;

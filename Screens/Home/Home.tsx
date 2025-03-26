@@ -7,7 +7,6 @@ import React, {
   useState,
 } from 'react';
 import {
-  Image,
   Text,
   TouchableOpacity,
   View,
@@ -23,6 +22,7 @@ import {
   Dimensions,
   LogBox,
   Alert,
+  Image,
 } from 'react-native';
 import colors from '../../assets/color/colors';
 import icons from '../../assets/iconApp/icons';
@@ -34,6 +34,7 @@ import { useRoute } from '@react-navigation/native';
 import { showToast, toastConfigExport } from '../../Configs/ToastConfig';
 import Toast from 'react-native-toast-message';
 import { UserContext } from '../../Configs/UserReducer';
+import { ItemFeed, ListItemAddFriend } from './components';
 
 LogBox.ignoreLogs(['Function components cannot be given refs']);
 
@@ -673,6 +674,58 @@ const Home = forwardRef(({ navigation }, ref) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <FlatList
+        nestedScrollEnabled={true}
+        ref={flatListRef}
+        data={[1, 2]}
+        style={{ flex: 1 }}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <ItemFeed data={item} />
+        )}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[colors.primary]}
+          />
+        }
+        onEndReached={loadMorePosts}
+        onEndReachedThreshold={0.5} // Tỉ lệ danh sách còn lại trước khi gọi hàm (0.5 = 50%)
+        ListFooterComponent={
+          <View style={{ padding: 10 }}>
+            {/* {loading ? (
+                            <ActivityIndicator size="small" />
+                        ) : (
+                            !hasMoreData && <Text style={{ textAlign: 'center' }}>Đã tải hết dữ liệu</Text>
+                        )} */}
+          </View>
+        }
+        keyExtractor={(item, index) => index.toString()}
+        ListHeaderComponent={
+          <>
+            <View style={styles.contai_head}>
+              <View>
+                <Text style={styles.logo}>Helianthus</Text>
+              </View>
+              <View style={styles.message}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Message')}>
+                  <Image
+                    style={{ width: 30, height: 30, tintColor: colors.dark }}
+                    source={{ uri: icons.mess_icon }}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <ListItemAddFriend data={"hello"} />
+          </>
+        }
+
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+      />
+      {/* // */}
       <Modal
         animationType="slide" // Kiểu animation khi Modal hiển thị
         transparent={true} // Làm nền phía sau Modal mờ đi
@@ -947,242 +1000,7 @@ const Home = forwardRef(({ navigation }, ref) => {
         </TouchableWithoutFeedback>
       </Modal>
 
-      <FlatList
-        ref={flatListRef}
-        data={[{}]}
-        showsVerticalScrollIndicator={false} // Tắt thanh cuộn dọc
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={[colors.primary]}
-          />
-        }
-        onEndReached={loadMorePosts}
-        onEndReachedThreshold={0.5} // Tỉ lệ danh sách còn lại trước khi gọi hàm (0.5 = 50%)
-        ListFooterComponent={
-          <View style={{ padding: 10 }}>
-            {/* {loading ? (
-                            <ActivityIndicator size="small" />
-                        ) : (
-                            !hasMoreData && <Text style={{ textAlign: 'center' }}>Đã tải hết dữ liệu</Text>
-                        )} */}
-          </View>
-        }
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.contain}>
-            {/* thông tin ng đăng */}
-            <View style={styles.post_infor}>
-              <Image
-                style={{ width: 50, height: 50, borderRadius: 50 }}
-                source={{
-                  uri:
-                    item.avatar === ''
-                      ? 'https://i.pinimg.com/564x/25/ee/de/25eedef494e9b4ce02b14990c9b5db2d.jpg'
-                      : item.avatar,
-                }}
-              />
 
-              <View style={{ marginLeft: 10 }}>
-                <Text style={{ fontSize: 18, fontWeight: '500' }}>
-                  {item.username}
-                </Text>
-                <Text style={{ fontSize: 17, color: colors.gray }}>
-                  {formatDate(item.dateCreated)}
-                </Text>
-              </View>
-            </View>
-            <TouchableOpacity
-              onPress={() => setPost(item.idPost)}
-              style={styles.menu}>
-              <Image
-                style={{
-                  width: 20,
-                  height: 20,
-                  tintColor: colors.black,
-                  paddingRight: 5,
-                }}
-                source={{ uri: icons.icon_menu }}
-              />
-            </TouchableOpacity>
-            {/* Menu chọn */}
-            {post === item.idPost && (
-              <>
-                <View style={styles.menu_box}>
-                  {user.id === item.idUser ? (
-                    <TouchableOpacity
-                      onPress={() => confirmDeletePost(item.idPost)}
-                      style={styles.item_menu}>
-                      <Text>Xóa bài viết</Text>
-                    </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity
-                      onPress={() => hienThiBaoCao(item.idPost)}
-                      style={styles.item_menu}>
-                      <Text>Báo cáo bài viết</Text>
-                    </TouchableOpacity>
-                  )}
-                  <TouchableOpacity
-                    style={styles.item_menu}
-                    onPress={() => setPost(null)}>
-                    <Text>Hủy</Text>
-                  </TouchableOpacity>
-                </View>
-              </>
-            )}
-            <View
-              style={{
-                width: 'auto',
-                paddingLeft: 10,
-                paddingRight: 10,
-                marginTop: 5,
-              }}>
-              <Text style={{ fontSize: 18, color: colors.dark }}>
-                {item.content}
-              </Text>
-            </View>
-
-            <View style={styles.post_contain}>
-              {/* // hiển thị ảnh */}
-
-              <View style={styles.contai_image}>
-                <FlatList
-                  data={item.medias}
-                  renderItem={renderItem}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={
-                    {
-                      // paddingLeft: '12%'
-                    }
-                  }
-                />
-              </View>
-              {/* hien thi thoe doi */}
-              <View style={styles.contain_action}>
-                {item.idUser !== user.id ? (
-                  item.following ? (
-                    <TouchableOpacity
-                      onPress={() => unFollow(item)}
-                      style={styles.btn_follow}
-                      activeOpacity={0.3}>
-                      <Text
-                        style={{
-                          fontSize: 18,
-                          fontWeight: '600',
-                          color: colors.info,
-                        }}>
-                        following
-                      </Text>
-                    </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity
-                      onPress={() => following(item)}
-                      style={styles.btn_follow}
-                      activeOpacity={0.3}>
-                      <Text
-                        style={{
-                          fontSize: 18,
-                          fontWeight: '600',
-                          color: colors.info,
-                        }}>
-                        follow
-                      </Text>
-                    </TouchableOpacity>
-                  )
-                ) : (
-                  <TouchableOpacity
-                    onPress={() => pickPostEdit(item)}
-                    style={styles.btn_follow}
-                    activeOpacity={0.3}>
-                    <Text
-                      style={{
-                        fontSize: 18,
-                        fontWeight: '600',
-                        color: colors.info,
-                      }}>
-                      Cập nhật
-                    </Text>
-                  </TouchableOpacity>
-                )}
-
-                <TouchableOpacity
-                  onPress={() => popup(item.idPost)}
-                  activeOpacity={0.3}
-                  style={styles.btn_cmt}>
-                  <Text
-                    style={{
-                      fontSize: 18,
-                      fontWeight: '600',
-                      color: colors.info,
-                    }}>
-                    Comment
-                  </Text>
-                </TouchableOpacity>
-
-                <View style={styles.btn_like}>
-                  <Text
-                    style={{
-                      fontSize: 18,
-                      fontWeight: '600',
-                      color: colors.danger,
-                    }}>
-                    {item.likes}
-                  </Text>
-
-                  {item.liked ? (
-                    <TouchableOpacity
-                      onPress={() => disLikePost(item.idPost)}
-                      activeOpacity={0.3}>
-                      <Image
-                        style={{ width: 35, height: 35, tintColor: colors.gold }}
-                        source={{ uri: icons.like }}
-                      />
-                    </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity
-                      onPress={() => likePost(item.idPost)}
-                      activeOpacity={0.3}>
-                      <Image
-                        style={{ width: 35, height: 35, tintColor: colors.black }}
-                        source={{ uri: icons.like }}
-                      />
-                    </TouchableOpacity>
-                  )}
-                </View>
-              </View>
-            </View>
-          </View>
-        )}
-        ListHeaderComponent={
-          <>
-            <View style={styles.contai_head}>
-              <View>
-                <Text style={styles.logo}>Helianthus</Text>
-              </View>
-
-              <View style={styles.message}>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('Message')}>
-                  <Image
-                    style={{ width: 30, height: 30, tintColor: colors.dark }}
-                    source={{ uri: icons.mess_icon }}
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </>
-        }
-        contentContainerStyle={{
-          flexGrow: 1,
-          alignItems: 'center',
-          width: '100%',
-          paddingBottom: 90,
-        }}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-      />
       <Toast config={toastConfigExport} />
     </SafeAreaView>
   );
