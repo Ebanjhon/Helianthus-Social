@@ -1,10 +1,12 @@
 import React from 'react';
 import Svg, {Path} from 'react-native-svg';
 import {IconProps} from './type';
+
 const IconOption: React.FC<IconProps> = ({
   width = 48,
   height = 48,
   fill = '#F6AF04',
+  style,
 }) => (
   <Svg
     width={width}

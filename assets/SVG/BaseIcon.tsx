@@ -1,7 +1,13 @@
 import React from 'react';
 import {Svg, Path} from 'react-native-svg';
+import {IconProps} from './type';
 
-const BaseIcon = ({width = 24, height = 24, fill = 'black', style}) => (
+const BaseIcon: React.FC<IconProps> = ({
+  width = 48,
+  height = 48,
+  fill = '#F6AF04',
+  style,
+}) => (
   <Svg
     width={width}
     height={height}

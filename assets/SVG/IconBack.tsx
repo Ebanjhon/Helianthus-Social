@@ -1,8 +1,19 @@
 import React from 'react';
 import {Svg, Path} from 'react-native-svg';
+import {IconProps} from './type';
 
-const IconBack = ({width = 24, height = 24, fill = 'black'}) => (
-  <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
+const IconBack: React.FC<IconProps> = ({
+  width = 48,
+  height = 48,
+  fill = '#F6AF04',
+  style,
+}) => (
+  <Svg
+    width={width}
+    height={height}
+    viewBox="0 0 24 24"
+    fill="none"
+    style={style}>
     <Path
       fillRule="evenodd"
       clipRule="evenodd"
