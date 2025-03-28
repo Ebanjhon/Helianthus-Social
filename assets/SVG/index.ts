@@ -5,3 +5,5 @@ export {default as IconSave} from './IconSave';
 export {default as IconSend} from './IconSend';
 export {default as IconOption} from './IconOption';
 export {default as IconFillOption} from './IconFillOption';
+export {default as IconPause} from './IconPause';
+export {default as IconPlay} from './IconPlay';

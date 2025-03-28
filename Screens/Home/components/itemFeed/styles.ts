@@ -5,16 +5,16 @@ export const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.trang,
     flexDirection: 'row',
-    maxHeight: 480,
+    height: 480,
     marginBottom: 9,
   },
   viewMedia: {
-    flexGrow: 1,
     minHeight: 130,
     backgroundColor: colors.dark,
     borderRadius: 20,
     marginVertical: 10,
     marginLeft: 16,
+    overflow: 'hidden',
   },
 
   infoFeed: {
@@ -84,7 +84,7 @@ export const styles = StyleSheet.create({
     zIndex: 1,
     top: 60,
     paddingHorizontal: 10,
-    maxHeight: 300,
+    maxHeight: 390,
     borderRadius: 10,
     marginHorizontal: 10,
     marginTop: 5,

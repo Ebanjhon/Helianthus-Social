@@ -3,12 +3,12 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  Pressable,
   Animated,
+  Dimensions,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {styles} from './styles';
-import {AppImage} from '../../../../Components';
+import {AppImage, AppMedia} from '../../../../Components';
 import {
   CommentIcon,
   HeartEmpty,
@@ -19,11 +19,12 @@ import {
 } from '../../../../assets/SVG';
 import {BlurView} from '@react-native-community/blur';
 import colors from '../../../../assets/color/colors';
+import dataResource from './data';
 
 type ItemFeedProps = {
   data: any;
 };
-
+const screenWidth = Dimensions.get('window').width;
 const dataText =
   "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc. of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of  (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, comes from a line in section 1.10.32.";
 
@@ -45,15 +46,11 @@ const ItemFeed: React.FC<ItemFeedProps> = ({data}) => {
 
   return (
     <View style={styles.container}>
-      <Pressable
-        style={styles.viewMedia}
-        onPress={() => {
-          setIsHideInfo(prev => !prev);
-        }}>
+      <View style={styles.viewMedia}>
         <Animated.View
           style={[
             styles.ScrollText,
-            {backgroundColor: expanded ? '#000000B3' : 'transparent'},
+            {backgroundColor: expanded ? '#000000E6' : 'transparent'},
             {opacity: fadeAnim},
           ]}>
           <ScrollView nestedScrollEnabled={true}>
@@ -65,7 +62,7 @@ const ItemFeed: React.FC<ItemFeedProps> = ({data}) => {
                   setIsOverflow(true);
                 }
               }}
-              style={{fontSize: 13, color: '#fff'}}>
+              style={{fontSize: 15, color: '#fff'}}>
               {dataText}
             </Text>
           </ScrollView>
@@ -75,7 +72,7 @@ const ItemFeed: React.FC<ItemFeedProps> = ({data}) => {
                 setExpanded(pre => !pre);
               }}>
               <Text style={{color: colors.gold2}}>
-                {!expanded ? 'Xem tiếp' : 'Ẩn bớt'}
+                {!expanded ? 'Xem thêm' : 'Ẩn bớt'}
               </Text>
             </TouchableOpacity>
           )}
@@ -85,7 +82,7 @@ const ItemFeed: React.FC<ItemFeedProps> = ({data}) => {
           {!isHideInfo && (
             <BlurView
               blurRadius={10}
-              blurType="light"
+              blurType="dark"
               style={{
                 position: 'absolute',
                 width: '100%',
@@ -93,7 +90,6 @@ const ItemFeed: React.FC<ItemFeedProps> = ({data}) => {
               }}
             />
           )}
-
           <AppImage
             style={styles.avatarImage}
             imageStyle={[styles.image, {borderWidth: isHideInfo ? 2 : 0}]}
@@ -119,17 +115,13 @@ const ItemFeed: React.FC<ItemFeedProps> = ({data}) => {
             </Animated.Text>
           </Animated.View>
         </View>
-
-        {/* thay thế bằng appMedia */}
-        <AppImage
-          imageStyle={{borderRadius: 20}}
-          uri={
-            'https://i.pinimg.com/736x/5d/0d/a0/5d0da0ce29f9f384dcc8acc7a53904d7.jpg'
-          }
-          width={'100%'}
-          height={400}
+        <AppMedia
+          resource={dataResource}
+          onPress={() => {
+            setIsHideInfo(prev => !prev);
+          }}
         />
-      </Pressable>
+      </View>
       <View style={styles.viewAction}>
         <TouchableOpacity style={{marginBottom: 10}}>
           <IconFillOption width={38} height={38} />

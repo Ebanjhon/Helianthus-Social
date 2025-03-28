@@ -23,6 +23,7 @@ import {
   LogBox,
   Alert,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import colors from '../../assets/color/colors';
 import icons from '../../assets/iconApp/icons';
@@ -658,45 +659,15 @@ const Home = forwardRef(({navigation}, ref) => {
     setTextReport('');
   };
 
-  // một số nội dung báo cáo
-  const reportContent = [
-    'Bài viết chứa nội dung không phù hợp',
-    'Bài viết đăng tải hình ảnh không phù hợp',
-    'Tin giả',
-    'Bài viết chứa nội dung nhảy cảm',
-    'Bài viết mang tính bạo lực, thù ghét',
-    'Tôi không muốn xem nội dung này',
-    'Nội dung quấy rối hoặc lăng mạ',
-  ];
-
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        nestedScrollEnabled={true}
         ref={flatListRef}
         data={[1, 2]}
         style={{flex: 1}}
+        nestedScrollEnabled={true}
+        keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
-        renderItem={({item}) => <ItemFeed data={item} />}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={[colors.primary]}
-          />
-        }
-        onEndReached={loadMorePosts}
-        onEndReachedThreshold={0.5} // Tỉ lệ danh sách còn lại trước khi gọi hàm (0.5 = 50%)
-        ListFooterComponent={
-          <View style={{padding: 10}}>
-            {/* {loading ? (
-                            <ActivityIndicator size="small" />
-                        ) : (
-                            !hasMoreData && <Text style={{ textAlign: 'center' }}>Đã tải hết dữ liệu</Text>
-                        )} */}
-          </View>
-        }
-        keyExtractor={(item, index) => index.toString()}
         ListHeaderComponent={
           <>
             <View style={styles.contai_head}>
@@ -716,6 +687,30 @@ const Home = forwardRef(({navigation}, ref) => {
             <ListItemAddFriend data={'hello'} />
           </>
         }
+        renderItem={({item}) => <ItemFeed data={item} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[colors.primary]}
+          />
+        }
+        onEndReached={loadMorePosts}
+        onEndReachedThreshold={0.9}
+        ListFooterComponent={
+          <>
+            {!loading ? (
+              <ActivityIndicator size="small" />
+            ) : (
+              true && (
+                <Text style={{textAlign: 'center', color: colors.black}}>
+                  Đã tải hết dữ liệu
+                </Text>
+              )
+            )}
+          </>
+        }
+        keyExtractor={(item, index) => index.toString()}
         onScroll={handleScroll}
         scrollEventThrottle={16}
       />
@@ -764,19 +759,6 @@ const Home = forwardRef(({navigation}, ref) => {
                   }}>
                   Lựa chọn nội dung
                 </Text>
-                <View style={{width: '100%', padding: 10}}>
-                  <FlatList
-                    data={reportContent}
-                    renderItem={(
-                      {item}, // Render trực tiếp bên trong FlatList
-                    ) => (
-                      <TouchableOpacity onPress={() => setTextReport(item)}>
-                        <Text style={styles.item_report}>{item}</Text>
-                      </TouchableOpacity>
-                    )}
-                    keyExtractor={(item, index) => index.toString()} // Khóa duy nhất cho mỗi item
-                  />
-                </View>
               </View>
             </KeyboardAvoidingView>
           </View>
