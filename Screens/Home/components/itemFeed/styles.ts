@@ -54,7 +54,7 @@ export const styles = StyleSheet.create({
     color: colors.xamtrang,
   },
   viewAction: {
-    width: 40,
+    width: 44,
     alignItems: 'center',
     paddingTop: 15,
   },

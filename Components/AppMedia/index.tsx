@@ -10,7 +10,6 @@ type media = {
   height: number;
   typeMedia: 'IMAGE' | 'VIDEO';
 };
-
 interface AppMediaProps {
   resource: media[];
   onPress?: () => void;
@@ -19,12 +18,10 @@ const screenWidth = Dimensions.get('window').width - 60;
 const AppMedia: React.FC<AppMediaProps> = ({resource, onPress}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Cấu hình hiển thị item
   const viewabilityConfig = useRef({
-    viewAreaCoveragePercentThreshold: 50, // Ít nhất 50% phải hiển thị
+    viewAreaCoveragePercentThreshold: 50,
   });
 
-  // Hàm cập nhật trạng thái item hiển thị
   const onViewableItemsChanged = useRef(({viewableItems}) => {
     if (viewableItems.length > 0) {
       setCurrentIndex(viewableItems[0].index || 0);

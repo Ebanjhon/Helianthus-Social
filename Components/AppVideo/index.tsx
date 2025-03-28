@@ -71,19 +71,21 @@ const AppVideo: React.FC<AppVideoProps> = ({
           </Animated.View>
         )}
       </TouchableOpacity>
+      {/* <Animated.View style={{opacity: AniPause}}> */}
       <Slider
         style={[styles.line, {width: width}]}
         value={currentTime}
         maximumValue={duration}
         minimumValue={0}
         thumbTintColor={colors.gold2}
-        minimumTrackTintColor={colors.black}
+        minimumTrackTintColor={colors.milk}
         maximumTrackTintColor={colors.gray}
         onSlidingComplete={value => {
           videoRef.current.seek(value);
           setCurrentTime(value);
         }}
       />
+      {/* </Animated.View> */}
     </View>
   );
 };
