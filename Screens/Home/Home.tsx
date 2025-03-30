@@ -28,22 +28,21 @@ import {
 import colors from '../../assets/color/colors';
 import icons from '../../assets/iconApp/icons';
 import styles from './HomeStyle';
-import {useTabBar} from '../../Configs/TabBarContext';
-import {authApi, endpoints} from '../../Configs/APIs';
-import {BlurView} from '@react-native-community/blur';
-import {useRoute} from '@react-navigation/native';
-import {showToast, toastConfigExport} from '../../Configs/ToastConfig';
+import { useTabBar } from '../../Configs/TabBarContext';
+import { authApi, endpoints } from '../../Configs/APIs';
+import { BlurView } from '@react-native-community/blur';
+import { useRoute } from '@react-navigation/native';
+import { showToast, toastConfigExport } from '../../Configs/ToastConfig';
 import Toast from 'react-native-toast-message';
-import {UserContext} from '../../Configs/UserReducer';
-import {ItemFeed, ListItemAddFriend, ModalComment} from './components';
+import { UserContext } from '../../Configs/UserReducer';
+import { ItemFeed, ListItemAddFriend, ModalComment } from './components';
+import { ModalCommentRef } from './components/modalComment';
 
-LogBox.ignoreLogs(['Function components cannot be given refs']);
-
-const Home = forwardRef(({navigation}, ref) => {
-  const {user, dispatch: userDispatch} = useContext(UserContext);
+const Home = forwardRef(({ navigation }, ref) => {
+  const { user, dispatch: userDispatch } = useContext(UserContext);
   const flatListRef = useRef(null);
   const [refreshing, setRefreshing] = useState(false);
-  const {state, dispatch} = useTabBar();
+  const { state, dispatch } = useTabBar();
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -129,15 +128,15 @@ const Home = forwardRef(({navigation}, ref) => {
   );
 
   const hideTabBar = () => {
-    dispatch({type: 'HIDE_TAB_BAR'});
+    dispatch({ type: 'HIDE_TAB_BAR' });
   };
 
   const showTabBar = () => {
-    dispatch({type: 'SHOW_TAB_BAR'});
+    dispatch({ type: 'SHOW_TAB_BAR' });
   };
 
-  const renderItem = ({item}) => (
-    <Image source={{uri: item.mediaUrl}} style={styles.image} />
+  const renderItem = ({ item }) => (
+    <Image source={{ uri: item.mediaUrl }} style={styles.image} />
   );
 
   const route = useRoute();
@@ -210,9 +209,8 @@ const Home = forwardRef(({navigation}, ref) => {
     const year = date.getFullYear();
 
     // Định dạng thành chuỗi như mong muốn "phút:giờ yyyy-mm-dd"
-    const formattedDate = `${hours}:${minutes} ${year}-${
-      month < 10 ? '0' : ''
-    }${month}-${day < 10 ? '0' : ''}${day}`;
+    const formattedDate = `${hours}:${minutes} ${year}-${month < 10 ? '0' : ''
+      }${month}-${day < 10 ? '0' : ''}${day}`;
 
     return formattedDate;
   };
@@ -342,7 +340,7 @@ const Home = forwardRef(({navigation}, ref) => {
   const handleFollowPost = (idUser, followStatus) => {
     setPosts(prevPosts =>
       prevPosts.map(post =>
-        post.idUser === idUser ? {...post, following: followStatus} : post,
+        post.idUser === idUser ? { ...post, following: followStatus } : post,
       ),
     );
   };
@@ -377,7 +375,7 @@ const Home = forwardRef(({navigation}, ref) => {
     // console.log(item.commentChild);
   };
 
-  useEffect(() => {}, [idCommentParent]);
+  useEffect(() => { }, [idCommentParent]);
 
   // hàm thích bài viết
   const likePost = async postId => {
@@ -415,17 +413,17 @@ const Home = forwardRef(({navigation}, ref) => {
       prevPosts.map(
         post =>
           post.idPost === idPost
-            ? {...post, likes: newLikes, liked: likedStatus} // Cập nhật likes và liked cho post tương ứng
+            ? { ...post, likes: newLikes, liked: likedStatus } // Cập nhật likes và liked cho post tương ứng
             : post, // Giữ nguyên các post khác
       ),
     );
   };
 
   // xuất comments
-  const renderComment = ({item}) => (
-    <View style={{width: '100%', minHeight: 70, flexDirection: 'row'}}>
+  const renderComment = ({ item }) => (
+    <View style={{ width: '100%', minHeight: 70, flexDirection: 'row' }}>
       <Image
-        style={{width: 40, height: 40, borderRadius: 50, margin: 5}}
+        style={{ width: 40, height: 40, borderRadius: 50, margin: 5 }}
         source={{
           uri:
             item.avatar === ''
@@ -439,18 +437,18 @@ const Home = forwardRef(({navigation}, ref) => {
           paddingRight: 9,
           width: Dimensions.get('window').width * 0.95 - 50,
         }}>
-        <View style={{paddingRight: 9}}>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <View style={{ paddingRight: 9 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text
-              style={{fontSize: 15, fontWeight: '600', color: colors.black}}>
+              style={{ fontSize: 15, fontWeight: '600', color: colors.black }}>
               {item.firstname} {item.lastname}
             </Text>
-            <Text style={{fontSize: 14, fontWeight: '400', marginLeft: 10}}>
+            <Text style={{ fontSize: 14, fontWeight: '400', marginLeft: 10 }}>
               {convertDateTime(item.commentDate)}
             </Text>
           </View>
         </View>
-        <Text style={{minHeight: 20, fontSize: 16}}>{item.comment}</Text>
+        <Text style={{ minHeight: 20, fontSize: 16 }}>{item.comment}</Text>
         <View
           style={{
             width: '100%',
@@ -460,7 +458,7 @@ const Home = forwardRef(({navigation}, ref) => {
             justifyContent: 'flex-start',
           }}>
           <TouchableOpacity onPress={() => reply(item)}>
-            <Text style={{fontSize: 17, fontWeight: '500', color: colors.info}}>
+            <Text style={{ fontSize: 17, fontWeight: '500', color: colors.info }}>
               Trả lời
             </Text>
           </TouchableOpacity>
@@ -485,10 +483,10 @@ const Home = forwardRef(({navigation}, ref) => {
           keyExtractor={child => child.idComment.toString()}
           nestedScrollEnabled={true}
           scrollEnabled={false}
-          renderItem={({item: child}) => (
-            <View style={{width: 'auto', minHeight: 70, flexDirection: 'row'}}>
+          renderItem={({ item: child }) => (
+            <View style={{ width: 'auto', minHeight: 70, flexDirection: 'row' }}>
               <Image
-                style={{width: 40, height: 40, borderRadius: 50, margin: 5}}
+                style={{ width: 40, height: 40, borderRadius: 50, margin: 5 }}
                 source={{
                   uri:
                     child.avatar === ''
@@ -502,7 +500,7 @@ const Home = forwardRef(({navigation}, ref) => {
                   paddingRight: 9,
                   width: Dimensions.get('window').width * 0.8 - 50,
                 }}>
-                <View style={{paddingRight: 9}}>
+                <View style={{ paddingRight: 9 }}>
                   <View
                     style={{
                       flexDirection: 'row',
@@ -517,12 +515,12 @@ const Home = forwardRef(({navigation}, ref) => {
                       {child.firstname} {child.lastname}
                     </Text>
                     <Text
-                      style={{fontSize: 14, fontWeight: '400', marginLeft: 10}}>
+                      style={{ fontSize: 14, fontWeight: '400', marginLeft: 10 }}>
                       {convertDateTime(child.commentDate)}
                     </Text>
                   </View>
                 </View>
-                <Text style={{minHeight: 20, fontSize: 16}}>
+                <Text style={{ minHeight: 20, fontSize: 16 }}>
                   {child.comment}
                 </Text>
                 <View
@@ -659,11 +657,10 @@ const Home = forwardRef(({navigation}, ref) => {
     setIdReport(null);
     setTextReport('');
   };
-
-  useEffect(() => {}, []);
-
+  // new
+  const modalRef = useRef<ModalCommentRef>(null);
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <FlatList
         ref={flatListRef}
         data={[1, 2]}
@@ -680,8 +677,8 @@ const Home = forwardRef(({navigation}, ref) => {
                 <TouchableOpacity
                   onPress={() => navigation.navigate('Message')}>
                   <Image
-                    style={{width: 30, height: 30, tintColor: colors.dark}}
-                    source={{uri: icons.mess_icon}}
+                    style={{ width: 30, height: 30, tintColor: colors.dark }}
+                    source={{ uri: icons.mess_icon }}
                   />
                 </TouchableOpacity>
               </View>
@@ -689,13 +686,13 @@ const Home = forwardRef(({navigation}, ref) => {
             <ListItemAddFriend />
           </>
         }
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <ItemFeed
             data={item}
             onShowModalComment={() => {
-              setIsModalVisible(true);
+              modalRef.current?.onShowModalComment();
             }}
-            onShowAction={() => {}}
+            onShowAction={() => { }}
           />
         )}
         refreshControl={
@@ -713,7 +710,7 @@ const Home = forwardRef(({navigation}, ref) => {
               <ActivityIndicator size="small" />
             ) : (
               true && (
-                <Text style={{textAlign: 'center', color: colors.black}}>
+                <Text style={{ textAlign: 'center', color: colors.black }}>
                   Đã tải hết dữ liệu
                 </Text>
               )
@@ -724,8 +721,7 @@ const Home = forwardRef(({navigation}, ref) => {
         onScroll={handleScroll}
         scrollEventThrottle={16}
       />
-      <ModalComment isShowModal={isModalVisible} />
-
+      <ModalComment ref={modalRef} />
       {/* <Toast config={toastConfigExport} /> */}
     </View>
   );

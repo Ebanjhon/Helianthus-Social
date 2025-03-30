@@ -6,9 +6,9 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
-import {styles} from './styles';
-import {AppImage, AppMedia} from '../../../../Components';
+import React, { useEffect, useRef, useState } from 'react';
+import { styles } from './styles';
+import { AppImage, AppMedia } from '../../../../Components';
 import {
   CommentIcon,
   HeartEmpty,
@@ -17,11 +17,11 @@ import {
   IconSave,
   IconSend,
 } from '../../../../assets/SVG';
-import {BlurView} from '@react-native-community/blur';
+import { BlurView } from '@react-native-community/blur';
 import colors from '../../../../assets/color/colors';
 import dataResource from './data';
 
-type ItemFeedProps = {
+interface ItemFeedProps {
   data: any;
   onShowModalComment: () => void;
   onShowAction: () => void;
@@ -55,8 +55,8 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
         <Animated.View
           style={[
             styles.ScrollText,
-            {backgroundColor: expanded ? '#000000E6' : 'transparent'},
-            {opacity: fadeAnim},
+            { backgroundColor: expanded ? '#000000E6' : 'transparent' },
+            { opacity: fadeAnim },
           ]}>
           <ScrollView nestedScrollEnabled={true}>
             <Text
@@ -67,7 +67,7 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
                   setIsOverflow(true);
                 }
               }}
-              style={{fontSize: 15, color: '#fff'}}>
+              style={{ fontSize: 15, color: '#fff' }}>
               {dataText}
             </Text>
           </ScrollView>
@@ -76,7 +76,7 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
               onPress={() => {
                 setExpanded(pre => !pre);
               }}>
-              <Text style={{color: colors.gold2}}>
+              <Text style={{ color: colors.gold2 }}>
                 {!expanded ? 'Xem thêm' : 'Ẩn bớt'}
               </Text>
             </TouchableOpacity>
@@ -97,12 +97,12 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
           )}
           <AppImage
             style={styles.avatarImage}
-            imageStyle={[styles.image, {borderWidth: isHideInfo ? 2 : 0}]}
+            imageStyle={[styles.image, { borderWidth: isHideInfo ? 2 : 0 }]}
             uri="https://i.pinimg.com/736x/50/45/21/504521463b0b781a51d1d14222a3d5d6.jpg"
             width={45}
           />
-          <Animated.View style={[{marginLeft: 5}, {opacity: fadeAnim}]}>
-            <View style={{flexDirection: 'row', gap: 10}}>
+          <Animated.View style={[{ marginLeft: 5 }, { opacity: fadeAnim }]}>
+            <View style={{ flexDirection: 'row', gap: 10 }}>
               <Text style={styles.textUsername}>Eban Jhon Y</Text>
               <TouchableOpacity
                 style={{
@@ -115,7 +115,7 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
                 </Text>
               </TouchableOpacity>
             </View>
-            <Animated.Text style={[styles.textTime, {opacity: fadeAnim}]}>
+            <Animated.Text style={[styles.textTime, { opacity: fadeAnim }]}>
               Yesterday
             </Animated.Text>
           </Animated.View>
@@ -128,11 +128,11 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
         />
       </View>
       <View style={styles.viewAction}>
-        <TouchableOpacity style={{marginBottom: 10}}>
+        <TouchableOpacity style={{ marginBottom: 10 }}>
           <IconFillOption width={38} height={38} />
         </TouchableOpacity>
         <TouchableOpacity
-          style={{marginBottom: 5}}
+          style={{ marginBottom: 5 }}
           onPress={() => {
             setIsLikeFeed(pre => !pre);
           }}>
@@ -152,11 +152,11 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
         </TouchableOpacity>
         <Text>33</Text>
 
-        <TouchableOpacity style={{marginVertical: 5}}>
+        <TouchableOpacity style={{ marginVertical: 5 }}>
           <IconSend width={32} height={32} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={{marginVertical: 5}}>
+        <TouchableOpacity style={{ marginVertical: 5 }}>
           <IconSave width={30} height={30} />
         </TouchableOpacity>
       </View>

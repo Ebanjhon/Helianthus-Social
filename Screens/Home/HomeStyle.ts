@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 import colors from '../../assets/color/colors';
 
 const styles = StyleSheet.create({
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     //ios
     shadowColor: '#000', // Màu bóng
-    shadowOffset: {width: 0, height: 2}, // Độ lệch của bóng (chiều ngang, chiều dọc)
+    shadowOffset: { width: 0, height: 2 }, // Độ lệch của bóng (chiều ngang, chiều dọc)
     shadowOpacity: 0.25, // Độ mờ của bóng
     shadowRadius: 3.84, // Bán kính của shadow
   },
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     // Shadow for iOS
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.4,
     shadowRadius: 2,
     // Shadow for Android
