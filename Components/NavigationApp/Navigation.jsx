@@ -1,11 +1,11 @@
-import React, {forwardRef, useEffect, useReducer, useRef} from 'react';
+import React, { forwardRef, useEffect, useReducer, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Image, PermissionsAndroid, TouchableOpacity, View} from 'react-native';
+import { Image, PermissionsAndroid, TouchableOpacity, View } from 'react-native';
 import IntroApp from '../../Screens/Intro/IntroApp';
-import {Provider} from 'react-redux';
+import { Provider } from 'react-redux';
 import colors from '../../assets/color/colors';
-import UserReducer, {UserContext} from '../../Configs/UserReducer';
-import {TabBarProvider, useTabBar} from '../../Configs/TabBarContext';
+import UserReducer, { UserContext } from '../../Configs/UserReducer';
+import { TabBarProvider, useTabBar } from '../../Configs/TabBarContext';
 import {
   NavigationContainer,
   useNavigation,
@@ -22,24 +22,24 @@ import Search from '../../Screens/Search/Search';
 import Notification from '../../Screens/Notification/Notification';
 import UserSeting from '../../Screens/ProfileUser/UserSetting';
 import Logout from '../../Screens/Logout/Logout';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import icons from '../../assets/iconApp/icons';
-import ProfileUser from '../../Screens/ProfileUser/ProfileUser';
 import Post from '../../Screens/Post/Post';
 import UpdateProfile from '../../Screens/ProfileUser/UpdateProfile';
 import Message from '../../Screens/Message/Message';
 import Chat from '../../Screens/Message/Chat';
 import Toast from 'react-native-toast-message';
-import notifee, {AndroidImportance} from '@notifee/react-native';
+import notifee, { AndroidImportance } from '@notifee/react-native';
 import ActiveAccount from '../../Screens/OTP/ActiveAccount';
-import {store} from '../../RTKQuery/Stores/store';
-import {styles} from './style';
+import { store } from '../../RTKQuery/Stores/store';
+import { styles } from './style';
+import ProfileUser from '../../Screens/ProfileUser';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const HomeTabs = forwardRef(() => {
-  const {state} = useTabBar();
+  const { state } = useTabBar();
   const navigation = useNavigation();
   const route = useRoute();
 
@@ -56,7 +56,7 @@ const HomeTabs = forwardRef(() => {
     };
   }, [navigation, route.name]);
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
@@ -70,13 +70,13 @@ const HomeTabs = forwardRef(() => {
           name="Home"
           component={Home}
           options={{
-            tabBarIcon: ({focused}) => (
+            tabBarIcon: ({ focused }) => (
               <View style={styles.tabBarIconText}>
                 <Image
                   source={icons.home_full}
                   resizeMode="contain"
                   style={[
-                    {tintColor: focused ? colors.gold : colors.secondary},
+                    { tintColor: focused ? colors.gold : colors.secondary },
                     styles.icon,
                   ]}
                 />
@@ -88,13 +88,13 @@ const HomeTabs = forwardRef(() => {
           name="Search"
           component={Search}
           options={{
-            tabBarIcon: ({focused}) => (
+            tabBarIcon: ({ focused }) => (
               <View style={styles.tabBarIconText}>
                 <Image
                   source={icons.search}
                   resizeMode="contain"
                   style={[
-                    {tintColor: focused ? colors.gold : colors.secondary},
+                    { tintColor: focused ? colors.gold : colors.secondary },
                     styles.icon,
                   ]}
                 />
@@ -106,8 +106,8 @@ const HomeTabs = forwardRef(() => {
           name="Post"
           component={Post}
           options={{
-            tabBarStyle: {display: 'none'},
-            tabBarIcon: ({focused}) => (
+            tabBarStyle: { display: 'none' },
+            tabBarIcon: ({ focused }) => (
               <View style={styles.tabBarIconText}>
                 <Image
                   source={icons.add}
@@ -126,13 +126,13 @@ const HomeTabs = forwardRef(() => {
           name="Notification"
           component={Notification}
           options={{
-            tabBarIcon: ({focused}) => (
+            tabBarIcon: ({ focused }) => (
               <View style={styles.tabBarIconText}>
                 <Image
                   source={icons.notifi}
                   resizeMode="contain"
                   style={[
-                    {tintColor: focused ? colors.gold : colors.secondary},
+                    { tintColor: focused ? colors.gold : colors.secondary },
                     styles.icon,
                   ]}
                 />
@@ -142,15 +142,16 @@ const HomeTabs = forwardRef(() => {
         />
         <Tab.Screen
           name="Profile"
-          component={UserProfile}
+          component={ProfileUser}
           options={{
-            tabBarIcon: ({focused}) => (
+            headerShown: false,
+            tabBarIcon: ({ focused }) => (
               <View style={styles.tabBarIconText}>
                 <Image
                   source={icons.profile}
                   resizeMode="contain"
                   style={[
-                    {tintColor: focused ? colors.gold : colors.secondary},
+                    { tintColor: focused ? colors.gold : colors.secondary },
                     styles.icon,
                   ]}
                 />
@@ -163,42 +164,6 @@ const HomeTabs = forwardRef(() => {
   );
 });
 
-function UserProfile() {
-  const navigation = useNavigation();
-  return (
-    <Stack.Navigator initialRouteName="ProfileDetail">
-      <Stack.Screen
-        name="ProfileDetail"
-        component={ProfileUser}
-        options={{
-          headerStyle: {
-            height: 50,
-          },
-          title: 'Trang cá nhân',
-          headerTitleAlign: 'center',
-          headerTitleStyle: styles.title_top_screen,
-          headerRight: () => (
-            <View
-              style={{
-                height: '100%',
-                width: 50,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <TouchableOpacity onPress={() => navigation.navigate('Setting')}>
-                <Image
-                  style={{width: 40, height: 40, tintColor: colors.black}}
-                  source={{uri: icons.menu}}
-                />
-              </TouchableOpacity>
-            </View>
-          ),
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
-
 const Navigation = () => {
   const [user, dispatch] = useReducer(UserReducer, null);
   const loadUserData = async () => {
@@ -210,7 +175,7 @@ const Navigation = () => {
           payload: JSON.parse(userData),
         });
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   useEffect(() => {
@@ -291,7 +256,7 @@ const Navigation = () => {
     <>
       <Provider store={store}>
         <NavigationContainer independent={true}>
-          <UserContext.Provider value={{user, dispatch}}>
+          <UserContext.Provider value={{ user, dispatch }}>
             <TabBarProvider>
               <Stack.Navigator
                 initialRouteName="HomeTabs"

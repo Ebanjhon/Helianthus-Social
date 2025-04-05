@@ -1,15 +1,17 @@
 import React from 'react';
-import {Text, TouchableOpacity, View} from 'react-native';
+import { StyleProp, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import styles from './Style';
 import IconBack from '../../assets/SVG/IconBack';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import IconMenu from '../../assets/SVG/IconMenu';
 
 export type HeaderAppProps = {
-  title: string;
+  title?: string;
   isShowleftAction: boolean;
   isShowrightAction: boolean;
+  isButtonHead?: boolean;
   bgColor?: string;
+  style?: StyleProp<ViewStyle>;
 };
 
 const HeaderApp: React.FC<HeaderAppProps> = ({
@@ -17,22 +19,24 @@ const HeaderApp: React.FC<HeaderAppProps> = ({
   isShowleftAction = true,
   isShowrightAction = false,
   bgColor,
+  style,
+  isButtonHead = false,
 }) => {
   const Navigation = useNavigation();
   return (
-    <View style={[styles.Container, {backgroundColor: bgColor}]}>
+    <View style={[styles.Container, { backgroundColor: bgColor }, style]}>
       {isShowleftAction ? (
         <TouchableOpacity
           onPress={Navigation.goBack}
-          style={[styles.itemHeader]}>
+          style={[styles.itemHeader, isButtonHead && styles.btnAction]}>
           <IconBack height={40} width={40} />
         </TouchableOpacity>
       ) : (
         <View style={styles.itemHeader} />
       )}
-      <Text style={{fontSize: 19, fontWeight: '600'}}>{title}</Text>
+      <Text style={{ fontSize: 19, fontWeight: '600' }}>{title}</Text>
       {isShowrightAction ? (
-        <TouchableOpacity style={[styles.itemHeader, {}]}>
+        <TouchableOpacity style={[styles.itemHeader, isButtonHead && styles.btnAction]}>
           <IconMenu height={40} width={40} />
         </TouchableOpacity>
       ) : (
