@@ -19,6 +19,8 @@ const MyMediaMasonry = forwardRef((props: myMediaProps, ref) => {
         <FlatList
             ref={flatListRef}
             nestedScrollEnabled
+            contentContainerStyle={styles.contentItem}
+            showsHorizontalScrollIndicator={false}
             style={styles.container}
             scrollEnabled={props.isEnabledScroll}
             data={data}

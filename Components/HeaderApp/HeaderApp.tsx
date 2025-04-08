@@ -12,6 +12,7 @@ export type HeaderAppProps = {
   isButtonHead?: boolean;
   bgColor?: string;
   style?: StyleProp<ViewStyle>;
+  onPrees?: () => void;
 };
 
 const HeaderApp: React.FC<HeaderAppProps> = ({
@@ -21,6 +22,7 @@ const HeaderApp: React.FC<HeaderAppProps> = ({
   bgColor,
   style,
   isButtonHead = false,
+  onPrees,
 }) => {
   const Navigation = useNavigation();
   return (
@@ -36,7 +38,9 @@ const HeaderApp: React.FC<HeaderAppProps> = ({
       )}
       <Text style={{ fontSize: 19, fontWeight: '600' }}>{title}</Text>
       {isShowrightAction ? (
-        <TouchableOpacity style={[styles.itemHeader, isButtonHead && styles.btnAction]}>
+        <TouchableOpacity style={[styles.itemHeader, isButtonHead && styles.btnAction]}
+          onPress={onPrees}
+        >
           <IconMenu height={40} width={40} />
         </TouchableOpacity>
       ) : (

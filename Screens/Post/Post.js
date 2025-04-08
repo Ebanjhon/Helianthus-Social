@@ -1,31 +1,17 @@
-import { Button, FlatList, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import styles from "./PostStyle";
 import SlideUpView from "./SlideUp";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import colors from "../../assets/color/colors";
 import icons from '../../assets/iconApp/icons';
 import ImagePicker from 'react-native-image-crop-picker';
 import { authApi, endpoints } from "../../Configs/APIs";
 import Toast from 'react-native-toast-message';
 import { showToast, toastConfigExport } from '../../Configs/ToastConfig';
-import PhotoManipulator from 'react-native-photo-manipulator';
 import Slider from '@react-native-community/slider';  // Import Slider
-import ViewShot, { captureRef } from 'react-native-view-shot';
+import ViewShot from 'react-native-view-shot';
 import {
-    Grayscale,
-    Sepia,
-    Tint,
     ColorMatrix,
-    concatColorMatrices,
-    invert,
-    contrast,
-    saturate,
-    Saturate,
-    Brightness,
-    Contrast,
-    Invert,
-    HueRotate,
-    brightness
 } from 'react-native-color-matrix-image-filters';
 import filter from "../../assets/color/filter";
 import { UserContext } from "../../Configs/UserReducer";
@@ -47,7 +33,6 @@ const Post = ({ navigation }) => {
     }));
 
     const [filterImage, setFilterImage] = useState(filter.normal);
-
     // lấy ảnh sau khi sửa
     const captureImage = () => {
         viewShotRef.current.capture().then(uri => {

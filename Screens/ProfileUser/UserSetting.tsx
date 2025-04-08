@@ -4,9 +4,9 @@ import { Colors } from "react-native/Libraries/NewAppScreen";
 import colors from '../../assets/color/colors';
 import { useEffect } from "react";
 import icons from "../../assets/iconApp/icons";
+import React from "react";
 
 const UserSeting = ({ navigation }) => {
-
     return (
         <View style={styles.container}>
             <View style={{ backgroundColor: colors.light, width: '100%', height: 50, elevation: 9, alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row' }}>

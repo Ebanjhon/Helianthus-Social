@@ -1,13 +1,14 @@
 import React, { forwardRef, useEffect, useRef } from "react"
-import { FlatList, View } from "react-native"
+import { FlatList, Text, TouchableOpacity, View } from "react-native"
 import styles from "./styles"
+import { dataFeedItem } from "../../data"
+import FeedItem from "../FeedItem"
 
 interface myFeedProps {
     isEnabledScroll: boolean
 }
 
 
-const data = [1, 2, 3]
 const MyFeedMasonry = forwardRef((props: myFeedProps, ref) => {
     const flatListRef = useRef<FlatList>(null);
     useEffect(() => {
@@ -20,12 +21,12 @@ const MyFeedMasonry = forwardRef((props: myFeedProps, ref) => {
             ref={flatListRef}
             nestedScrollEnabled
             style={styles.container}
+            contentContainerStyle={styles.contentItem}
+            showsHorizontalScrollIndicator={false}
             scrollEnabled={props.isEnabledScroll}
-            data={data}
-            renderItem={() => (
-                <View style={styles.item}>
-
-                </View>
+            data={dataFeedItem}
+            renderItem={({ item, index }) => (
+                <FeedItem data={item} key={index} />
             )}
         />
     )

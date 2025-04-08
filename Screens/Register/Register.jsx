@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   Image,
@@ -9,11 +9,11 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import {Text, View} from 'react-native';
-import colors, {colorsGradient} from '../../assets/color/colors';
+import { Text, View } from 'react-native';
+import colors, { colorsGradient } from '../../assets/color/colors';
 import icons from '../../assets/iconApp/icons';
-import {Picker} from '@react-native-picker/picker';
-import apiWithoutAuth, {endpoints} from '../../Configs/APIs';
+import { Picker } from '@react-native-picker/picker';
+import apiWithoutAuth, { endpoints } from '../../Configs/APIs';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import LottieView from 'lottie-react-native';
 import Toast from 'react-native-toast-message';
@@ -25,8 +25,9 @@ import {
 import HeaderApp from '../../Components/HeaderApp/HeaderApp';
 import styles from './Style';
 import AppBackground from '../../Components/AppBackground/AppBackground';
+import { IconGoogle } from '../../assets/SVG';
 
-const Register = ({navigation}) => {
+const Register = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -93,9 +94,9 @@ const Register = ({navigation}) => {
       newErrors.firstName = 'Không được để trống mục này!';
     }
 
-    if (lastName.length === 0) {
-      newErrors.lastName = 'Không được để trống mục này!';
-    }
+    // if (lastName.length === 0) {
+    //   newErrors.lastName = 'Không được để trống mục này!';
+    // }
 
     if (!validateEmail(email)) {
       newErrors.email = 'Email nhập chưa chính xác!';
@@ -220,28 +221,28 @@ const Register = ({navigation}) => {
   };
 
   return (
-    <AppBackground groupColor={colorsGradient.GC}>
+    <View style={{ backgroundColor: '#F6F6F6', flex: 1 }}>
       <HeaderApp />
       <KeyboardAvoidingView
         behavior="padding"
         keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}
-        style={{flex: 1, backgroundColor: 'transparent'}}>
+        style={{ flex: 1, backgroundColor: 'transparent' }}>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{flexGrow: 1, paddingBottom: 20}}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
           keyboardShouldPersistTaps="handled"
           style={styles.background}>
           <View style={styles.container}>
-            <Text style={styles.logo}>Đăng ký</Text>
+            <Text style={styles.logo}>Đăng ký tài khoản</Text>
             <Text style={styles.text}>{displayText}</Text>
           </View>
           <View style={styles.contai_form}>
-            <View style={{width: '90%', marginBottom: 5}}>
-              <Text style={styles.text_show}>UserName</Text>
+            <View style={{ width: '90%', marginBottom: 5 }}>
+              <Text style={styles.text_show}>Username</Text>
               <View style={styles.input_contai}>
                 <Image
-                  style={{width: 30, height: 30}}
-                  source={{uri: icons.username}}
+                  style={{ width: 30, height: 30 }}
+                  source={{ uri: icons.username }}
                 />
                 <TextInput
                   value={userName}
@@ -256,12 +257,12 @@ const Register = ({navigation}) => {
               ) : null}
             </View>
 
-            <View style={{width: '90%', marginBottom: 5}}>
-              <Text style={styles.text_show}>FirstName</Text>
+            <View style={{ width: '90%', marginBottom: 5 }}>
+              <Text style={styles.text_show}>First name</Text>
               <View style={styles.input_contai}>
                 <Image
-                  style={{width: 30, height: 30}}
-                  source={{uri: icons.firstname}}
+                  style={{ width: 30, height: 30 }}
+                  source={{ uri: icons.firstname }}
                 />
                 <TextInput
                   value={firstName}
@@ -276,12 +277,12 @@ const Register = ({navigation}) => {
               ) : null}
             </View>
 
-            <View style={{width: '90%', marginBottom: 5}}>
-              <Text style={styles.text_show}>LastName</Text>
+            <View style={{ width: '90%', marginBottom: 5 }}>
+              <Text style={styles.text_show}>Last name</Text>
               <View style={styles.input_contai}>
                 <Image
-                  style={{width: 30, height: 30}}
-                  source={{uri: icons.lastname}}
+                  style={{ width: 30, height: 30 }}
+                  source={{ uri: icons.lastname }}
                 />
                 <TextInput
                   value={lastName}
@@ -296,12 +297,12 @@ const Register = ({navigation}) => {
               ) : null}
             </View>
 
-            <View style={{width: '90%', marginBottom: 5}}>
+            <View style={{ width: '90%', marginBottom: 5 }}>
               <Text style={styles.text_show}>Email</Text>
               <View style={styles.input_contai}>
                 <Image
-                  style={{width: 30, height: 30}}
-                  source={{uri: icons.email}}
+                  style={{ width: 30, height: 30 }}
+                  source={{ uri: icons.email }}
                 />
                 <TextInput
                   value={email}
@@ -381,12 +382,12 @@ const Register = ({navigation}) => {
               ) : null}
             </View> */}
 
-            <View style={{width: '90%', marginBottom: 5}}>
+            <View style={{ width: '90%', marginBottom: 5 }}>
               <Text style={styles.text_show}>Password</Text>
               <View style={styles.input_contai}>
                 <Image
-                  style={{width: 25, height: 25}}
-                  source={{uri: icons.pass}}
+                  style={{ width: 25, height: 25 }}
+                  source={{ uri: icons.pass }}
                 />
                 <TextInput
                   value={password}
@@ -399,7 +400,7 @@ const Register = ({navigation}) => {
                 <TouchableOpacity
                   onPress={() => setIsShowPass(prevShowPass => !prevShowPass)}>
                   <Image
-                    style={{width: 30, height: 30}}
+                    style={{ width: 30, height: 30 }}
                     source={
                       !isShowPass
                         ? require('../../assets/images/iconhide.png') // Nếu showPass là true
@@ -413,12 +414,12 @@ const Register = ({navigation}) => {
               ) : null}
             </View>
 
-            <View style={{width: '90%', marginBottom: 5}}>
-              <Text style={styles.text_show}>Password Again</Text>
+            <View style={{ width: '90%', marginBottom: 5 }}>
+              <Text style={styles.text_show}>Password confirm</Text>
               <View style={styles.input_contai}>
                 <Image
-                  style={{width: 25, height: 25}}
-                  source={{uri: icons.pass}}
+                  style={{ width: 25, height: 25 }}
+                  source={{ uri: icons.pass }}
                 />
                 <TextInput
                   value={passConfirm}
@@ -432,7 +433,7 @@ const Register = ({navigation}) => {
                 <TouchableOpacity
                   onPress={() => setIsShowPass(prevShowPass => !prevShowPass)}>
                   <Image
-                    style={{width: 30, height: 30}}
+                    style={{ width: 30, height: 30 }}
                     source={
                       !isShowPass
                         ? require('../../assets/images/iconhide.png') // Nếu showPass là true
@@ -461,21 +462,24 @@ const Register = ({navigation}) => {
                 source={require('../../assets/animations/Animation - 1726832285926.json')} // Đường dẫn tới file Lottie
                 autoPlay
                 loop
-                style={{width: 100, height: 100}}
+                style={{ width: 100, height: 100 }}
               />
             )}
             <Toast config={toastConfigExport} />
           </View>
+          <View style={{ alignSelf: 'center' }}>
+            <IconGoogle />
+          </View>
           <TouchableOpacity
-            style={{width: '100%', alignItems: 'center', paddingBottom: 10}}
+            style={{ width: '100%', alignItems: 'center', paddingBottom: 10 }}
             onPress={() => navigation.navigate('Login')}>
-            <Text style={{color: colors.gray, fontSize: 16}}>
+            <Text style={{ color: colors.gray, fontSize: 16 }}>
               Bạn đã có tài khoản
             </Text>
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
-    </AppBackground>
+    </View>
   );
 };
 

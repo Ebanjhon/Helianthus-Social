@@ -4,22 +4,20 @@ import { useFocusEffect } from '@react-navigation/native';
 import colors from '../../assets/color/colors';
 
 const SlideUp = ({ children }) => {
-    const slideAnim = useRef(new Animated.Value(300)).current; // Giá trị khởi tạo ngoài màn hình
+    const slideAnim = useRef(new Animated.Value(300)).current;
 
     useFocusEffect(
         React.useCallback(() => {
-            // Khi màn hình được focus
             Animated.timing(slideAnim, {
-                toValue: 0, // Vị trí cuối cùng (trong màn hình)
-                duration: 400, // Thời gian animation
-                useNativeDriver: true, // Sử dụng native driver cho hiệu suất tốt hơn
+                toValue: 0,
+                duration: 400,
+                useNativeDriver: true,
             }).start();
 
             return () => {
-                // Reset animation khi màn hình mất focus
                 Animated.timing(slideAnim, {
-                    toValue: 900, // Trở về vị trí ngoài màn hình
-                    duration: 0, // Không cần hiệu ứng khi quay lại
+                    toValue: 900,
+                    duration: 0,
                     useNativeDriver: true,
                 }).start();
             };
@@ -38,7 +36,7 @@ const SlideUp = ({ children }) => {
 const styles = StyleSheet.create({
     container: {
         width: "100%",
-        height: "95%",
+        height: "100%",
         backgroundColor: colors.white,
         borderTopLeftRadius: 15,
         borderTopRightRadius: 15,

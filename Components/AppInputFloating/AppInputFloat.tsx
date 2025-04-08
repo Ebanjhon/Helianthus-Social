@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   StyleSheet,
   TextInput,
@@ -47,7 +47,7 @@ export const AppInputFloat: React.FC<import('./types').AppInputFloatProps> = ({
     }),
     backgroundColor: labelAnimation.interpolate({
       inputRange: [0, 1],
-      outputRange: ['transparent', colors.darkBG],
+      outputRange: ['transparent', '#F6F6F6'],
     }),
   };
 
@@ -66,7 +66,7 @@ export const AppInputFloat: React.FC<import('./types').AppInputFloatProps> = ({
         style={styles.ShowPass}
         onPress={() => setIsShowPass(!isShowPass)}>
         <Image
-          style={[styles.icon, {display: isPassword ? 'flex' : 'none'}]}
+          style={[styles.icon, { display: isPassword ? 'flex' : 'none' }]}
           source={
             isShowPass
               ? require('../../assets/images/iconhide.png')
@@ -94,6 +94,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     fontSize: 20,
     color: colors.gold2,
+    fontWeight: '600',
   },
   ShowPass: {
     position: 'absolute',

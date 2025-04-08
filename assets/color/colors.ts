@@ -30,4 +30,5 @@ export const colorsGradient = {
   GF: ['#ffffff', '#F6AF04'],
   GG: ['#F6AF04', '#F6AF04'],
   GC: ['#191820', '#191820'],
+  WW: ['#F6F6F6', '#F6F6F6'],
 };

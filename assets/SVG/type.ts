@@ -1,4 +1,4 @@
-import {StyleProp} from 'react-native';
+import { StyleProp } from 'react-native';
 
 export interface IconProps {
   width?: number;
@@ -7,4 +7,5 @@ export interface IconProps {
   strokeWidth?: number;
   stroke?: string;
   style?: StyleProp<any>;
+  full?: string
 }

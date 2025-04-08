@@ -1,15 +1,23 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 import colors from '../../assets/color/colors';
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
+    justifyContent: 'center',
+    alignItems: 'center'
+    // paddingHorizontal: 20,
   },
   titleLogin: {
     fontSize: 50,
     color: '#BFBFBF',
     fontFamily: 'FrancoisOne-Regular',
     alignSelf: 'center',
+  },
+  textNameApp: {
+    fontSize: 60,
+    color: colors.gold,
+    fontFamily: 'Pacifico-Regular',
+    alignSelf: 'center'
   },
   imgLogin: {
     width: '70%',
@@ -27,20 +35,19 @@ const styles = StyleSheet.create({
   },
   buttonLogin: {
     width: 330,
-    height: 70,
+    height: 64,
     backgroundColor: colors.gold,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
+    borderRadius: 100,
     borderStyle: 'solid',
-    borderWidth: 3,
     elevation: 3,
     alignSelf: 'center',
   },
   buttonText: {
-    fontSize: 38,
+    fontSize: 33,
     fontWeight: '800',
-    color: colors.dark,
+    color: colors.black,
   },
   input: {
     fontSize: 20,
@@ -53,8 +60,8 @@ const styles = StyleSheet.create({
   registerText: {
     paddingTop: 10,
     color: colors.dark,
-    fontSize: 21,
-    fontWeight: '700',
+    fontSize: 20,
+    fontWeight: '600',
     alignSelf: 'center',
   },
   loginGoogle: {

@@ -1,7 +1,7 @@
-import {ImageStyle, StyleProp, View, ViewStyle} from 'react-native';
-import React, {useState} from 'react';
-import FastImage from 'react-native-fast-image';
-import {styles} from './types';
+import { ImageStyle, StyleProp, View, ViewStyle } from 'react-native';
+import React, { useState } from 'react';
+import FastImage, { ResizeMode } from 'react-native-fast-image';
+import { styles } from './types';
 
 type AppImageProps = {
   uri: string;
@@ -9,6 +9,7 @@ type AppImageProps = {
   height?: any;
   style?: StyleProp<ViewStyle>;
   imageStyle?: StyleProp<ImageStyle>;
+  typeMode?: ResizeMode;
 };
 
 const AppImage: React.FC<AppImageProps> = ({
@@ -17,12 +18,13 @@ const AppImage: React.FC<AppImageProps> = ({
   height = width,
   style,
   imageStyle,
+  typeMode = 'cover',
 }) => {
   const [imageUri, setImageUri] = useState(uri);
   return (
-    <View style={[style, styles.container, {width: width, height: height}]}>
+    <View style={[style, styles.container, { width: width, height: height }]}>
       <FastImage
-        style={[{flex: 1}, imageStyle as any]}
+        style={[{ flex: 1 }, imageStyle as any]}
         source={{
           uri: imageUri,
           priority: FastImage.priority.high,
@@ -32,7 +34,7 @@ const AppImage: React.FC<AppImageProps> = ({
             'https://i.pinimg.com/736x/c9/e3/eb/c9e3eb487b0deb3f50501c196e332b58.jpg',
           )
         }
-        resizeMode={FastImage.resizeMode.cover}
+        resizeMode={typeMode}
       />
     </View>
   );

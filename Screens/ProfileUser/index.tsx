@@ -1,22 +1,22 @@
 import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
-import { Dimensions, FlatList, Pressable, SafeAreaView, ScrollView, StatusBar, Text, TouchableOpacity, View } from "react-native";
-import AppBackground from "../../Components/AppBackground/AppBackground";
+import { Dimensions, FlatList, Pressable, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import HeaderApp from "../../Components/HeaderApp/HeaderApp";
-import colors, { colorsGradient } from "../../assets/color/colors";
+import colors from "../../assets/color/colors";
 import { AppImage } from "../../Components";
 import styles from "./styles";
 import { MyFeedMasonry, MyLikeMasonry, MyMediaMasonry } from "./components";
+import { IconFavorite, IconFeed, IconMedia } from "../../assets/SVG";
+import { useNavigation } from "@react-navigation/native";
 const { width, height } = Dimensions.get('window');
 interface profileProps {
-
 }
-
 const ProfileUser: React.FC<profileProps> = ({ }) => {
+    const navigation = useNavigation();
     const flatListRef = useRef<FlatList>(null);
     const [isAllowScroll, setIsAllowScroll] = useState(false);
     const handleScroll = (event: { nativeEvent: { contentOffset: { y: number; }; }; }) => {
         const contentOffsetY = event.nativeEvent.contentOffset.y;
-        if (contentOffsetY >= 445 && !isAllowScroll) {
+        if (contentOffsetY >= 450 && !isAllowScroll) {
             setIsAllowScroll(pre => !pre)
         } else if (contentOffsetY <= 455 && isAllowScroll) {
             setIsAllowScroll(pre => !pre)
@@ -29,6 +29,7 @@ const ProfileUser: React.FC<profileProps> = ({ }) => {
                 bgColor={colors.trang}
                 isShowleftAction isShowrightAction
                 isButtonHead
+                onPrees={() => { navigation.navigate('Setting') }}
             />
             <FlatList
                 ref={flatListRef}
@@ -50,11 +51,11 @@ const ProfileUser: React.FC<profileProps> = ({ }) => {
                             <View style={styles.inforPrifile}>
                                 <Pressable style={styles.itemInfor}>
                                     <Text style={styles.textNum}>20</Text>
-                                    <Text style={styles.textTitleNum}>Follower</Text>
+                                    <Text style={styles.textTitleNum}>Followers</Text>
                                 </Pressable>
                                 <Pressable style={styles.itemInfor}>
                                     <Text style={styles.textNum}>20</Text>
-                                    <Text style={styles.textTitleNum}>Like</Text>
+                                    <Text style={styles.textTitleNum}>posts</Text>
                                 </Pressable>
                                 <Pressable style={styles.itemInfor}>
                                     <Text style={styles.textNum}>120</Text>
@@ -81,18 +82,18 @@ interface tabViewProps {
 const data = [
     {
         id: 1,
-        color: 'red',
-        title: "Tab 1"
+        title: "Tab 1",
+        icon: <IconFeed width={25} fill={colors.danger} />
     },
     {
         id: 2,
-        color: 'blue',
-        title: "Tab 2"
+        title: "Tab 2",
+        icon: <IconMedia width={25} fill="#fff" />
     },
     {
         id: 3,
-        color: 'green',
-        title: "Tab 3"
+        title: "Tab 3",
+        icon: <IconFavorite width={25} fill="#fff" />
     }
 ]
 
@@ -105,9 +106,13 @@ const TabView: React.FC<tabViewProps> = ({ isAllowScroll }) => {
             tabbarRef.current.setTabIndex(tabIndex);
         }
     }
+
+    const handleScrollToIndex = (index: number) => {
+        flatListRef.current?.scrollToIndex({ index, animated: true });
+    }
     return (
         <>
-            <TabbarView ref={tabbarRef} />
+            <TabbarView ref={tabbarRef} onScrollTab={handleScrollToIndex} />
             <FlatList
                 ref={flatListRef}
                 style={[{ width: width, height: height - 60 }]}
@@ -124,7 +129,7 @@ const TabView: React.FC<tabViewProps> = ({ isAllowScroll }) => {
                                 return (
                                     <View
                                         key={index}
-                                        style={[{ backgroundColor: item.color, width: width }, styles.tabItem]}>
+                                        style={[{ width: width }, styles.tabItem]}>
                                         <MyFeedMasonry isEnabledScroll={isAllowScroll} />
                                     </View>
                                 );
@@ -132,7 +137,7 @@ const TabView: React.FC<tabViewProps> = ({ isAllowScroll }) => {
                                 return (
                                     <View
                                         key={index}
-                                        style={[{ backgroundColor: item.color, width: width }, styles.tabItem]}>
+                                        style={[{ width: width }, styles.tabItem]}>
                                         <MyMediaMasonry isEnabledScroll={isAllowScroll} />
                                     </View>
                                 );
@@ -140,7 +145,7 @@ const TabView: React.FC<tabViewProps> = ({ isAllowScroll }) => {
                                 return (
                                     <View
                                         key={index}
-                                        style={[{ backgroundColor: item.color, width: width }, styles.tabItem]}>
+                                        style={[{ width: width }, styles.tabItem]}>
                                         <MyLikeMasonry isEnabledScroll={isAllowScroll} />
                                     </View>
                                 );
@@ -159,6 +164,7 @@ const TabView: React.FC<tabViewProps> = ({ isAllowScroll }) => {
 interface TabbarRef {
     setTabIndex?: (index: number) => void;
     getTabIndex?: () => number;
+    onScrollTab: (index: number) => void;
 }
 
 const TabbarView = forwardRef((props: TabbarRef, ref) => {
@@ -174,9 +180,13 @@ const TabbarView = forwardRef((props: TabbarRef, ref) => {
             style={[styles.tabbar]}>
             {data.map((item, index) => (
                 <TouchableOpacity
-                    onPress={() => setTabIndex(index)}
-                    style={[styles.btnTabbar, { backgroundColor: tabIndex === index ? 'red' : 'white' }]}>
-                    <Text>{item.title}</Text>
+                    onPress={() => {
+                        props.onScrollTab(index);
+                    }}
+                    style={[styles.btnTabbar]}>
+                    {React.cloneElement(item.icon, {
+                        fill: tabIndex === index ? colors.gold2 : colors.gray,
+                    })}
                 </TouchableOpacity>
             ))}
         </View>

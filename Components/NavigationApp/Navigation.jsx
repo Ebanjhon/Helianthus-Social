@@ -34,6 +34,8 @@ import ActiveAccount from '../../Screens/OTP/ActiveAccount';
 import { store } from '../../RTKQuery/Stores/store';
 import { styles } from './style';
 import ProfileUser from '../../Screens/ProfileUser';
+import Setting from '../../Screens/ProfileUser/components/SettingScreen';
+import CreateFeed from '../../Screens/Post';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -104,7 +106,7 @@ const HomeTabs = forwardRef(() => {
         />
         <Tab.Screen
           name="Post"
-          component={Post}
+          component={CreateFeed}
           options={{
             tabBarStyle: { display: 'none' },
             tabBarIcon: ({ focused }) => (
@@ -145,6 +147,7 @@ const HomeTabs = forwardRef(() => {
           component={ProfileUser}
           options={{
             headerShown: false,
+            tabBarStyle: { display: 'none' },
             tabBarIcon: ({ focused }) => (
               <View style={styles.tabBarIconText}>
                 <Image
@@ -268,14 +271,6 @@ const Navigation = () => {
                 {user === null ? (
                   <>
                     <Stack.Screen
-                      name="Intro"
-                      component={IntroApp}
-                      options={{
-                        cardStyleInterpolator:
-                          CardStyleInterpolators.forHorizontalIOS,
-                      }}
-                    />
-                    <Stack.Screen
                       name="Login"
                       component={Login}
                       options={{
@@ -299,11 +294,8 @@ const Navigation = () => {
                     <Stack.Screen name="Logout" component={Logout} />
                     <Stack.Screen name="Message" component={Message} />
                     <Stack.Screen name="Chat" component={Chat} />
-                    <Stack.Screen name="Setting" component={UserSeting} />
-                    <Stack.Screen
-                      name="UpdatePrifile"
-                      component={UpdateProfile}
-                    />
+                    <Stack.Screen name="Setting" component={Setting} />
+                    <Stack.Screen name="UpdatePrifile" component={UpdateProfile} />
                   </>
                 )}
               </Stack.Navigator>

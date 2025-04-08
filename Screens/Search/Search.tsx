@@ -24,8 +24,6 @@ const Search = () => {
         dispatch({ type: 'SHOW_TAB_BAR' });
     };
 
-    const [isFocused, setIsFocused] = useState(false);
-
     const searchUser = async () => {
         const api = await authApi();
         try {

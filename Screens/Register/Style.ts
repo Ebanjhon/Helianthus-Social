@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 import colors from '../../assets/color/colors';
 
 const styles = StyleSheet.create({
@@ -10,17 +10,16 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 30,
-    marginTop: 10,
   },
   logo: {
-    fontSize: 43,
+    fontSize: 39,
     color: colors.gold,
     fontWeight: '900',
   },
   text: {
     fontSize: 18,
-    color: colors.trang,
+    color: colors.black,
+    fontWeight: '600'
   },
   contai: {
     justifyContent: 'flex-end',
@@ -40,7 +39,7 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     borderColor: colors.gold,
     alignItems: 'center',
-    backgroundColor: colors.dark,
+    backgroundColor: colors.trang,
   },
   text_input: {
     fontSize: 19,
@@ -52,7 +51,7 @@ const styles = StyleSheet.create({
   text_show: {
     fontSize: 17,
     fontWeight: '500',
-    color: colors.gray,
+    color: colors.black,
   },
   picker: {
     width: 200,

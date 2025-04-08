@@ -20,6 +20,8 @@ const MyLikeMasonry = forwardRef((props: myLikeProps, ref) => {
             ref={flatListRef}
             nestedScrollEnabled
             style={styles.container}
+            contentContainerStyle={styles.contentItem}
+            showsHorizontalScrollIndicator={false}
             scrollEnabled={props.isEnabledScroll}
             data={data}
             renderItem={() => (
