@@ -1,176 +1,98 @@
-import { FlatList, Image, Keyboard, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { useContext, useEffect, useState } from "react";
-import styles from "./SearchStyle";
-import colors from "../../assets/color/colors";
-import { useTabBar } from "../../Configs/TabBarContext";
-import { authApi, endpoints } from "../../Configs/APIs";
+import {
+  FlatList,
+  Image,
+  Keyboard,
+  Pressable,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {useContext, useEffect, useState} from 'react';
+import styles from './SearchStyle';
+import {useTabBar} from '../../Configs/TabBarContext';
+import {authApi, endpoints} from '../../Configs/APIs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import FastImage from "react-native-fast-image";
-import React from "react";
-import AppBackground from "../../Components/AppBackground/AppBackground";
-import HeaderApp from "../../Components/HeaderApp/HeaderApp";
+import FastImage from 'react-native-fast-image';
+import React from 'react';
+import AppBackground from '../../Components/AppBackground/AppBackground';
+import HeaderApp from '../../Components/HeaderApp/HeaderApp';
+import {UserContext} from '../../Configs/UserReducer';
+import {AppImage} from '../../Components';
+import colors from '../../assets/color/colors';
 const Search = () => {
-    const { state, dispatch } = useTabBar();
-    const title = "Tìm kiếm";
-    const [text, setText] = useState('');
-    // const [user, dispatchUser] = useContext(UserContext);
-    const [result, setResult] = useState([]);
+  const {state, dispatch} = useTabBar();
+  const title = 'Tìm kiếm';
+  const [text, setText] = useState('');
+  const {user, dispatchUser} = useContext(UserContext);
+  const [result, setResult] = useState([]);
 
-    const hideTabBar = () => {
-        dispatch({ type: 'HIDE_TAB_BAR' });
-    };
+  const hideTabBar = () => {
+    dispatch({type: 'HIDE_TAB_BAR'});
+  };
 
-    const showTabBar = () => {
-        dispatch({ type: 'SHOW_TAB_BAR' });
-    };
+  const showTabBar = () => {
+    dispatch({type: 'SHOW_TAB_BAR'});
+  };
 
-    const searchUser = async () => {
-        const api = await authApi();
-        try {
-            const response = await api.get(endpoints['search-user'](text, user.id));
-            if (response.status === 200) {
-                setResult(response.data);
-                console.log(response.data);
-            } else if (response.status === 404) {
-                console.log("No users found.");
-            } else {
-                console.log("Error:", response.status);
-            }
-        } catch (error) {
-            setResult([]);
-        }
-    };
-
-    // Khởi tạo hook chạy đầu tiên
-    useEffect(() => {
-        searchUser();
-    }, [text]);
-
-    // hàm theo dỏi
-    const following = async (userTarget) => {
-        const form = {
-            idUser: user.id,
-            idTargetUser: userTarget
-        };
-
-        console.log(form); // In ra form để kiểm tra
-
-        const api = await authApi();
-
-        try {
-            const response = await api.post(endpoints['following'], form);
-            if (response.status === 200) {
-                console.log("Đã theo dõi thành công!");
-                searchUser();
-            } else {
-                console.log("Không thể theo dõi người dùng.");
-            }
-        } catch (error) {
-            // Kiểm tra lỗi và thông báo
-            if (error.response) {
-                console.error('Lỗi từ server:', error.response.data);
-            } else {
-                console.error('Lỗi mạng hoặc không thể kết nối:', error.message);
-            }
-            throw error; // Ném lỗi lên trên nếu cần
-        }
-    };
-
-    useEffect(() => {
-        // Hàm sẽ được gọi khi bàn phím ảo xuất hiện
-        const keyboardDidShowListener = Keyboard.addListener(
-            'keyboardDidShow',
-            () => {
-                console.log('Bàn phím đã xuất hiện');
-                // Gọi hàm của bạn tại đây
-                hideTabBar();
-            }
-        );
-
-        // Hàm sẽ được gọi khi bàn phím ảo ẩn đi
-        const keyboardDidHideListener = Keyboard.addListener(
-            'keyboardDidHide',
-            () => {
-                console.log('Bàn phím đã ẩn đi');
-                // Gọi hàm của bạn tại đây
-                showTabBar();
-            }
-        );
-
-        // Hủy lắng nghe khi component bị hủy
-        return () => {
-            keyboardDidShowListener.remove();
-            keyboardDidHideListener.remove();
-        };
-    }, []);
-
-    // truy cập thông tin user
-
-    const viewUser = async () => {
-        try {
-            const jsonValue = JSON.stringify(result);
-            await AsyncStorage.setItem(key, userlist);
-            console.log('Data stored successfully');
-        } catch (error) {
-            console.error('Error storing data:', error);
-        }
-    };
-
-    return (
-        <View style={styles.container}>
-            <HeaderApp title={"Tìm kiếm"} isShowleftAction={false} isShowrightAction={false} />
-            <View style={styles.searchContent}>
-                <View style={styles.contai_search}>
-                    <TextInput
-                        style={{ fontSize: 16 }}
-                        placeholder="nhập nội dung cần tìm kiếm..."
-                        onChange={(e) => setText(e.nativeEvent.text)}
-                        multiline={true}
-                    />
-                </View>
-            </View>
-            <FlatList
-                style={{ marginTop: 40 }}
-                data={result}
-                keyExtractor={(item) => item.user_id}
-                showsHorizontalScrollIndicator={false}
-                renderItem={({ item }) => (
-                    <TouchableOpacity
-                        onPress={viewUser}
-                        style={styles.item_notifi}>
-                        <Image
-                            style={styles.image_avatar}
-                            source={{
-                                uri: item.avatar === ''
-                                    ? 'https://i.pinimg.com/564x/25/ee/de/25eedef494e9b4ce02b14990c9b5db2d.jpg'
-                                    : item.avatar
-                            }} />
-                        <View>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Text style={styles.fullname}>{item.firstname} {item.lastname}</Text>
-                                {item.folow ? (
-                                    <TouchableOpacity
-                                        style={{ marginLeft: 10 }}
-                                    >
-                                        <Text style={{ fontSize: 16, color: colors.info }}>Following</Text>
-                                    </TouchableOpacity>
-                                ) : (
-                                    <TouchableOpacity
-                                        onPress={() => following(item.user_id)}
-                                        style={{ marginLeft: 10 }}
-                                    >
-                                        <Text style={{ fontSize: 16, color: colors.info }}>Follow</Text>
-                                    </TouchableOpacity>
-                                )}
-                            </View>
-                            <Text>@{item.user_name} - Có {item.countFollow} người theo giỏi</Text>
-                        </View>
-                    </TouchableOpacity>
-                )}
-            />
+  return (
+    <View style={styles.container}>
+      <HeaderApp
+        title={'Tìm kiếm'}
+        isShowleftAction={false}
+        isShowrightAction={false}
+        bgColor={colors.gold2}
+      />
+      <View style={styles.headSearch}>
+        <View style={styles.searchWrap}>
+          <TextInput style={styles.search} placeholder="Tìm kiếm" />
+          <Pressable style={styles.btnSearch}>
+            <Text style={{color: colors.white}}>Tìm</Text>
+          </Pressable>
         </View>
-    )
+        <View style={{flexDirection: 'row', marginTop: 10}}>
+          <TouchableOpacity>
+            <Text style={[true ? styles.textTypeSelected : styles.textType]}>
+              Bài Viết
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text style={[!true ? styles.textTypeSelected : styles.textType]}>
+              Tài khoản
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <FlatList
+        style={styles.boxList}
+        data={[1, 2, 3]}
+        renderItem={({item, index}) => {
+          return (
+            <>
+              <View style={styles.itemUser}>
+                <View style={styles.leftInfo}>
+                  <AppImage
+                    uri={''}
+                    width={60}
+                    height={60}
+                    style={{marginRight: 10}}
+                    imageStyle={styles.avatar}
+                  />
+                  <View>
+                    <Text style={styles.textName}>JhonEBan</Text>
+                    <Text>@SonJiHons</Text>
+                  </View>
+                </View>
+                <TouchableOpacity style={styles.btnFl}>
+                  <Text>Follow</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          );
+        }}
+      />
+    </View>
+  );
 };
 
-
-export default Search
+export default Search;
