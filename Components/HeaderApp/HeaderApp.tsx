@@ -4,6 +4,7 @@ import styles from './Style';
 import IconBack from '../../assets/SVG/IconBack';
 import { useNavigation } from '@react-navigation/native';
 import IconMenu from '../../assets/SVG/IconMenu';
+import { IconSetting } from '../../assets/SVG';
 
 export type HeaderAppProps = {
   title?: string;
@@ -41,7 +42,7 @@ const HeaderApp: React.FC<HeaderAppProps> = ({
         <TouchableOpacity style={[styles.itemHeader, isButtonHead && styles.btnAction]}
           onPress={onPrees}
         >
-          <IconMenu height={40} width={40} />
+          <IconSetting height={30} width={30} />
         </TouchableOpacity>
       ) : (
         <View style={styles.itemHeader} />

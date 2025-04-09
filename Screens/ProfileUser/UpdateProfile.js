@@ -9,9 +9,10 @@ import Toast from "react-native-toast-message";
 import { showToast, toastConfigExport } from "../../Configs/ToastConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { UserContext } from "../../Configs/UserReducer";
 
 const UpdateProfile = ({ navigation }) => {
-    // const [user, dispatch] = useContext(UserContext);
+    const [user, dispatch] = useContext(UserContext);
     const [firstname, setFirstName] = useState("");
     const [lastname, setLastName] = useState("");
     const [phone, setPhone] = useState("");

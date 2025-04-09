@@ -25,7 +25,6 @@ import Logout from '../../Screens/Logout/Logout';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import icons from '../../assets/iconApp/icons';
 import Post from '../../Screens/Post/Post';
-import UpdateProfile from '../../Screens/ProfileUser/UpdateProfile';
 import Message from '../../Screens/Message/Message';
 import Chat from '../../Screens/Message/Chat';
 import Toast from 'react-native-toast-message';
@@ -36,6 +35,7 @@ import { styles } from './style';
 import ProfileUser from '../../Screens/ProfileUser';
 import Setting from '../../Screens/ProfileUser/components/SettingScreen';
 import CreateFeed from '../../Screens/Post';
+import UpdateProfile from '../../Screens/ProfileUser/components/UpdateProfileScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -291,7 +291,7 @@ const Navigation = () => {
                 ) : (
                   <>
                     <Stack.Screen name="HomeTabs" component={HomeTabs} />
-                    <Stack.Screen name="Logout" component={Logout} />
+
                     <Stack.Screen name="Message" component={Message} />
                     <Stack.Screen name="Chat" component={Chat} />
                     <Stack.Screen name="Setting" component={Setting} />

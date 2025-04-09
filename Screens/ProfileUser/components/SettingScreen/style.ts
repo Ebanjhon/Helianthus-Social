@@ -22,14 +22,15 @@ const styles = StyleSheet.create({
     elevation: 5,               // Đối với Android: độ cao của bóng
   },
   box_bottom: {
-
+    backgroundColor: colors.danger,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   text_logout: {
     fontSize: 30,
     fontWeight: '700',
-    color: colors.danger,
-    width: '100%',
-    textAlign: 'center'
+    color: colors.white
   },
   text_login: {
     fontSize: 20,
@@ -38,16 +39,20 @@ const styles = StyleSheet.create({
     margin: 5
   },
   title_box: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: colors.gray,
-
+    fontSize: 17,
+    fontWeight: '500',
+    color: colors.dark,
+    alignSelf: 'center',
   },
   itemp: {
     fontSize: 18,
     fontWeight: '500',
     color: colors.dark,
-    marginTop: 7
+    marginTop: 7,
+    borderTopWidth: 1,
+    width: '100%',
+    borderColor: colors.gray,
+    paddingVertical: 5
   },
   title: {
     fontSize: 20,

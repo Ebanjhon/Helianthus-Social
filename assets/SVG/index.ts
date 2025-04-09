@@ -12,3 +12,5 @@ export { default as IconMedia } from './IconMedia';
 export { default as IconFavorite } from './IconFavorite';
 export { default as IconComment } from './IconComment';
 export { default as IconGoogle } from './IconGoogle';
+export { default as IconSetting } from './IconSetting';
+export { default as IconLogout } from './IconLogout';
