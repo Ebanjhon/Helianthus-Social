@@ -110,7 +110,7 @@ const HomeTabs = forwardRef(() => {
           options={{
             tabBarStyle: { display: 'none' },
             tabBarIcon: ({ focused }) => (
-              <View style={styles.tabBarIconText}>
+              < View style={styles.tabBarIconText}>
                 <Image
                   source={icons.add}
                   resizeMode="contain"

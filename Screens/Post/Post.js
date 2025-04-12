@@ -1,5 +1,5 @@
 import { FlatList, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
-import styles from "./PostStyle";
+import styles from "./Styles";
 import SlideUpView from "./SlideUp";
 import React, { useContext, useRef, useState } from "react";
 import colors from "../../assets/color/colors";

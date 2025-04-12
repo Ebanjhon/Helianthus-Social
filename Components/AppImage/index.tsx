@@ -1,7 +1,7 @@
-import {ImageStyle, StyleProp, View, ViewStyle} from 'react-native';
-import React, {useState} from 'react';
-import FastImage, {ResizeMode} from 'react-native-fast-image';
-import {styles} from './types';
+import { ImageStyle, StyleProp, View, ViewStyle } from 'react-native';
+import React, { useState } from 'react';
+import FastImage, { ResizeMode } from 'react-native-fast-image';
+import { styles } from './types';
 
 type AppImageProps = {
   uri: string;
@@ -24,9 +24,9 @@ const AppImage: React.FC<AppImageProps> = ({
 }) => {
   const [imageUri, setImageUri] = useState(uri);
   return (
-    <View style={[style, styles.container, {width: width, height: height}]}>
+    <View style={[style, styles.container, { width: width, height: height }]}>
       <FastImage
-        style={[{flex: 1}, imageStyle as any]}
+        style={[{ flex: 1 }, imageStyle as any]}
         source={{
           uri: imageUri ? imageUri : temp,
           priority: FastImage.priority.high,

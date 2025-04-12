@@ -3,44 +3,23 @@ import colors from '../../../../assets/color/colors';
 
 const styles = StyleSheet.create({
   commentView: {
-    height: '100%',
-    backgroundColor: colors.xamtrang,
+    backgroundColor: colors.white,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    position: 'absolute',
-    width: '100%',
-    bottom: 0
-  },
-  contai_popup: {
-    // backgroundColor: colors.danger,
-    height: '100%',
+    height: '90%'
   },
   contain_cmt_view: {
-    flex: 1,
-    backgroundColor: colors.xamtrang,
-    // backgroundColor: colors.danger,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 5,
     alignItems: 'center',
-    position: 'relative',
-  },
-  contain_list_cmt: {
-    width: '100%',
-    flex: 1,
-    alignItems: 'center',
-    alignContent: 'center',
-    paddingBottom: 50,
-    // backgroundColor: colors.danger,
+    borderBottomWidth: 2,
+    borderColor: colors.gray,
   },
   input_cmt: {
-    flex: 1,
-    // width: '100%',
     height: 50,
     backgroundColor: colors.white,
     alignItems: 'center',
-    position: 'absolute',
-    bottom: 0,
     paddingLeft: 15,
     paddingRight: 5,
     borderRadius: 30,
@@ -53,7 +32,8 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     // Shadow for Android
     elevation: 5,
-    justifyContent: 'flex-start',
+    alignSelf: 'center'
+
   },
   textInput: {
     width: '95%',
@@ -72,14 +52,68 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     right: 5,
   },
-  line: {
-    width: '95%',
-    borderWidth: 0.7,
-    borderColor: colors.gray,
-    marginBottom: 1,
+  containerComment: {
+    paddingTop: 10
   },
-  contentContainer: {
-    paddingVertical: 10,
+  contentItemList: {
+    paddingHorizontal: 7,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 5,
+    flex: 1,
+  },
+  detailComment: {
+    flex: 1,
+    paddingLeft: 5
+  },
+  nameText: {
+    fontSize: 16,
+    fontWeight: '500'
+  },
+  commentText: {
+    fontSize: 16,
+    fontWeight: '500',
+    backgroundColor: 'rgba(214, 214, 214, 0.4)',
+    minHeight: 27,
+    padding: 2,
+    color: colors.black,
+    borderRadius: 2
+  },
+  textReply: {
+    fontSize: 15,
+    fontWeight: '500',
+    minHeight: 27,
+    padding: 2,
+    color: colors.dark,
+    borderRadius: 2
+  },
+  textDelete: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: colors.danger,
+  },
+  line: {
+    flex: 1,
+    position: 'absolute',
+    backgroundColor: colors.gold2,
+    width: 4,
+    zIndex: 2,
+    top: 60,
+    left: 36,
+    height: '90%'
+  },
+  reply: {
+    width: 'auto',
+    height: 40,
+    backgroundColor: colors.gold,
+    position: 'absolute',
+    bottom: 55,
+    borderRadius: 50,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingLeft: 20,
+    flexDirection: 'row',
+    paddingRight: 10,
   },
 });
 

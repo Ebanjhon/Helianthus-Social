@@ -5,7 +5,6 @@ const styles = StyleSheet.create({
   Container: {
     height: 42,
     width: '100%',
-    // position: 'absolute',
     zIndex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -13,7 +12,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   itemHeader: {
-    width: 40,
+    width: 100,
     height: 38,
     alignItems: 'center',
     top: 1

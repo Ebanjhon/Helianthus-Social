@@ -4,11 +4,11 @@ import styles from './style';
 import { UserContext } from '../../../../Configs/UserReducer';
 import Toast from 'react-native-toast-message';
 import colors from '../../../../assets/color/colors';
-import icons from '../../../../assets/iconApp/icons';
 import HeaderApp from '../../../../Components/HeaderApp/HeaderApp';
-import { AppImage, AppPickerListBox, AppTextInput } from '../../../../Components';
+import { AppPickerListBox, AppTextInput } from '../../../../Components';
 import { toastConfigExport } from '../../../../Configs/ToastConfig';
 import ImageCropPicker from 'react-native-image-crop-picker';
+import DateTimePicker from 'react-native-modal-datetime-picker';
 
 interface UpdateProfileProps { };
 
@@ -20,7 +20,7 @@ const UpdateProfile: React.FC<UpdateProfileProps> = ({ }) => {
   const [gender, setGender] = useState("");
   const [bio, setBio] = useState("");
   const [email, setEmail] = useState(user?.email);
-  const [birth, setBirth] = useState("");
+  const [birth, setBirth] = useState(new Date());
   const [avatar, setAvatar] = useState("");
   const [cover, setCover] = useState("");
   const [imagePath, setImagePath] = useState(null);
@@ -60,7 +60,7 @@ const UpdateProfile: React.FC<UpdateProfileProps> = ({ }) => {
 
 
   return <View style={styles.container}>
-    <Toast config={toastConfigExport} />
+    {/* <Toast config={toastConfigExport} /> */}
     <HeaderApp
       title={"Update profile"}
       bgColor={colors.trang}
@@ -132,13 +132,6 @@ const UpdateProfile: React.FC<UpdateProfileProps> = ({ }) => {
         }}
       />
 
-
-      <AppTextInput
-        title='Birth'
-        setText={setBirth}
-        placeholder='Ngày sinh'
-        text={birth || ''}
-      />
       <Text style={styles.lable}>Gender</Text>
       <AppPickerListBox text={gender} setText={setGender} lists={["Nam", "Nữ", "khác"]} defaultText='Chọn giới tính' />
 
@@ -147,6 +140,7 @@ const UpdateProfile: React.FC<UpdateProfileProps> = ({ }) => {
       style={[styles.btnUpdate, { backgroundColor: !true ? colors.gold2 : colors.dark }]}>
       <Text style={styles.textBtn}>CẬP NHẬT</Text>
     </Pressable>
+
   </View>;
 };
 export default UpdateProfile;

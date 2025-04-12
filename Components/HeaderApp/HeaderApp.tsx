@@ -8,12 +8,13 @@ import { IconSetting } from '../../assets/SVG';
 
 export type HeaderAppProps = {
   title?: string;
-  isShowleftAction: boolean;
-  isShowrightAction: boolean;
+  isShowleftAction?: boolean;
+  isShowrightAction?: boolean;
   isButtonHead?: boolean;
   bgColor?: string;
   style?: StyleProp<ViewStyle>;
   onPrees?: () => void;
+  rightView?: React.ReactNode;
 };
 
 const HeaderApp: React.FC<HeaderAppProps> = ({
@@ -23,6 +24,7 @@ const HeaderApp: React.FC<HeaderAppProps> = ({
   bgColor,
   style,
   isButtonHead = false,
+  rightView,
   onPrees,
 }) => {
   const Navigation = useNavigation();
@@ -31,21 +33,25 @@ const HeaderApp: React.FC<HeaderAppProps> = ({
       {isShowleftAction ? (
         <TouchableOpacity
           onPress={Navigation.goBack}
-          style={[styles.itemHeader, isButtonHead && styles.btnAction]}>
+          style={[styles.itemHeader, { alignItems: 'flex-start' }, isButtonHead && styles.btnAction]}>
           <IconBack height={40} width={40} />
         </TouchableOpacity>
       ) : (
         <View style={styles.itemHeader} />
       )}
-      <Text style={{ fontSize: 19, fontWeight: '600' }}>{title}</Text>
+
+      <Text style={{ fontSize: 19, fontWeight: '600', lineHeight: 38 }}>{title}</Text>
+
       {isShowrightAction ? (
-        <TouchableOpacity style={[styles.itemHeader, isButtonHead && styles.btnAction]}
+        <TouchableOpacity style={[styles.itemHeader, { alignItems: 'flex-end' }, isButtonHead && styles.btnAction]}
           onPress={onPrees}
         >
           <IconSetting height={30} width={30} />
         </TouchableOpacity>
       ) : (
-        <View style={styles.itemHeader} />
+        <View style={styles.itemHeader}>
+          {rightView && rightView}
+        </View>
       )}
     </View>
   );
