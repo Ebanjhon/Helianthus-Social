@@ -16,55 +16,79 @@ import HeaderApp from '../../Components/HeaderApp/HeaderApp';
 import { AppInputFloat } from '../../Components/AppInputFloating/AppInputFloat';
 import AppBackground from '../../Components/AppBackground/AppBackground';
 import { colorsGradient } from '../../assets/color/colors';
+import { UserResponse } from '../../RTKQuery/Slides/types';
 import {
+  BASE_URL,
+  useCreateOTPMutation,
   useGetTokenMutation,
   useGetUserProfileMutation,
 } from '../../RTKQuery/Slides/slide';
 import { UserContext } from '../../Configs/UserReducer';
 import { IconGoogle } from '../../assets/SVG';
+import React from 'react';
 
 const Login = ({ navigation }) => {
   const [username, setUsername] = useState('eban123');
   const [password, setPassword] = useState('123456');
-  const [fetchToken, { data, error, isLoading }] = useGetTokenMutation();
-  const [fetchProfileUser, { data: userData, isLoading: isFetchUserLoading }] =
-    useGetUserProfileMutation();
+  const [fetchToken, { data: tokenData, error, isLoading }] = useGetTokenMutation();
+  useGetUserProfileMutation();
   const { dispatch } = useContext(UserContext);
-  const getUserProfile = async () => {
+  const handleGetUserProfile = async (token: string) => {
+    console.log(token);
     try {
-      await fetchProfileUser(username).unwrap();
-      if (userData.active) {
-        navigation.navigate('Active', { userData: userData });
+      const response = await fetch(`${BASE_URL}/api/user?username=${encodeURIComponent(username)}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const text = await response.text();
+
+      if (!response.ok) {
+        throw new Error(`Lỗi server: ${response.status}`);
       }
-      await AsyncStorage.setItem('user', JSON.stringify(userData));
-      dispatch({ type: 'login', payload: userData });
-    } catch (err) {
-      showToast('error', 'Đăng nhập thất bại!', error.data);
+
+      const result: UserResponse = text ? JSON.parse(text) : ({} as UserResponse);
+      if (result?.active) {
+        navigation.navigate('Active', { userData: result });
+      } else {
+        await AsyncStorage.setItem('user', JSON.stringify(result));
+        dispatch({ type: 'login', payload: result });
+      }
+    } catch (error: any) {
+      console.error('API error:', error.message);
+      throw error;
     }
   };
 
   const handleLogin = async () => {
-    dispatch({
-      type: 'login',
-      payload: {
-        userId: 'KIUHLYGJYGKJHK',
-        username: 'eban123',
-        firstname: 'Son',
-        lastname: 'Json',
-        email: 'eban@eban.vn',
-        avatar:
-          'https://i.pinimg.com/736x/29/31/bc/2931bce606d71b1c60bd9c6c6596f441.jpg',
-        active: true,
-        curentUser: true,
-      },
-    });
-    return;
+    // dispatch({
+    //   type: 'login',
+    //   payload: {
+    //     userId: 'KIUHLYGJYGKJHK',
+    //     username: 'eban123',
+    //     firstname: 'Son',
+    //     lastname: 'Json',
+    //     email: 'eban@eban.vn',
+    //     avatar:
+    //       'https://i.pinimg.com/736x/29/31/bc/2931bce606d71b1c60bd9c6c6596f441.jpg',
+    //     active: true,
+    //     curentUser: true,
+    //   },
+    // });
+    // return;
     try {
-      await fetchToken({ username, password }).unwrap();
-      await AsyncStorage.setItem('token', data.token);
-      getUserProfile();
+      const dataToken = await fetchToken({ username, password }).unwrap();
+      if (dataToken.token === undefined) {
+        showToast('error', 'Đăng nhập thất bại!', "Vui lòng đăng nhập lại!");
+      } else {
+        await AsyncStorage.setItem('token', dataToken.token);
+        await handleGetUserProfile(dataToken.token);
+      }
     } catch (err) {
-      showToast('error', 'Đăng nhập thất bại!', error.data);
+      showToast('error', 'Đăng nhập thất bại!', errOTP);
     }
   };
 
@@ -97,7 +121,7 @@ const Login = ({ navigation }) => {
               isPassword={true}
             />
           </View>
-          {isLoading || isFetchUserLoading ? (
+          {isLoading ? (
             <LottieView
               source={require('../../assets/animations/Animation - 1726832285926.json')}
               autoPlay

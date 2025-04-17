@@ -39,11 +39,11 @@ export const AppInputFloat: React.FC<import('./types').AppInputFloatProps> = ({
     }),
     color: labelAnimation.interpolate({
       inputRange: [0, 1],
-      outputRange: [colors.gold2, colors.gold2], // Màu khi placeholder chuyển động
+      outputRange: ['rgba(37, 37, 37, 0.3)', colors.gold2], // Màu khi placeholder chuyển động
     }),
     fontWeight: labelAnimation.interpolate({
       inputRange: [0, 1],
-      outputRange: ['400', '600'], // Thay đổi độ đậm của font chữ
+      outputRange: ['500', '600'], // Thay đổi độ đậm của font chữ
     }),
     backgroundColor: labelAnimation.interpolate({
       inputRange: [0, 1],

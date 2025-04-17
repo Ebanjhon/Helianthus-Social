@@ -17,8 +17,8 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
   text: {
-    fontSize: 18,
-    color: colors.black,
+    fontSize: 15,
+    color: colors.dark,
     fontWeight: '600'
   },
   contai: {
@@ -65,6 +65,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 5,
+    alignSelf: 'center',
+    marginBottom: 10
   },
   text_error: {
     color: colors.danger,
