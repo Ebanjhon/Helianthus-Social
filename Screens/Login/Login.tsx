@@ -1,6 +1,6 @@
 import styles from './LoginStyle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useContext, useState } from 'react';
+import {useContext, useState} from 'react';
 import {
   Image,
   KeyboardAvoidingView,
@@ -11,38 +11,42 @@ import {
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import Toast from 'react-native-toast-message';
-import { showToast, toastConfigExport } from '../../Configs/ToastConfig';
+import {showToast, toastConfigExport} from '../../Configs/ToastConfig';
 import HeaderApp from '../../Components/HeaderApp/HeaderApp';
-import { AppInputFloat } from '../../Components/AppInputFloating/AppInputFloat';
+import {AppInputFloat} from '../../Components/AppInputFloating/AppInputFloat';
 import AppBackground from '../../Components/AppBackground/AppBackground';
-import { colorsGradient } from '../../assets/color/colors';
-import { UserResponse } from '../../RTKQuery/Slides/types';
+import {colorsGradient} from '../../assets/color/colors';
+import {UserResponse} from '../../RTKQuery/Slides/types';
 import {
   BASE_URL,
   useCreateOTPMutation,
   useGetTokenMutation,
   useGetUserProfileMutation,
 } from '../../RTKQuery/Slides/slide';
-import { UserContext } from '../../Configs/UserReducer';
-import { IconGoogle } from '../../assets/SVG';
+import {UserContext} from '../../Configs/UserReducer';
+import {IconGoogle} from '../../assets/SVG';
 import React from 'react';
 
-const Login = ({ navigation }) => {
+const Login = ({navigation}) => {
   const [username, setUsername] = useState('eban123');
   const [password, setPassword] = useState('123456');
-  const [fetchToken, { data: tokenData, error, isLoading }] = useGetTokenMutation();
+  const [fetchToken, {data: tokenData, error, isLoading}] =
+    useGetTokenMutation();
   useGetUserProfileMutation();
-  const { dispatch } = useContext(UserContext);
+  const {dispatch} = useContext(UserContext);
   const handleGetUserProfile = async (token: string) => {
     console.log(token);
     try {
-      const response = await fetch(`${BASE_URL}/api/user?username=${encodeURIComponent(username)}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+      const response = await fetch(
+        `${BASE_URL}/api/user?username=${encodeURIComponent(username)}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       const text = await response.text();
 
@@ -50,12 +54,14 @@ const Login = ({ navigation }) => {
         throw new Error(`Lỗi server: ${response.status}`);
       }
 
-      const result: UserResponse = text ? JSON.parse(text) : ({} as UserResponse);
+      const result: UserResponse = text
+        ? JSON.parse(text)
+        : ({} as UserResponse);
       if (result?.active) {
-        navigation.navigate('Active', { userData: result });
+        navigation.navigate('Active', {userData: result});
       } else {
         await AsyncStorage.setItem('user', JSON.stringify(result));
-        dispatch({ type: 'login', payload: result });
+        dispatch({type: 'login', payload: result});
       }
     } catch (error: any) {
       console.error('API error:', error.message);
@@ -64,25 +70,26 @@ const Login = ({ navigation }) => {
   };
 
   const handleLogin = async () => {
-    // dispatch({
-    //   type: 'login',
-    //   payload: {
-    //     userId: 'KIUHLYGJYGKJHK',
-    //     username: 'eban123',
-    //     firstname: 'Son',
-    //     lastname: 'Json',
-    //     email: 'eban@eban.vn',
-    //     avatar:
-    //       'https://i.pinimg.com/736x/29/31/bc/2931bce606d71b1c60bd9c6c6596f441.jpg',
-    //     active: true,
-    //     curentUser: true,
-    //   },
-    // });
-    // return;
+    dispatch({
+      type: 'login',
+      payload: {
+        userId: 'KIUHLYGJYGKJHK',
+        username: 'eban123',
+        firstname: 'Son',
+        lastname: 'Json',
+        email: 'eban@eban.vn',
+        avatar:
+          'https://i.pinimg.com/736x/29/31/bc/2931bce606d71b1c60bd9c6c6596f441.jpg',
+        active: true,
+        curentUser: true,
+        id: undefined,
+      },
+    });
+    return;
     try {
-      const dataToken = await fetchToken({ username, password }).unwrap();
+      const dataToken = await fetchToken({username, password}).unwrap();
       if (dataToken.token === undefined) {
-        showToast('error', 'Đăng nhập thất bại!', "Vui lòng đăng nhập lại!");
+        showToast('error', 'Đăng nhập thất bại!', 'Vui lòng đăng nhập lại!');
       } else {
         await AsyncStorage.setItem('token', dataToken.token);
         await handleGetUserProfile(dataToken.token);
@@ -95,13 +102,10 @@ const Login = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Toast config={toastConfigExport} />
-      <KeyboardAvoidingView
-        behavior='padding'
-      >
+      <KeyboardAvoidingView behavior="padding">
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ justifyContent: 'center', flexGrow: 1 }}
-        >
+          contentContainerStyle={{justifyContent: 'center', flexGrow: 1}}>
           <Text style={styles.textNameApp}>Helianthus</Text>
 
           <View
@@ -126,7 +130,7 @@ const Login = ({ navigation }) => {
               source={require('../../assets/animations/Animation - 1726832285926.json')}
               autoPlay
               loop
-              style={{ width: 100, height: 100, alignSelf: 'center' }}
+              style={{width: 100, height: 100, alignSelf: 'center'}}
             />
           ) : (
             <>
@@ -138,11 +142,11 @@ const Login = ({ navigation }) => {
                 <Text style={styles.buttonText}>Đăng nhập</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => { }}
+                onPress={() => {}}
                 style={{
                   width: 50,
                   alignSelf: 'center',
-                  marginTop: 18
+                  marginTop: 18,
                 }}>
                 <IconGoogle />
               </TouchableOpacity>
@@ -153,12 +157,11 @@ const Login = ({ navigation }) => {
                 }}>
                 <Text style={styles.registerText}>Đăng ký tài khoản</Text>
               </TouchableOpacity>
-
             </>
           )}
         </ScrollView>
       </KeyboardAvoidingView>
-    </View >
+    </View>
   );
 };
 

@@ -6,9 +6,9 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
-import { styles } from './styles';
-import { AppImage, AppMedia } from '../../../../Components';
+import React, {useEffect, useRef, useState} from 'react';
+import {styles} from './styles';
+import {AppImage, AppMedia} from '../../../../Components';
 import {
   CommentIcon,
   HeartEmpty,
@@ -17,24 +17,23 @@ import {
   IconSave,
   IconSend,
 } from '../../../../assets/SVG';
-import { BlurView } from '@react-native-community/blur';
+import {BlurView} from '@react-native-community/blur';
 import colors from '../../../../assets/color/colors';
 import dataResource from './data';
+import {FeedItem} from './type';
 
 interface ItemFeedProps {
-  data: any;
+  data: FeedItem;
   onShowModalComment: () => void;
   onShowAction: () => void;
-};
-const dataText =
-  "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc. of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of  (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, comes from a line in section 1.10.32.";
+}
 
 const ItemFeed: React.FC<ItemFeedProps> = ({
   data,
   onShowModalComment,
   onShowAction,
 }) => {
-  const [isLikeFeed, setIsLikeFeed] = useState(false);
+  const [isLikeFeed, setIsLikeFeed] = useState(data.isLike);
   const [isHideInfo, setIsHideInfo] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [isOverflow, setIsOverflow] = useState(false);
@@ -49,14 +48,42 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
     }).start();
   }, [isHideInfo]);
 
+  function formatTimeAgo(timecreate: string): string {
+    const now = new Date();
+    const createdAt = new Date(timecreate);
+    const diffMs = now.getTime() - createdAt.getTime();
+    const diffSec = Math.floor(diffMs / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHour = Math.floor(diffMin / 60);
+
+    if (diffSec < 60) return 'Vài giây trước';
+    if (diffMin < 60) return `${diffMin} phút trước`;
+    if (diffHour < 24) return `${diffHour} giờ trước`;
+
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const postDate = new Date(
+      createdAt.getFullYear(),
+      createdAt.getMonth(),
+      createdAt.getDate(),
+    );
+    const diffDays = Math.floor(
+      (today.getTime() - postDate.getTime()) / (1000 * 60 * 60 * 24),
+    );
+
+    if (diffDays === 0) return 'Hôm nay';
+    if (diffDays === 1) return 'Hôm qua';
+
+    return `${diffDays} ngày trước`;
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.viewMedia}>
         <Animated.View
           style={[
             styles.ScrollText,
-            { backgroundColor: expanded ? '#000000E6' : 'transparent' },
-            { opacity: fadeAnim },
+            {backgroundColor: expanded ? '#000000E6' : 'transparent'},
+            {opacity: fadeAnim},
           ]}>
           <ScrollView nestedScrollEnabled={true}>
             <Text
@@ -67,8 +94,8 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
                   setIsOverflow(true);
                 }
               }}
-              style={{ fontSize: 15, color: '#fff' }}>
-              {dataText}
+              style={{fontSize: 15, color: '#fff'}}>
+              {data.content}
             </Text>
           </ScrollView>
           {isOverflow && (
@@ -76,7 +103,7 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
               onPress={() => {
                 setExpanded(pre => !pre);
               }}>
-              <Text style={{ color: colors.gold2 }}>
+              <Text style={{color: colors.gold2}}>
                 {!expanded ? 'Xem thêm' : 'Ẩn bớt'}
               </Text>
             </TouchableOpacity>
@@ -97,42 +124,44 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
           )}
           <AppImage
             style={styles.avatarImage}
-            imageStyle={[styles.image, { borderWidth: isHideInfo ? 2 : 0 }]}
-            uri="https://i.pinimg.com/736x/50/45/21/504521463b0b781a51d1d14222a3d5d6.jpg"
+            imageStyle={[styles.image, {borderWidth: isHideInfo ? 2 : 0}]}
+            uri={data.avatar}
             width={45}
           />
-          <Animated.View style={[{ marginLeft: 5 }, { opacity: fadeAnim }]}>
-            <View style={{ flexDirection: 'row', gap: 10 }}>
-              <Text style={styles.textUsername}>Eban Jhon Y</Text>
+          <Animated.View style={[{marginLeft: 5}, {opacity: fadeAnim}]}>
+            <View style={{flexDirection: 'row', gap: 10}}>
+              <Text style={styles.textUsername}>
+                {data.firstname} {data.lastname}
+              </Text>
               <TouchableOpacity
                 style={{
-                  backgroundColor: colors.gold2,
+                  backgroundColor: data.isFollow ? colors.gold2 : colors.info,
                   borderRadius: 10,
                   paddingHorizontal: 10,
                 }}>
                 <Text style={styles.lableFollow}>
-                  {!true ? 'Follow' : 'Following'}
+                  {data.isFollow ? 'Follow' : 'Following'}
                 </Text>
               </TouchableOpacity>
             </View>
-            <Animated.Text style={[styles.textTime, { opacity: fadeAnim }]}>
-              Yesterday
+            <Animated.Text style={[styles.textTime, {opacity: fadeAnim}]}>
+              {formatTimeAgo(data.timecreate)}
             </Animated.Text>
           </Animated.View>
         </View>
         <AppMedia
-          resource={dataResource}
+          resource={data.media}
           onPress={() => {
             setIsHideInfo(prev => !prev);
           }}
         />
       </View>
       <View style={styles.viewAction}>
-        <TouchableOpacity style={{ marginBottom: 10 }}>
+        <TouchableOpacity style={{marginBottom: 10}}>
           <IconFillOption width={38} height={38} />
         </TouchableOpacity>
         <TouchableOpacity
-          style={{ marginBottom: 5 }}
+          style={{marginBottom: 5}}
           onPress={() => {
             setIsLikeFeed(pre => !pre);
           }}>
@@ -142,7 +171,7 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
             <HeartFill width={30} height={30} />
           )}
         </TouchableOpacity>
-        <Text>100k</Text>
+        <Text>{data.countLike}</Text>
 
         <TouchableOpacity
           onPress={() => {
@@ -150,13 +179,13 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
           }}>
           <CommentIcon width={30} height={30} />
         </TouchableOpacity>
-        <Text>33</Text>
+        <Text>{data.countComment}</Text>
 
-        <TouchableOpacity style={{ marginVertical: 5 }}>
+        <TouchableOpacity style={{marginVertical: 5}}>
           <IconSend width={32} height={32} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={{ marginVertical: 5 }}>
+        <TouchableOpacity style={{marginVertical: 5}}>
           <IconSave width={30} height={30} />
         </TouchableOpacity>
       </View>

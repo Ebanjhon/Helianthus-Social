@@ -66,6 +66,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  btnUnFl: {
+    width: 90,
+    backgroundColor: colors.xamtrang,
+    height: 35,
+    borderRadius: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   textName: {
     fontWeight: '600',
     color: colors.black,
@@ -79,6 +87,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderColor: colors.gray,
     paddingBottom: 5,
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 

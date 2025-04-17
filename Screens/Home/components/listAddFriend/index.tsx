@@ -3,11 +3,16 @@ import React from 'react';
 import {styles} from './styles';
 import {AppImage} from '../../../../Components';
 import colors from '../../../../assets/color/colors';
+import {accountNew} from '../../data';
 
-type ListItemAddFriendProps = {
-  data?: any;
+type itemData = {
+  avatar: string;
+  username: string;
+  isFollow: boolean;
 };
-const user = [1, 2, 3, 4, 5, 6, 7, 8, 90, 9, 0];
+interface ListItemAddFriendProps {
+  data?: itemData;
+}
 const ListItemAddFriend: React.FC<ListItemAddFriendProps> = ({data}) => {
   return (
     <ScrollView
@@ -15,19 +20,21 @@ const ListItemAddFriend: React.FC<ListItemAddFriendProps> = ({data}) => {
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={{paddingHorizontal: 10, gap: 5}}
       style={styles.container}>
-      {user.map(p => (
+      {accountNew.map(item => (
         <View style={styles.itemUser}>
           <Text style={styles.newUser}>New account</Text>
           <AppImage
             imageStyle={{borderRadius: 90, marginRight: 5}}
-            uri="https://i.pinimg.com/736x/6d/97/c8/6d97c8b8c472119808c7691caff600ed.jpg"
+            uri={item.avatar}
             width={80}
             height={80}
           />
-          <Text style={{color: colors.black, fontWeight: '600'}}>David</Text>
+          <Text style={{color: colors.black, fontWeight: '600'}}>
+            {item.username}
+          </Text>
           <TouchableOpacity
             style={{
-              backgroundColor: colors.gray,
+              backgroundColor: colors.info,
               paddingHorizontal: 8,
               borderRadius: 10,
             }}>
