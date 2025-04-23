@@ -51,7 +51,7 @@ const Login = ({ navigation }) => {
       }
 
       const result: UserResponse = text ? JSON.parse(text) : ({} as UserResponse);
-      if (result?.active) {
+      if (!result?.active) {
         navigation.navigate('Active', { userData: result });
       } else {
         await AsyncStorage.setItem('user', JSON.stringify(result));
