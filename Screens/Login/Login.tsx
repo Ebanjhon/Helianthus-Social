@@ -30,19 +30,23 @@ import React from 'react';
 const Login = ({ navigation }) => {
   const [username, setUsername] = useState('eban123');
   const [password, setPassword] = useState('123456');
-  const [fetchToken, { data: tokenData, error, isLoading }] = useGetTokenMutation();
+  const [fetchToken, { data: tokenData, error, isLoading }] =
+    useGetTokenMutation();
   useGetUserProfileMutation();
   const { dispatch } = useContext(UserContext);
   const handleGetUserProfile = async (token: string) => {
     console.log(token);
     try {
-      const response = await fetch(`${BASE_URL}/api/user?username=${encodeURIComponent(username)}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+      const response = await fetch(
+        `${BASE_URL}/api/user?username=${encodeURIComponent(username)}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       const text = await response.text();
 
@@ -50,8 +54,10 @@ const Login = ({ navigation }) => {
         throw new Error(`Lỗi server: ${response.status}`);
       }
 
-      const result: UserResponse = text ? JSON.parse(text) : ({} as UserResponse);
-      if (!result?.active) {
+      const result: UserResponse = text
+        ? JSON.parse(text)
+        : ({} as UserResponse);
+      if (result?.active) {
         navigation.navigate('Active', { userData: result });
       } else {
         await AsyncStorage.setItem('user', JSON.stringify(result));
@@ -64,25 +70,26 @@ const Login = ({ navigation }) => {
   };
 
   const handleLogin = async () => {
-    // dispatch({
-    //   type: 'login',
-    //   payload: {
-    //     userId: 'KIUHLYGJYGKJHK',
-    //     username: 'eban123',
-    //     firstname: 'Son',
-    //     lastname: 'Json',
-    //     email: 'eban@eban.vn',
-    //     avatar:
-    //       'https://i.pinimg.com/736x/29/31/bc/2931bce606d71b1c60bd9c6c6596f441.jpg',
-    //     active: true,
-    //     curentUser: true,
-    //   },
-    // });
-    // return;
+    dispatch({
+      type: 'login',
+      payload: {
+        userId: 'KIUHLYGJYGKJHK',
+        username: 'eban123',
+        firstname: 'Son',
+        lastname: 'Json',
+        email: 'eban@eban.vn',
+        avatar:
+          'https://i.pinimg.com/736x/29/31/bc/2931bce606d71b1c60bd9c6c6596f441.jpg',
+        active: true,
+        curentUser: true,
+        id: undefined,
+      },
+    });
+    return;
     try {
       const dataToken = await fetchToken({ username, password }).unwrap();
       if (dataToken.token === undefined) {
-        showToast('error', 'Đăng nhập thất bại!', "Vui lòng đăng nhập lại!");
+        showToast('error', 'Đăng nhập thất bại!', 'Vui lòng đăng nhập lại!');
       } else {
         await AsyncStorage.setItem('token', dataToken.token);
         await handleGetUserProfile(dataToken.token);
@@ -95,13 +102,10 @@ const Login = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Toast config={toastConfigExport} />
-      <KeyboardAvoidingView
-        behavior='padding'
-      >
+      <KeyboardAvoidingView behavior="padding">
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ justifyContent: 'center', flexGrow: 1 }}
-        >
+          contentContainerStyle={{ justifyContent: 'center', flexGrow: 1 }}>
           <Text style={styles.textNameApp}>Helianthus</Text>
 
           <View
@@ -142,7 +146,7 @@ const Login = ({ navigation }) => {
                 style={{
                   width: 50,
                   alignSelf: 'center',
-                  marginTop: 18
+                  marginTop: 18,
                 }}>
                 <IconGoogle />
               </TouchableOpacity>
@@ -153,12 +157,11 @@ const Login = ({ navigation }) => {
                 }}>
                 <Text style={styles.registerText}>Đăng ký tài khoản</Text>
               </TouchableOpacity>
-
             </>
           )}
         </ScrollView>
       </KeyboardAvoidingView>
-    </View >
+    </View>
   );
 };
 
