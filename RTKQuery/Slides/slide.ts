@@ -1,7 +1,9 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { createAccount, createFeed, UserResponse } from './types';
+import { createAccount, createFeed, FeedItem, UserProfileInfo, UserResponse, UserSearchResult } from './types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-export const BASE_URL = 'http://192.168.182.25:8888';
+export const HOST = '172.31.99.37';
+export const BASE_URL = `http://${HOST}:8888`;
+export const BASE_MinIO = `http://${HOST}`;
 
 const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL,
@@ -70,6 +72,38 @@ export const apiSlice = createApi({
         body: params,
       }),
     }),
+    searchUser: builder.mutation<UserSearchResult, { username: string }>({
+      query: ({ username }) => ({
+        url: `/api/user/search?username=${username}`,
+        method: 'GET',
+      }),
+    }),
+    followUser: builder.mutation<any, { userTargetId: string }>({
+      query: (params) => ({
+        url: '/api/user/follow',
+        method: 'POST',
+        body: params
+      }),
+    }),
+    unFollowUser: builder.mutation<any, { userTargetId: string }>({
+      query: (params) => ({
+        url: '/api/user/follow',
+        method: 'DELETE',
+        body: params
+      }),
+    }),
+    getFeedHome: builder.mutation<FeedItem, { page: number }>({
+      query: ({ page }) => ({
+        url: `/api/feed/search?page=${page}&size=5`,
+        method: 'GET',
+      }),
+    }),
+    getUserInfo: builder.mutation<UserProfileInfo, { username: string }>({
+      query: ({ username }) => ({
+        url: `/api/user/profile?username=${username}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -78,5 +112,10 @@ export const { useGetTokenMutation,
   useCreateAccountMutation,
   useCreateOTPMutation,
   useVerifyOTPMutation,
-  useCreateFeedMutation
+  useCreateFeedMutation,
+  useSearchUserMutation,
+  useFollowUserMutation,
+  useUnFollowUserMutation,
+  useGetFeedHomeMutation,
+  useGetUserInfoMutation,
 } = apiSlice;

@@ -1,11 +1,11 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 import colors from '../../../../assets/color/colors';
 
 export const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.trang,
     flexDirection: 'row',
-    height: 480,
+    maxHeight: 480,
     marginBottom: 9,
   },
   viewMedia: {

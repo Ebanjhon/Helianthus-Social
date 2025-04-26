@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Image, ImageBackground, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import styles from './style';
 import { UserContext } from '../../../../Configs/UserReducer';
@@ -9,24 +9,33 @@ import { AppPickerListBox, AppTextInput } from '../../../../Components';
 import { toastConfigExport } from '../../../../Configs/ToastConfig';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import DateTimePicker from 'react-native-modal-datetime-picker';
+import { useGetUserInfoMutation } from '../../../../RTKQuery/Slides/slide';
 
 interface UpdateProfileProps { };
 
 const UpdateProfile: React.FC<UpdateProfileProps> = ({ }) => {
   const { user, dispatch } = useContext(UserContext);
+  const [fetchData, { data, isLoading: isFetching, error }] = useGetUserInfoMutation();
   const [firstname, setFirstName] = useState(user?.firstname);
   const [lastname, setLastName] = useState(user?.lastname);
-  const [phone, setPhone] = useState("");
-  const [gender, setGender] = useState("");
-  const [bio, setBio] = useState("");
+  const [phone, setPhone] = useState(data?.phoneNumber);
+  const [gender, setGender] = useState(data?.gender);
+  const [bio, setBio] = useState(data?.bio);
   const [email, setEmail] = useState(user?.email);
   const [birth, setBirth] = useState(new Date());
-  const [avatar, setAvatar] = useState("");
+  const [avatar, setAvatar] = useState(data?.avatar);
   const [cover, setCover] = useState("");
   const [imagePath, setImagePath] = useState(null);
   const [isChange, setIsChange] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const handeldFetchData = async () => {
+    await fetchData({ username: user?.username || '' }).unwrap();
+  };
+
+  useEffect(() => {
+    handeldFetchData();
+  }, [])
 
   const openImageLibrary = () => {
     ImageCropPicker.openPicker({
@@ -60,13 +69,14 @@ const UpdateProfile: React.FC<UpdateProfileProps> = ({ }) => {
 
 
   return <View style={styles.container}>
-    {/* <Toast config={toastConfigExport} /> */}
+    <Toast config={toastConfigExport} />
     <HeaderApp
       title={"Update profile"}
       bgColor={colors.trang}
       isShowleftAction
       isButtonHead isShowrightAction={false} />
     <ScrollView
+      contentContainerStyle={{ paddingBottom: 20 }}
       showsVerticalScrollIndicator={false}
       style={{ height: 90, flex: 1 }}>
       <Text style={styles.lable}>Ảnh bìa</Text>

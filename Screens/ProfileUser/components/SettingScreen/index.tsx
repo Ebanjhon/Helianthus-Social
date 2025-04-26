@@ -32,7 +32,7 @@ const Setting: React.FC<SettingProps> = ({ }) => {
         isButtonHead isShowrightAction={false} />
       <View style={styles.box}>
         <Text style={styles.title_box}>Trung tâm tài khoản</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("UpdatePrifile")}>
+        <TouchableOpacity onPress={() => navigation.navigate("UpdateProfile")}>
           <Text style={styles.itemp}>Chỉnh sửa thông tin cá nhân</Text>
         </TouchableOpacity>
         <TouchableOpacity>

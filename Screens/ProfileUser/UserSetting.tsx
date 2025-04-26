@@ -19,7 +19,6 @@ const UserSeting = ({ navigation }) => {
                         source={{ uri: icons.back_head }}
                     />
                 </TouchableOpacity>
-
                 <Text style={styles.title}>Cài đặt</Text>
                 <Text style={{ width: 50 }}></Text>
             </View>

@@ -2,7 +2,6 @@ import styles from './LoginStyle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useContext, useState } from 'react';
 import {
-  Image,
   KeyboardAvoidingView,
   ScrollView,
   Text,
@@ -12,14 +11,10 @@ import {
 import LottieView from 'lottie-react-native';
 import Toast from 'react-native-toast-message';
 import { showToast, toastConfigExport } from '../../Configs/ToastConfig';
-import HeaderApp from '../../Components/HeaderApp/HeaderApp';
 import { AppInputFloat } from '../../Components/AppInputFloating/AppInputFloat';
-import AppBackground from '../../Components/AppBackground/AppBackground';
-import { colorsGradient } from '../../assets/color/colors';
 import { UserResponse } from '../../RTKQuery/Slides/types';
 import {
   BASE_URL,
-  useCreateOTPMutation,
   useGetTokenMutation,
   useGetUserProfileMutation,
 } from '../../RTKQuery/Slides/slide';
@@ -28,8 +23,8 @@ import { IconGoogle } from '../../assets/SVG';
 import React from 'react';
 
 const Login = ({ navigation }) => {
-  const [username, setUsername] = useState('eban123');
-  const [password, setPassword] = useState('123456');
+  const [username, setUsername] = useState('Eban1234');
+  const [password, setPassword] = useState('123');
   const [fetchToken, { data: tokenData, error, isLoading }] =
     useGetTokenMutation();
   useGetUserProfileMutation();
@@ -57,7 +52,7 @@ const Login = ({ navigation }) => {
       const result: UserResponse = text
         ? JSON.parse(text)
         : ({} as UserResponse);
-      if (result?.active) {
+      if (result?.active === false) {
         navigation.navigate('Active', { userData: result });
       } else {
         await AsyncStorage.setItem('user', JSON.stringify(result));
@@ -70,22 +65,22 @@ const Login = ({ navigation }) => {
   };
 
   const handleLogin = async () => {
-    dispatch({
-      type: 'login',
-      payload: {
-        userId: 'KIUHLYGJYGKJHK',
-        username: 'eban123',
-        firstname: 'Son',
-        lastname: 'Json',
-        email: 'eban@eban.vn',
-        avatar:
-          'https://i.pinimg.com/736x/29/31/bc/2931bce606d71b1c60bd9c6c6596f441.jpg',
-        active: true,
-        curentUser: true,
-        id: undefined,
-      },
-    });
-    return;
+    // dispatch({
+    //   type: 'login',
+    //   payload: {
+    //     userId: 'KIUHLYGJYGKJHK',
+    //     username: 'eban123',
+    //     firstname: 'Son',
+    //     lastname: 'Json',
+    //     email: 'eban@eban.vn',
+    //     avatar:
+    //       'https://i.pinimg.com/736x/29/31/bc/2931bce606d71b1c60bd9c6c6596f441.jpg',
+    //     active: true,
+    //     curentUser: true,
+    //     id: undefined,
+    //   },
+    // });
+    // return;
     try {
       const dataToken = await fetchToken({ username, password }).unwrap();
       if (dataToken.token === undefined) {
@@ -95,7 +90,7 @@ const Login = ({ navigation }) => {
         await handleGetUserProfile(dataToken.token);
       }
     } catch (err) {
-      showToast('error', 'Đăng nhập thất bại!', errOTP);
+      showToast('error', 'Đăng nhập thất bại!', "Mật khẩu hoặc tên người dùng không chính xác!");
     }
   };
 

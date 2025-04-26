@@ -2,6 +2,7 @@ import { ImageStyle, StyleProp, View, ViewStyle } from 'react-native';
 import React, { useState } from 'react';
 import FastImage, { ResizeMode } from 'react-native-fast-image';
 import { styles } from './types';
+import { BASE_MinIO } from '../../RTKQuery/Slides/slide';
 
 type AppImageProps = {
   uri: string;
@@ -22,7 +23,7 @@ const AppImage: React.FC<AppImageProps> = ({
   imageStyle,
   typeMode = 'cover',
 }) => {
-  const [imageUri, setImageUri] = useState(uri);
+  const [imageUri, setImageUri] = useState(BASE_MinIO + uri);
   return (
     <View style={[style, styles.container, { width: width, height: height }]}>
       <FastImage

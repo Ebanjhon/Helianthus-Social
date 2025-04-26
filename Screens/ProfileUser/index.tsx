@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import React, { forwardRef, useCallback, useContext, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { Dimensions, FlatList, Pressable, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import HeaderApp from "../../Components/HeaderApp/HeaderApp";
 import colors from "../../assets/color/colors";
@@ -6,11 +6,15 @@ import { AppImage } from "../../Components";
 import styles from "./styles";
 import { MyFeedMasonry, MyLikeMasonry, MyMediaMasonry } from "./components";
 import { IconFavorite, IconFeed, IconMedia } from "../../assets/SVG";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useGetUserInfoMutation } from "../../RTKQuery/Slides/slide";
+import { UserContext } from "../../Configs/UserReducer";
 const { width, height } = Dimensions.get('window');
 interface profileProps {
 }
 const ProfileUser: React.FC<profileProps> = ({ }) => {
+    const { user, dispatch: userDispatch } = useContext(UserContext);
+    const [fetchData, { data, isLoading, error }] = useGetUserInfoMutation();
     const navigation = useNavigation();
     const flatListRef = useRef<FlatList>(null);
     const [isAllowScroll, setIsAllowScroll] = useState(false);
@@ -22,12 +26,28 @@ const ProfileUser: React.FC<profileProps> = ({ }) => {
             setIsAllowScroll(pre => !pre)
         }
     }
+
+    const handeldFetchData = async () => {
+        await fetchData({ username: user?.username || '' }).unwrap();
+    };
+
+    useFocusEffect(
+        useCallback(() => {
+            console.log('Screen is focused');
+            handeldFetchData();
+            return () => {
+                console.log('Screen is unfocused');
+            };
+        }, [])
+    );
+
     return (
         <SafeAreaView style={styles.container}>
             <HeaderApp
-                title={"Eban Jhon Y"}
+                title={data?.username}
                 bgColor={colors.trang}
-                isShowleftAction isShowrightAction
+                isShowleftAction
+                isShowrightAction={!data?.curentUser}
                 isButtonHead
                 onPrees={() => { navigation.navigate('Setting') }}
             />
@@ -40,14 +60,14 @@ const ProfileUser: React.FC<profileProps> = ({ }) => {
                 showsVerticalScrollIndicator={false}
                 ListHeaderComponent={
                     <>
-                        <AppImage uri={"https://i.pinimg.com/736x/43/61/09/4361091dd491bacbbcdbaa0be7a2d2be.jpg"} width={"100%"} height={230} imageStyle={styles.cover} />
-                        <AppImage uri="https://i.pinimg.com/736x/a4/1d/5b/a41d5bcc7240df30b9d69219bd8cb021.jpg" width={100} height={100} imageStyle={styles.avatar} style={styles.avtView} />
-                        <Text style={styles.nameText}>Y JHON EBAN</Text>
-                        <TouchableOpacity style={styles.btnFollow}>
+                        <AppImage uri={data?.avatar || "https://i.pinimg.com/736x/43/61/09/4361091dd491bacbbcdbaa0be7a2d2be.jpg"} width={"100%"} height={230} imageStyle={styles.cover} />
+                        <AppImage uri={data?.avatar || "https://i.pinimg.com/736x/a4/1d/5b/a41d5bcc7240df30b9d69219bd8cb021.jpg"} width={100} height={100} imageStyle={styles.avatar} style={styles.avtView} />
+                        <Text style={styles.nameText}>{data?.firstname} {data?.lastname}</Text>
+                        <TouchableOpacity style={[styles.btnFollow, { display: data?.curentUser ? 'flex' : 'none' }]}>
                             <Text style={{ color: colors.white }}>FOLLOW</Text>
                         </TouchableOpacity>
                         <View style={styles.thumnable}>
-                            <Text style={styles.bioText}>I'm frontend mobile dev </Text>
+                            <Text style={styles.bioText}>{data?.bio || ''}</Text>
                             <View style={styles.inforPrifile}>
                                 <Pressable style={styles.itemInfor}>
                                     <Text style={styles.textNum}>20</Text>

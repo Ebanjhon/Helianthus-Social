@@ -1,57 +1,60 @@
-import React, {useRef, useState} from 'react';
-import {Dimensions, FlatList, Pressable} from 'react-native';
+import React, { useRef, useState } from 'react';
+import { Dimensions, FlatList, Pressable } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import AppVideo from '../AppVideo';
+import { BASE_MinIO } from '../../RTKQuery/Slides/slide';
+import { Media } from '../../RTKQuery/Slides/types';
 
-type media = {
-  id: string;
-  url: string;
-  width: number;
-  height: number;
-  typeMedia: 'IMAGE' | 'VIDEO';
-};
+// type media = {
+//   id: string;
+//   url: string;
+//   width: number;
+//   height: number;
+//   typeMedia: 'IMAGE' | 'VIDEO';
+// };
 interface AppMediaProps {
-  resource: media[];
+  resource: Media[];
   onPress?: () => void;
 }
 const screenWidth = Dimensions.get('window').width - 60;
-const AppMedia: React.FC<AppMediaProps> = ({resource, onPress}) => {
+const AppMedia: React.FC<AppMediaProps> = ({ resource, onPress }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const viewabilityConfig = useRef({
     viewAreaCoveragePercentThreshold: 50,
   });
 
-  const onViewableItemsChanged = useRef(({viewableItems}) => {
+  const onViewableItemsChanged = useRef(({ viewableItems }) => {
     if (viewableItems.length > 0) {
       setCurrentIndex(viewableItems[0].index || 0);
     }
   });
+
   return (
     <FlatList
-      style={{height: 480, width: screenWidth}}
+      style={{ height: 480, width: screenWidth }}
       data={resource}
       horizontal={true}
       pagingEnabled
       showsHorizontalScrollIndicator={false}
-      keyExtractor={item => item.id}
-      renderItem={({item, index}) => (
+      keyExtractor={item => item.mediaId}
+      renderItem={({ item, index }) => (
         <Pressable
           onPress={() => {
             onPress && onPress();
           }}>
-          {item.typeMedia === 'IMAGE' ? (
+          {item.mediaType === 'IMAGE' ? (
             <FastImage
-              style={{flex: 1, width: screenWidth}}
+              style={{ flex: 1, width: screenWidth }}
               source={{
-                uri: item.url,
+                uri: BASE_MinIO + item.url,
                 priority: FastImage.priority.high,
               }}
               resizeMode={FastImage.resizeMode.cover}
             />
           ) : (
             <AppVideo
-              source={item.url}
+              source={BASE_MinIO + item.url}
               width={screenWidth}
               height={480}
               isCurrent={index === currentIndex}
