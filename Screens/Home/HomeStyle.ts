@@ -8,6 +8,16 @@ const styles = StyleSheet.create({
     // height: '100%',
     backgroundColor: colors.xamtrang,
   },
+  tabBarStyle: {
+    position: 'absolute',
+    bottom: 10,
+    left: 15,
+    right: 15,
+    backgroundColor: colors.light,
+    borderRadius: 50,
+    height: 50,
+    zIndex: 2,
+  },
   contai_head: {
     width: '100%',
     display: 'flex',

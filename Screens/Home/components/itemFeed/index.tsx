@@ -4,7 +4,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Animated,
-  Dimensions,
 } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { styles } from './styles';
@@ -19,26 +18,31 @@ import {
 } from '../../../../assets/SVG';
 import { BlurView } from '@react-native-community/blur';
 import colors from '../../../../assets/color/colors';
-import dataResource from './data';
 import { FeedItem } from '../../../../RTKQuery/Slides/types';
+import { formatTimeAgo } from './functions';
+import { useLikeFeedMutation, useUnLikeFeedMutation } from '../../../../RTKQuery/Slides/slide';
 
 interface ItemFeedProps {
   data: FeedItem;
   onShowModalComment: () => void;
   onShowAction: () => void;
 }
-const screenWidth = Dimensions.get('window').width - 60;
 const ItemFeed: React.FC<ItemFeedProps> = ({
   data,
   onShowModalComment,
   onShowAction,
 }) => {
+  const [fetchLikeFeed, { error: errorLike }] = useLikeFeedMutation();
+  const [fetchUnLikeFeed, { error: errorUnLike }] = useUnLikeFeedMutation();
   const [isLikeFeed, setIsLikeFeed] = useState(data.action.isLike);
+  const [countLike, setCountLike] = useState(data.action.countLike);
   const [isHideInfo, setIsHideInfo] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [isOverflow, setIsOverflow] = useState(false);
   const textRef = useRef(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const isEmptyMedia = data.resource.length === 0 && !expanded;
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -48,35 +52,27 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
     }).start();
   }, [isHideInfo]);
 
-  function formatTimeAgo(timecreate: string): string {
-    const now = new Date();
-    const createdAt = new Date(timecreate);
-    const diffMs = now.getTime() - createdAt.getTime();
-    const diffSec = Math.floor(diffMs / 1000);
-    const diffMin = Math.floor(diffSec / 60);
-    const diffHour = Math.floor(diffMin / 60);
 
-    if (diffSec < 60) return 'Vài giây trước';
-    if (diffMin < 60) return `${diffMin} phút trước`;
-    if (diffHour < 24) return `${diffHour} giờ trước`;
-
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const postDate = new Date(
-      createdAt.getFullYear(),
-      createdAt.getMonth(),
-      createdAt.getDate(),
-    );
-    const diffDays = Math.floor(
-      (today.getTime() - postDate.getTime()) / (1000 * 60 * 60 * 24),
-    );
-
-    if (diffDays === 0) return 'Hôm nay';
-    if (diffDays === 1) return 'Hôm qua';
-
-    return `${diffDays} ngày trước`;
+  const handleLike = async () => {
+    setIsLikeFeed(pre => !pre)
+    if (isLikeFeed) {
+      try {
+        setCountLike(pre => pre - 1)
+        await fetchUnLikeFeed({ feedId: data.feedId }).unwrap();
+      } catch (error) {
+        setIsLikeFeed(pre => !pre)
+        setCountLike(pre => pre + 1)
+      }
+    } else {
+      setCountLike(pre => pre + 1)
+      try {
+        await fetchLikeFeed({ feedId: data.feedId }).unwrap();
+      } catch (error) {
+        setIsLikeFeed(pre => !pre)
+        setCountLike(pre => pre - 1)
+      }
+    }
   }
-
-  const isEmptyMedia = data.resource.length === 0 && !expanded;
 
   return (
     <View style={[styles.container, isEmptyMedia && { height: 240 }]}>
@@ -164,16 +160,14 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
         </TouchableOpacity>
         <TouchableOpacity
           style={{ marginBottom: 5 }}
-          onPress={() => {
-            // setIsLikeFeed(pre => !pre);
-          }}>
+          onPress={handleLike}>
           {!isLikeFeed ? (
             <HeartEmpty width={30} height={30} />
           ) : (
             <HeartFill width={30} height={30} />
           )}
         </TouchableOpacity>
-        <Text>{data.action.countLike}</Text>
+        <Text>{countLike}</Text>
 
         <TouchableOpacity
           onPress={() => {

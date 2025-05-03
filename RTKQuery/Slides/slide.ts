@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { createAccount, createFeed, FeedItem, UserProfileInfo, UserResponse, UserSearchResult } from './types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-export const HOST = '172.31.99.37';
+export const HOST = '192.168.1.4';
 export const BASE_URL = `http://${HOST}:8888`;
 export const BASE_MinIO = `http://${HOST}`;
 
@@ -104,6 +104,20 @@ export const apiSlice = createApi({
         method: 'GET',
       }),
     }),
+    likeFeed: builder.mutation<any, { feedId: string }>({
+      query: ({ feedId }) => ({
+        url: '/api/feed/action',
+        method: 'POST',
+        body: feedId
+      }),
+    }),
+    unLikeFeed: builder.mutation<any, { feedId: string }>({
+      query: ({ feedId }) => ({
+        url: '/api/feed/action',
+        method: 'DELETE',
+        body: feedId
+      }),
+    }),
   }),
 });
 
@@ -118,4 +132,6 @@ export const { useGetTokenMutation,
   useUnFollowUserMutation,
   useGetFeedHomeMutation,
   useGetUserInfoMutation,
+  useLikeFeedMutation,
+  useUnLikeFeedMutation
 } = apiSlice;

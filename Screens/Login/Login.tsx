@@ -23,7 +23,7 @@ import { IconGoogle } from '../../assets/SVG';
 import React from 'react';
 
 const Login = ({ navigation }) => {
-  const [username, setUsername] = useState('Eban1234');
+  const [username, setUsername] = useState('hon123');
   const [password, setPassword] = useState('123');
   const [fetchToken, { data: tokenData, error, isLoading }] =
     useGetTokenMutation();
