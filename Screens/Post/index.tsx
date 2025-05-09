@@ -20,7 +20,7 @@ type CreateFeedProps = {
 
 const CreateFeed: React.FC<CreateFeedProps> = ({ }) => {
     const navigation = useNavigation();
-    const [createFeed, { data }] = useCreateFeedMutation();
+    const [createFeed] = useCreateFeedMutation();
     const [content, setContent] = React.useState('');
     const [images, setImages] = useState([]);
     const [files, setFiles] = useState<mediaType[]>([]);
@@ -31,6 +31,11 @@ const CreateFeed: React.FC<CreateFeedProps> = ({ }) => {
     const [imageUri, setImageUri] = useState(null);
     const viewShotRef = useRef();
     const [typeEdit, setTypeEdit] = useState(null);
+
+    const handleReset = () => {
+        setFiles([]);
+        setContent('');
+    }
 
     // chọn ảnh từ thư viện
     const openFilePicker = () => {
@@ -153,8 +158,7 @@ const CreateFeed: React.FC<CreateFeedProps> = ({ }) => {
             if (!response.ok) {
                 throw new Error(result.message || 'Upload thất bại');
             }
-            setFiles([]);
-            setContent('');
+            handleReset()
             showToast('success', 'Message!', 'Đăng tải bài viết thành công.');
             setTimeout(() => {
                 navigation.goBack();
@@ -170,26 +174,24 @@ const CreateFeed: React.FC<CreateFeedProps> = ({ }) => {
     const createPost = async () => {
         setLoading(true);
         try {
-            await createFeed({ content }).unwrap();
-            if (data) {
-                uploadPostFiles(data.feedId)
+            const result = await createFeed({ content: content }).unwrap();
+            setLoading(false);
+            if (result) {
+                uploadPostFiles(result.feedId)
             } else {
                 setLoading(false);
-                console.log('====================================');
                 console.log("Lỗi tạo bài viết");
-                console.log('====================================');
             }
         } catch (error) {
             setLoading(false);
-            console.log('====================================');
             console.log(error);
-            console.log('====================================');
         }
     }
 
     return (
         <SlideUp>
             <HeaderApp title='Tạo bài viết'
+                onActionBack={handleReset}
                 isShowleftAction={!loading}
                 rightView={
                     <TouchableOpacity
@@ -198,7 +200,7 @@ const CreateFeed: React.FC<CreateFeedProps> = ({ }) => {
                             createPost();
                         }}
                     >
-                        <Text style={styles.textBtnHead}>Đăng bài</Text>
+                        <Text style={[styles.textBtnHead, { opacity: loading ? 0.5 : 1 }]}>Đăng bài</Text>
                     </TouchableOpacity>}
                 style={{ backgroundColor: colors.white }}
             />
@@ -230,7 +232,7 @@ const CreateFeed: React.FC<CreateFeedProps> = ({ }) => {
                             style={styles.media}
                             source={{ uri: item.uri }}
                         />
-                        {loadUpdate && <>
+                        {!loading && <>
                             <TouchableOpacity style={styles.BGIcon} onPress={() => removeImage(index)}>
                                 <IconX width={23} />
                             </TouchableOpacity>

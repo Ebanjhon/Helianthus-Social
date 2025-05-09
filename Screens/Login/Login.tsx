@@ -21,8 +21,10 @@ import {
 import { UserContext } from '../../Configs/UserReducer';
 import { IconGoogle } from '../../assets/SVG';
 import React from 'react';
+import { useNavigation } from '@react-navigation/native';
 
-const Login = ({ navigation }) => {
+const Login = ({ }) => {
+  const navigation = useNavigation();
   const [username, setUsername] = useState('hon123');
   const [password, setPassword] = useState('123');
   const [fetchToken, { data: tokenData, error, isLoading }] =
@@ -30,7 +32,6 @@ const Login = ({ navigation }) => {
   useGetUserProfileMutation();
   const { dispatch } = useContext(UserContext);
   const handleGetUserProfile = async (token: string) => {
-    console.log(token);
     try {
       const response = await fetch(
         `${BASE_URL}/api/user?username=${encodeURIComponent(username)}`,
@@ -65,22 +66,6 @@ const Login = ({ navigation }) => {
   };
 
   const handleLogin = async () => {
-    // dispatch({
-    //   type: 'login',
-    //   payload: {
-    //     userId: 'KIUHLYGJYGKJHK',
-    //     username: 'eban123',
-    //     firstname: 'Son',
-    //     lastname: 'Json',
-    //     email: 'eban@eban.vn',
-    //     avatar:
-    //       'https://i.pinimg.com/736x/29/31/bc/2931bce606d71b1c60bd9c6c6596f441.jpg',
-    //     active: true,
-    //     curentUser: true,
-    //     id: undefined,
-    //   },
-    // });
-    // return;
     try {
       const dataToken = await fetchToken({ username, password }).unwrap();
       if (dataToken.token === undefined) {

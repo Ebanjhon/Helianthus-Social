@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native';
 import React from 'react';
 import { styles } from './styles';
 import { AppImage } from '../../../../Components';
@@ -10,17 +10,18 @@ type itemData = {
   username: string;
   isFollow: boolean;
 };
-interface ListItemAddFriendProps {
-  data?: itemData;
-}
-const ListItemAddFriend: React.FC<ListItemAddFriendProps> = ({ data }) => {
+
+interface ListItemAddFriendProps { }
+
+const ListItemAddFriend: React.FC<ListItemAddFriendProps> = ({ }) => {
   return (
-    <ScrollView
+    <FlatList
+      data={accountNew}
       horizontal={true}
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={{ paddingHorizontal: 10, gap: 5, height: 130 }}
-      style={styles.container}>
-      {accountNew.map(item => (
+      style={styles.container}
+      renderItem={(item: any) => (
         <View style={styles.itemUser}>
           <Text style={styles.newUser}>New account</Text>
           <AppImage
@@ -41,8 +42,8 @@ const ListItemAddFriend: React.FC<ListItemAddFriendProps> = ({ data }) => {
             <Text style={{ color: colors.white }}>Follow</Text>
           </TouchableOpacity>
         </View>
-      ))}
-    </ScrollView>
+      )}
+    />
   );
 };
 

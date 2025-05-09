@@ -21,22 +21,24 @@ import colors from '../../../../assets/color/colors';
 import { FeedItem } from '../../../../RTKQuery/Slides/types';
 import { formatTimeAgo } from './functions';
 import { useLikeFeedMutation, useUnLikeFeedMutation } from '../../../../RTKQuery/Slides/slide';
+import { ModalActionRef } from '../modalAction';
 
 interface ItemFeedProps {
   data: FeedItem;
   onShowModalComment: () => void;
-  onShowAction: () => void;
+  modalActionRef: React.RefObject<ModalActionRef>
 }
 const ItemFeed: React.FC<ItemFeedProps> = ({
   data,
   onShowModalComment,
-  onShowAction,
+  modalActionRef
 }) => {
   const [fetchLikeFeed, { error: errorLike }] = useLikeFeedMutation();
   const [fetchUnLikeFeed, { error: errorUnLike }] = useUnLikeFeedMutation();
   const [isLikeFeed, setIsLikeFeed] = useState(data.action.isLike);
   const [countLike, setCountLike] = useState(data.action.countLike);
   const [isHideInfo, setIsHideInfo] = useState(false);
+  const [isShow, setIsShow] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [isOverflow, setIsOverflow] = useState(false);
   const textRef = useRef(null);
@@ -60,6 +62,9 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
         setCountLike(pre => pre - 1)
         await fetchUnLikeFeed({ feedId: data.feedId }).unwrap();
       } catch (error) {
+        console.log('====================================');
+        console.log(error);
+        console.log('====================================');
         setIsLikeFeed(pre => !pre)
         setCountLike(pre => pre + 1)
       }
@@ -75,7 +80,7 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
   }
 
   return (
-    <View style={[styles.container, isEmptyMedia && { height: 240 }]}>
+    <View style={[styles.container, isEmptyMedia && { height: 240, display: isShow ? 'none' : 'flex' }]}>
       <View style={styles.viewMedia}>
         <Animated.View
           style={[
@@ -155,7 +160,17 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
         />
       </View>
       <View style={styles.viewAction}>
-        <TouchableOpacity style={{ marginBottom: 10 }}>
+        <TouchableOpacity
+          onPress={() => {
+            modalActionRef.current?.onShowModalAction({
+              isAuthor: true,
+              feedId: data.feedId,
+              setDeleteFeed() {
+                setIsShow(true)
+              },
+            })
+          }}
+          style={{ marginBottom: 10 }}>
           <IconFillOption width={38} height={38} />
         </TouchableOpacity>
         <TouchableOpacity

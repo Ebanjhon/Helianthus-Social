@@ -14,6 +14,7 @@ export type HeaderAppProps = {
   bgColor?: string;
   style?: StyleProp<ViewStyle>;
   onPrees?: () => void;
+  onActionBack?: () => void;
   rightView?: React.ReactNode;
 };
 
@@ -26,13 +27,17 @@ const HeaderApp: React.FC<HeaderAppProps> = ({
   isButtonHead = false,
   rightView,
   onPrees,
+  onActionBack,
 }) => {
   const Navigation = useNavigation();
   return (
     <View style={[styles.Container, { backgroundColor: bgColor }, style]}>
       {isShowleftAction ? (
         <TouchableOpacity
-          onPress={Navigation.goBack}
+          onPress={() => {
+            Navigation.goBack()
+            onActionBack && onActionBack()
+          }}
           style={[styles.itemHeader, { alignItems: 'flex-start' }, isButtonHead && styles.btnAction]}>
           <IconBack height={40} width={40} />
         </TouchableOpacity>

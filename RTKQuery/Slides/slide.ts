@@ -43,7 +43,7 @@ export const apiSlice = createApi({
       query: () => ({
         url: "/api/auth/send-otp",
         method: "POST",
-        responseHandler: (response) => response.text(), // 👈 xử lý dạng text
+        responseHandler: (response) => response.text(),
       }),
       transformResponse: (rawResult: string) => {
         const otp = rawResult.split(':')[1]?.trim() ?? '';
@@ -58,10 +58,9 @@ export const apiSlice = createApi({
         headers: {
           'Content-Type': 'text/plain',
         },
-        responseHandler: (response) => response.text(), // 👈 để tránh lỗi JSON parse
+        responseHandler: (response) => response.text(),
       }),
       transformResponse: (_raw, meta) => {
-        // 👈 Lấy status code từ meta
         return { status: meta?.response?.status || 0 };
       },
     }),
@@ -92,7 +91,7 @@ export const apiSlice = createApi({
         body: params
       }),
     }),
-    getFeedHome: builder.mutation<FeedItem, { page: number }>({
+    getFeedHome: builder.mutation<FeedItem[], { page: number }>({
       query: ({ page }) => ({
         url: `/api/feed/search?page=${page}&size=5`,
         method: 'GET',
@@ -115,7 +114,24 @@ export const apiSlice = createApi({
       query: ({ feedId }) => ({
         url: '/api/feed/action',
         method: 'DELETE',
-        body: feedId
+        body: feedId,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        responseHandler: async (response) => {
+          const text = await response.text();
+          try {
+            return JSON.parse(text); // nếu trả JSON
+          } catch {
+            return { message: text }; // nếu là chuỗi "Success!"
+          }
+        },
+      }),
+    }),
+    deleteFeed: builder.mutation<any, { feedId: string }>({
+      query: ({ feedId }) => ({
+        url: `/api/feed?feedId=${feedId}`,
+        method: 'DELETE',
       }),
     }),
   }),
@@ -133,5 +149,6 @@ export const { useGetTokenMutation,
   useGetFeedHomeMutation,
   useGetUserInfoMutation,
   useLikeFeedMutation,
-  useUnLikeFeedMutation
+  useUnLikeFeedMutation,
+  useDeleteFeedMutation
 } = apiSlice;

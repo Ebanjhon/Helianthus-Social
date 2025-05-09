@@ -1,6 +1,5 @@
 import React, {
   forwardRef,
-  useContext,
   useEffect,
   useRef,
   useState,
@@ -17,19 +16,26 @@ import {
 import colors from '../../assets/color/colors';
 import icons from '../../assets/iconApp/icons';
 import styles from './HomeStyle';
-import { UserContext } from '../../Configs/UserReducer';
-import { ItemFeed, ListItemAddFriend, ModalComment } from './components';
+import { ItemFeed, ListItemAddFriend, ModalAction, ModalComment } from './components';
 import { ModalCommentRef } from './components/modalComment';
 import { useGetFeedHomeMutation } from '../../RTKQuery/Slides/slide';
 import { FeedItem } from '../../RTKQuery/Slides/types';
 import { NavigationProp, NavigationState, useNavigation } from '@react-navigation/native';
+import { ModalActionRef } from './components/modalAction';
+import Toast from 'react-native-toast-message';
+import { toastConfigExport } from '../../Configs/ToastConfig';
 
 const Home = forwardRef((ref) => {
   const navigation = useNavigation();
   const lastOffsetYFlatlist = useRef(0);
   const [isShowTabar, setIsShowTabar] = useState(false);
-  const { user, dispatch: userDispatch } = useContext(UserContext);
   const flatListRef = useRef(null);
+  const [feedHome, setFeedHome] = useState<FeedItem[]>([]);
+  const [isStop, setIsStop] = useState(false);
+  const [fetchData, { data, isLoading, error }] = useGetFeedHomeMutation();
+  const modalRef = useRef<ModalCommentRef>(null);
+  const modalActionRef = useRef<ModalActionRef>(null);
+  const numPageRef = useRef<number>(0);
 
   const handleScroll = (event: any) => {
     const sideY = event.nativeEvent.contentOffset.y - lastOffsetYFlatlist.current;
@@ -46,22 +52,16 @@ const Home = forwardRef((ref) => {
     lastOffsetYFlatlist.current = event.nativeEvent.contentOffset.y;
   };
 
-  const [feedHome, setFeedHome] = useState<FeedItem[]>([]);
-  const [isStop, setIsStop] = useState(false);
-  const [pageFeed, setPageFeed] = useState(0);
-  const [fetchData, { data, isLoading, error }] = useGetFeedHomeMutation();
-  const modalRef = useRef<ModalCommentRef>(null);
-
   const handleFetchData = async () => {
     try {
-      if (isStop) {
-        return;
-      }
-      await fetchData({ page: pageFeed }).unwrap();
-      // console.log(data);
-      setFeedHome(prev => [...prev || [], ...data || []]);
-      if (data?.length === 0) {
-        setIsStop(true);
+      if (!isStop && !isLoading) {
+        await fetchData({ page: numPageRef.current }).unwrap();
+        if (data?.length !== 0) {
+          setFeedHome(prev => [...prev || [], ...data || []]);
+          numPageRef.current += 1;
+        } else {
+          setIsStop(pre => !pre)
+        }
       }
     } catch (e) {
       console.log(error);
@@ -84,7 +84,7 @@ const Home = forwardRef((ref) => {
           Không có dữ liệu
         </Text>}
         ListHeaderComponent={
-          <View>
+          <>
             <View style={styles.contai_head}>
               <View>
                 <Text style={styles.logo}>Helianthus</Text>
@@ -101,7 +101,7 @@ const Home = forwardRef((ref) => {
               </View>
             </View>
             <ListItemAddFriend />
-          </View>
+          </>
         }
         renderItem={({ item, index }) => (
           <ItemFeed
@@ -110,28 +110,25 @@ const Home = forwardRef((ref) => {
             onShowModalComment={() => {
               modalRef.current?.onShowModalComment();
             }}
-            onShowAction={() => { }}
+            modalActionRef={modalActionRef}
           />
         )}
         refreshControl={
           <RefreshControl
             refreshing={isLoading}
             onRefresh={() => {
-              setPageFeed(0);
-              setIsStop(false);
               setFeedHome([]);
+              numPageRef.current = 0;
+              setIsStop(false);
               handleFetchData();
             }}
             colors={[colors.gold2]}
           />
         }
         onEndReached={() => {
-          if (!isLoading) {
-            setPageFeed(pre => pre + 1)
-            handleFetchData();
-          }
+          handleFetchData();
         }}
-        onEndReachedThreshold={0.9}
+        onEndReachedThreshold={0.7}
         ListFooterComponent={
           <>
             {isLoading ? (
@@ -149,7 +146,8 @@ const Home = forwardRef((ref) => {
         scrollEventThrottle={16}
       />
       <ModalComment ref={modalRef} />
-      {/* <Toast config={toastConfigExport} /> */}
+      <ModalAction ref={modalActionRef} />
+      <Toast config={toastConfigExport} />
     </View>
   );
 });
