@@ -11,7 +11,7 @@ import { UserResponse } from "../../RTKQuery/Slides/types";
 import { UserContext } from "../../Configs/UserReducer";
 import { useCreateOTPMutation, useVerifyOTPMutation } from "../../RTKQuery/Slides/slide";
 
-type ActiveAccountProps = {
+export type ActiveAccountProps = {
     route: {
         params: {
             userData: UserResponse;

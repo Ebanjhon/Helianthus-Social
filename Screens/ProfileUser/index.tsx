@@ -1,31 +1,39 @@
 import React, { forwardRef, useCallback, useContext, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { Dimensions, FlatList, Pressable, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, FlatList, NativeScrollEvent, NativeSyntheticEvent, Pressable, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import HeaderApp from "../../Components/HeaderApp/HeaderApp";
 import colors from "../../assets/color/colors";
 import { AppImage } from "../../Components";
 import styles from "./styles";
-import { MyFeedMasonry, MyLikeMasonry, MyMediaMasonry } from "./components";
+import { MyFeedMasonry, MyLikeMasonry, MyMediaMasonry, ViewHeader } from "./components";
 import { IconFavorite, IconFeed, IconMedia } from "../../assets/SVG";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { useGetUserInfoMutation } from "../../RTKQuery/Slides/slide";
 import { UserContext } from "../../Configs/UserReducer";
+import { ScreenProps } from "../../Components/NavigationApp/type";
+import { MyFeedRef } from "./components/myFeeds";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, {
+    useSharedValue,
+    withSpring,
+    runOnJS,
+    withDecay,
+    clamp,
+    useDerivedValue,
+    useAnimatedStyle,
+    useAnimatedScrollHandler,
+    useAnimatedReaction,
+} from 'react-native-reanimated';
 const { width, height } = Dimensions.get('window');
-interface profileProps {
-}
-const ProfileUser: React.FC<profileProps> = ({ }) => {
+const ProfileUser: React.FC<ScreenProps<'Profile'>> = ({ navigation }) => {
     const { user, dispatch: userDispatch } = useContext(UserContext);
     const [fetchData, { data, isLoading, error }] = useGetUserInfoMutation();
-    const navigation = useNavigation();
-    const flatListRef = useRef<FlatList>(null);
-    const [isAllowScroll, setIsAllowScroll] = useState(false);
-    const handleScroll = (event: { nativeEvent: { contentOffset: { y: number; }; }; }) => {
-        const contentOffsetY = event.nativeEvent.contentOffset.y;
-        if (contentOffsetY >= 450 && !isAllowScroll) {
-            setIsAllowScroll(pre => !pre)
-        } else if (contentOffsetY <= 455 && isAllowScroll) {
-            setIsAllowScroll(pre => !pre)
-        }
-    }
+    const tabIndexView = useRef<number>(0);
+    const tabbarRef = useRef<TabbarRef | null>(null);
+    const feedRef = useRef<MyFeedRef>(null);
+    const mediaRef = useRef<MyFeedRef>(null);
+    const likeRef = useRef<MyFeedRef>(null);
+    const translateY = useSharedValue(0);
+    const previousTranslationY = useSharedValue(0);
 
     const handeldFetchData = async () => {
         await fetchData({ username: user?.username || '' }).unwrap();
@@ -33,17 +41,86 @@ const ProfileUser: React.FC<profileProps> = ({ }) => {
 
     useFocusEffect(
         useCallback(() => {
-            console.log('Screen is focused');
+            // console.log('Screen is focused');
             handeldFetchData();
             return () => {
-                console.log('Screen is unfocused');
+                // console.log('Screen is unfocused');
             };
         }, [])
     );
 
+    const handleHorizontalScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+        const offsetX = event.nativeEvent.contentOffset.x;
+        const index = Math.round(offsetX / width);
+        tabIndexView.current = index
+    };
+
+    const handleScrollToIndex = (index: number) => {
+    }
+
+    const syncScroll = (y: number) => {
+        switch (tabIndexView.current) {
+            case 0:
+                feedRef.current?.setOffsetY(y);
+                break;
+            case 1:
+                mediaRef.current?.setOffsetY(y);
+                break;
+            case 2:
+                likeRef.current?.setOffsetY(y);
+                break;
+            default:
+        }
+    };
+
+    const syncScrollOther = (y: number) => {
+        switch (tabIndexView.current) {
+            case 0:
+                mediaRef.current?.setOffsetY(y);
+                likeRef.current?.setOffsetY(y);
+                break;
+            case 1:
+                feedRef.current?.setOffsetY(y);
+                likeRef.current?.setOffsetY(y);
+                break;
+            case 2:
+                feedRef.current?.setOffsetY(y);
+                mediaRef.current?.setOffsetY(y);
+                break;
+            default:
+        }
+    };
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        transform: [{ translateY: -translateY.value }],
+    }));
+
+    const panGesture = Gesture.Pan()
+        .onStart(() => {
+            previousTranslationY.value = -translateY.value;
+        })
+        .onUpdate((e) => {
+            const newTranslateY = previousTranslationY.value + e.translationY;
+            translateY.value = clamp(-newTranslateY, 0, 400);
+            runOnJS(syncScroll)(translateY.value);
+        }).onEnd(() => {
+            runOnJS(syncScrollOther)(translateY.value);
+        })
+
+    const handleScroll = useAnimatedScrollHandler({
+        onScroll: (event) => {
+            translateY.value = clamp(event.contentOffset.y, 0, 400);
+        },
+    });
+
+    const onScrollEndFlatlist = () => {
+        runOnJS(syncScrollOther)(translateY.value);
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <HeaderApp
+                style={{ zIndex: 2 }}
                 title={data?.username}
                 bgColor={colors.trang}
                 isShowleftAction
@@ -51,50 +128,42 @@ const ProfileUser: React.FC<profileProps> = ({ }) => {
                 isButtonHead
                 onPrees={() => { navigation.navigate('Setting') }}
             />
-            <FlatList
-                ref={flatListRef}
-                scrollEnabled={true}
-                data={[1]}
-                stickyHeaderIndices={[1]}
-                onScroll={handleScroll}
-                showsVerticalScrollIndicator={false}
-                ListHeaderComponent={
-                    <>
-                        <AppImage uri={data?.avatar || "https://i.pinimg.com/736x/43/61/09/4361091dd491bacbbcdbaa0be7a2d2be.jpg"} width={"100%"} height={230} imageStyle={styles.cover} />
-                        <AppImage uri={data?.avatar || "https://i.pinimg.com/736x/a4/1d/5b/a41d5bcc7240df30b9d69219bd8cb021.jpg"} width={100} height={100} imageStyle={styles.avatar} style={styles.avtView} />
-                        <Text style={styles.nameText}>{data?.firstname} {data?.lastname}</Text>
-                        <TouchableOpacity style={[styles.btnFollow, { display: data?.curentUser ? 'flex' : 'none' }]}>
-                            <Text style={{ color: colors.white }}>FOLLOW</Text>
-                        </TouchableOpacity>
-                        <View style={styles.thumnable}>
-                            <Text style={styles.bioText}>{data?.bio || ''}</Text>
-                            <View style={styles.inforPrifile}>
-                                <Pressable style={styles.itemInfor}>
-                                    <Text style={styles.textNum}>20</Text>
-                                    <Text style={styles.textTitleNum}>Followers</Text>
-                                </Pressable>
-                                <Pressable style={styles.itemInfor}>
-                                    <Text style={styles.textNum}>20</Text>
-                                    <Text style={styles.textTitleNum}>posts</Text>
-                                </Pressable>
-                                <Pressable style={styles.itemInfor}>
-                                    <Text style={styles.textNum}>120</Text>
-                                    <Text style={styles.textTitleNum}>Following</Text>
-                                </Pressable>
-                            </View>
-                        </View>
-                    </>
-                }
-                renderItem={() => (
-                    <TabView isAllowScroll={isAllowScroll} />
-                )}
-            />
+            {/* new */}
+            <GestureDetector gesture={panGesture}>
+                <Animated.View style={[{ zIndex: 1 }, animatedStyle]}>
+                    <ViewHeader data={data} />
+                    <TabbarView ref={tabbarRef} onScrollTab={handleScrollToIndex} />
+                </Animated.View>
+            </GestureDetector>
+            <ScrollView
+                style={styles.scrollViewTab}
+                pagingEnabled
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                onScroll={handleHorizontalScroll}
+                scrollEventThrottle={16}
+            >
+                <MyFeedMasonry
+                    ref={feedRef}
+                    onScroll={handleScroll}
+                    onScrollEnd={onScrollEndFlatlist}
+                />
+                <MyFeedMasonry
+                    ref={mediaRef}
+                    onScroll={handleScroll}
+                    onScrollEnd={onScrollEndFlatlist}
+                />
+                <MyFeedMasonry
+                    ref={likeRef}
+                    onScroll={handleScroll}
+                    onScrollEnd={onScrollEndFlatlist}
+                />
+            </ScrollView>
         </SafeAreaView>
     )
 }
 
 export default ProfileUser;
-
 interface tabViewProps {
     isAllowScroll: boolean;
 }
@@ -150,7 +219,7 @@ const TabView: React.FC<tabViewProps> = ({ isAllowScroll }) => {
                                     <View
                                         key={index}
                                         style={[{ width: width }, styles.tabItem]}>
-                                        <MyFeedMasonry isEnabledScroll={isAllowScroll} />
+                                        {/* <MyFeedMasonry isEnabledScroll={isAllowScroll} /> */}
                                     </View>
                                 );
                             case 2:
@@ -212,3 +281,4 @@ const TabbarView = forwardRef((props: TabbarRef, ref) => {
         </View>
     )
 });
+

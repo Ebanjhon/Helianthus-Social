@@ -3,6 +3,8 @@ import colors from "../../assets/color/colors"
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
+        position: 'relative'
     },
     cover: {
         borderBottomLeftRadius: 30,
@@ -94,7 +96,14 @@ const styles = StyleSheet.create({
     },
     btnTabbarSelected: {
 
-    }
+    },
+    scrollViewTab: {
+        flex: 1,
+        backgroundColor: 'blue',
+        position: 'absolute',
+        width: '100%',
+        height: '100%'
+    },
 })
 
 export default styles

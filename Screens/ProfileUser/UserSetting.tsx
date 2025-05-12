@@ -68,11 +68,11 @@ const styles = StyleSheet.create({
         marginTop: 7,
         padding: 10,
         borderRadius: 7,
-        shadowColor: '#000',        // Màu sắc của bóng
-        shadowOffset: { width: 5, height: 5 },  // Độ dịch chuyển của bóng
-        shadowOpacity: 0.8,         // Độ mờ của bóng
-        shadowRadius: 3,            // Bán kính làm mờ của bóng
-        elevation: 5,               // Đối với Android: độ cao của bóng
+        shadowColor: '#000',
+        shadowOffset: { width: 5, height: 5 },
+        shadowOpacity: 0.8,
+        shadowRadius: 3,
+        elevation: 5,
     },
     box_bottom: {
 

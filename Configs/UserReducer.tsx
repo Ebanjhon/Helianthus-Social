@@ -6,7 +6,7 @@ type UserAction =
     | { type: 'logout' }
     | { type: 'update_avatar'; payload: { avatar: string } };
 
-const UserReducer = (user: UserResponse, action: UserAction) => {
+const UserReducer = (user: UserResponse | null, action: UserAction): UserResponse | null => {
     switch (action.type) {
         case "login": {
             return action.payload;
@@ -15,6 +15,7 @@ const UserReducer = (user: UserResponse, action: UserAction) => {
             return null;
         }
         case "update_avatar": {
+            if (!user) return null;
             return {
                 ...user,
                 avatar: action.payload.avatar,

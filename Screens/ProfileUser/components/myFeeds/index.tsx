@@ -1,30 +1,45 @@
-import React, { forwardRef, useEffect, useRef } from "react"
-import { FlatList, Text, TouchableOpacity, View } from "react-native"
+import React, { forwardRef, useImperativeHandle, useRef } from "react"
+import { Dimensions, FlatList, NativeScrollEvent, NativeSyntheticEvent, } from "react-native"
 import styles from "./styles"
 import { dataFeedItem } from "../../data"
 import FeedItem from "../FeedItem"
-
-interface myFeedProps {
-    isEnabledScroll: boolean
+import Animated, { useSharedValue } from "react-native-reanimated"
+interface MyFeedProps {
+    onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
+    onScrollEnd?: () => void;
 }
 
+export interface MyFeedRef {
+    setOffsetY: (y: number) => void;
+}
 
-const MyFeedMasonry = forwardRef((props: myFeedProps, ref) => {
+const { width } = Dimensions.get('window');
+const MyFeedMasonry = forwardRef<MyFeedRef, MyFeedProps>((props, ref) => {
     const flatListRef = useRef<FlatList>(null);
-    useEffect(() => {
-        if (!props.isEnabledScroll) {
-            flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
-        }
-    }, [props.isEnabledScroll])
+    const scrollY = useSharedValue(0);
+    const handleScroll = props.onScroll;
+    useImperativeHandle(ref, () => ({
+        setOffsetY: (y: number) => {
+            if (!(scrollY.value > 400 && y === 400)) {
+                flatListRef.current?.scrollToOffset({ offset: y, animated: false });
+            }
+        },
+    }));
+
     return (
-        <FlatList
+        <Animated.FlatList
             ref={flatListRef}
             nestedScrollEnabled
-            style={styles.container}
+            style={[styles.container, { width: width, paddingTop: 400 + 100 }]}
             contentContainerStyle={styles.contentItem}
             showsHorizontalScrollIndicator={false}
-            scrollEnabled={props.isEnabledScroll}
             data={dataFeedItem}
+            onScroll={(e) => {
+                handleScroll;
+                scrollY.value = e.nativeEvent.contentOffset.y;
+            }}
+            onMomentumScrollEnd={props.onScrollEnd}
+            scrollEventThrottle={16}
             renderItem={({ item, index }) => (
                 <FeedItem data={item} key={index} />
             )}
