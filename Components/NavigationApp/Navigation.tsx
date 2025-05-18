@@ -1,14 +1,12 @@
-import React, { forwardRef, useEffect, useReducer, useRef } from 'react';
+import React, { forwardRef, useContext, useEffect, useReducer } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Image, PermissionsAndroid, TouchableOpacity, View } from 'react-native';
+import { Image, View } from 'react-native';
 import { Provider } from 'react-redux';
 import colors from '../../assets/color/colors';
 import UserReducer, { UserContext } from '../../Configs/UserReducer';
-import { TabBarProvider, useTabBar } from '../../Configs/TabBarContext';
+import { TabBarProvider } from '../../Configs/TabBarContext';
 import {
   NavigationContainer,
-  useNavigation,
-  useRoute,
 } from '@react-navigation/native';
 import {
   CardStyleInterpolators,
@@ -23,8 +21,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import icons from '../../assets/iconApp/icons';
 import Message from '../../Screens/Message/Message';
 import Chat from '../../Screens/Message/Chat';
-import Toast from 'react-native-toast-message';
-import notifee, { AndroidImportance } from '@notifee/react-native';
 import ActiveAccount from '../../Screens/OTP/ActiveAccount';
 import { store } from '../../RTKQuery/Stores/store';
 import { styles } from './style';
@@ -39,6 +35,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
 
 const HomeTabs = forwardRef(() => {
+  const { user, dispatch } = useContext(UserContext);
   return (
     <View style={{ flex: 1 }}>
       <Tab.Navigator
@@ -128,6 +125,7 @@ const HomeTabs = forwardRef(() => {
           component={ProfileUser}
           options={{
             headerShown: false,
+            unmountOnBlur: true,
             tabBarStyle: { display: 'none' },
             tabBarIcon: ({ focused }) => (
               <View style={styles.tabBarIconText}>
@@ -142,6 +140,11 @@ const HomeTabs = forwardRef(() => {
               </View>
             ),
           }}
+          listeners={({ navigation }) => ({
+            tabPress: e => {
+              navigation.navigate("Profile", { usernameProps: user?.username });
+            },
+          })}
         />
       </Tab.Navigator>
     </View>

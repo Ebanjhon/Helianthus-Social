@@ -5,7 +5,7 @@ import { styles } from './types';
 import { BASE_MinIO } from '../../RTKQuery/Slides/slide';
 
 type AppImageProps = {
-  uri: string;
+  uri?: string;
   width?: any;
   height?: any;
   style?: StyleProp<ViewStyle>;

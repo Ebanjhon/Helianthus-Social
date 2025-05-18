@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import colors from '../../../../assets/color/colors';
+import { opacity } from 'react-native-reanimated/lib/typescript/Colors';
 
 const styles = StyleSheet.create({
   container: {
@@ -29,8 +30,14 @@ const styles = StyleSheet.create({
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
-    opacity: 0.5,
     marginBottom: 10
+  },
+  btnActive: {
+    backgroundColor: colors.gold2
+  },
+  btnNotActive: {
+    backgroundColor: colors.dark,
+    opacity: 0.5
   },
   textBtn: {
     fontSize: 40,

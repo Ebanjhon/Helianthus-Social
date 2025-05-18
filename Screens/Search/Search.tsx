@@ -1,31 +1,25 @@
 import {
   FlatList,
-  Image,
-  Keyboard,
   Pressable,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './SearchStyle';
 import { useTabBar } from '../../Configs/TabBarContext';
-import FastImage from 'react-native-fast-image';
 import React from 'react';
-import AppBackground from '../../Components/AppBackground/AppBackground';
 import HeaderApp from '../../Components/HeaderApp/HeaderApp';
-import { UserContext } from '../../Configs/UserReducer';
 import { AppImage } from '../../Components';
 import colors from '../../assets/color/colors';
-import { SearchUsers } from './data';
 import { useFollowUserMutation, useSearchUserMutation, useUnFollowUserMutation } from '../../RTKQuery/Slides/slide';
 import { UserSearchResult } from '../../RTKQuery/Slides/types';
-const Search = () => {
+import { useNavigation } from '@react-navigation/native';
+const Search = ({ }) => {
+  const navigation = useNavigation();
   const { state, dispatch } = useTabBar();
   const [text, setText] = useState('');
-  const { user, dispatchUser } = useContext(UserContext);
-  const [result, setResult] = useState([]);
   const [isSearchAccount, setIssSearchAccount] = useState(true);
   const [getUser, { data, isLoading, error }] = useSearchUserMutation();
   const hideTabBar = () => {
@@ -38,7 +32,7 @@ const Search = () => {
 
   const fetchUsers = async () => {
     try {
-      await getUser({ username: text }).unwrap();
+      await getUser({ keyWord: text }).unwrap();
     } catch (error) {
       console.log(error);
     }
@@ -70,7 +64,8 @@ const Search = () => {
           </Pressable>
         </View>
         <View style={{ flexDirection: 'row', marginTop: 10 }}>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => { setIssSearchAccount(true) }}>
             <Text
               style={[
                 isSearchAccount ? styles.textTypeSelected : styles.textType,
@@ -78,7 +73,8 @@ const Search = () => {
               Tài khoản
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => { setIssSearchAccount(false) }}>
             <Text
               style={[
                 !isSearchAccount ? styles.textTypeSelected : styles.textType,
@@ -109,6 +105,7 @@ type UserProps = {
 };
 
 const User: React.FC<UserProps> = ({ data }) => {
+  const navigation = useNavigation();
   const [fetchFollow, { error }] = useFollowUserMutation();
   const [fetchUnFollow, { error: errorUnFl }] = useUnFollowUserMutation();
 
@@ -139,7 +136,11 @@ const User: React.FC<UserProps> = ({ data }) => {
     }
   }
 
-  return <TouchableOpacity style={styles.itemUser}>
+  return <TouchableOpacity
+    onPress={() => {
+      navigation.navigate("Profile", { usernameProps: data.username });
+    }}
+    style={styles.itemUser}>
     <View style={styles.leftInfo}>
       <AppImage
         uri={data.avatar || ''}

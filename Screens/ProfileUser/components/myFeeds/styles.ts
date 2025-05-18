@@ -7,9 +7,11 @@ const styles = StyleSheet.create({
         // marginHorizontal: 5,
         borderRadius: 10,
         elevation: 4,
+
     },
     contentItem: {
         marginHorizontal: 5,
+        paddingTop: 500,
     },
     item: {
         marginBottom: 9

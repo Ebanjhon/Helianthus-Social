@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   },
   input_cmt: {
     height: 50,
-    backgroundColor: colors.white,
+    backgroundColor: colors.gold2,
     alignItems: 'center',
     paddingLeft: 15,
     paddingRight: 5,

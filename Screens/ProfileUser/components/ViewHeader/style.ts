@@ -8,10 +8,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white
   },
   cover: {
+    width: '100%',
+    height: 230,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
   },
   avatar: {
+    width: 100,
+    height: 100,
     borderRadius: 90,
     borderWidth: 3,
     borderColor: colors.gold2
@@ -20,6 +24,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 180,
     alignSelf: 'center',
+    zIndex: 1
   },
   nameText: {
     fontSize: 19,
@@ -50,10 +55,10 @@ const styles = StyleSheet.create({
   },
   thumnable: {
     minHeight: 80,
-    backgroundColor: colors.white,
+    backgroundColor: colors.trang,
     margin: 5,
     // android
-    elevation: 3,
+    elevation: 5,
     borderRadius: 10,
     padding: 5
   },

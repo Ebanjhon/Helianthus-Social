@@ -158,14 +158,13 @@ const styles = StyleSheet.create({
         width: '90%',
         aspectRatio: 3 / 4,
         backgroundColor: colors.danger,
-        marginBottom: 9
+        marginBottom: 9,
+        alignSelf: 'center'
     },
     text_edit_img: {
-        color: colors.light
+        color: colors.black
     },
     contain_filter: {
-        // backgroundColor: colors.danger,
-        // height: 100,
         width: '100%',
         marginTop: 10
     },
@@ -180,9 +179,11 @@ const styles = StyleSheet.create({
     text_filter: {
         overflow: 'hidden',
         height: 20
+    },
+    viewControlEdit: {
+        width: '90%',
+        alignSelf: 'center'
     }
-
-
 });
 
 export default styles;

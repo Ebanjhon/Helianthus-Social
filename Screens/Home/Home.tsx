@@ -100,7 +100,7 @@ const Home = forwardRef((ref) => {
                 </TouchableOpacity>
               </View>
             </View>
-            <ListItemAddFriend />
+            {/* <ListItemAddFriend /> */}
           </>
         }
         renderItem={({ item, index }) => (
@@ -108,7 +108,7 @@ const Home = forwardRef((ref) => {
             key={index}
             data={item}
             onShowModalComment={() => {
-              modalRef.current?.onShowModalComment();
+              modalRef.current?.onShowModalComment(item.feedId);
             }}
             modalActionRef={modalActionRef}
           />

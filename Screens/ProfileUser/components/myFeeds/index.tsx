@@ -17,11 +17,11 @@ const { width } = Dimensions.get('window');
 const MyFeedMasonry = forwardRef<MyFeedRef, MyFeedProps>((props, ref) => {
     const flatListRef = useRef<FlatList>(null);
     const scrollY = useSharedValue(0);
-    const handleScroll = props.onScroll;
     useImperativeHandle(ref, () => ({
         setOffsetY: (y: number) => {
-            if (!(scrollY.value > 400 && y === 400)) {
+            if (!(scrollY.value == 400 && y === 400)) {
                 flatListRef.current?.scrollToOffset({ offset: y, animated: false });
+                scrollY.value = y;
             }
         },
     }));
@@ -30,14 +30,11 @@ const MyFeedMasonry = forwardRef<MyFeedRef, MyFeedProps>((props, ref) => {
         <Animated.FlatList
             ref={flatListRef}
             nestedScrollEnabled
-            style={[styles.container, { width: width, paddingTop: 400 + 100 }]}
+            style={[styles.container, { width: width }]}
             contentContainerStyle={styles.contentItem}
             showsHorizontalScrollIndicator={false}
             data={dataFeedItem}
-            onScroll={(e) => {
-                handleScroll;
-                scrollY.value = e.nativeEvent.contentOffset.y;
-            }}
+            onScroll={props.onScroll}
             onMomentumScrollEnd={props.onScrollEnd}
             scrollEventThrottle={16}
             renderItem={({ item, index }) => (

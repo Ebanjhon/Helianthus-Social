@@ -1,5 +1,4 @@
 export type UserResponse = {
-  id: any;
   userId: string;
   username: string;
   firstname: string;
@@ -81,8 +80,66 @@ export type UserProfileInfo = {
   curentUser: boolean;
   lastname?: string;
   avatar?: string;
+  cover?: string;
   bio?: string;
   gender?: string;
   phoneNumber?: string;
   birthDate?: string;
+  countFeed: number;
+  countFollow: number;
+  countFollowing: number;
 };
+
+export type UserUpdate = {
+  userId: string;
+  firstname: string;
+  email: string;
+  lastname: string;
+  avatar: string;
+  cover: string;
+  bio: string;
+  // gender?: string;
+  // phoneNumber?: string;
+  // birthDate?: string;
+};
+
+// comment
+
+export interface CommentResponse {
+  data: Comment;
+  user: User;
+  hasChil: boolean;
+}
+
+export interface Comment {
+  commentId: string;
+  feedId: string;
+  parentCommentId?: string;
+  content: string;
+  userId: string;
+  dateCreate: string;
+}
+
+export interface User {
+  userId: string;
+  username: string;
+  firstname: string;
+  lastname: string;
+  avatar: string;
+}
+
+export interface CreateComment {
+  feedId: string | null,
+  parentCommentId: string | null,
+  content: string;
+}
+// 
+
+export interface CommentResponse {
+  commentId: string;
+  feedId: string | null;
+  parentCommentId: string | null;
+  content: string;
+  userId: string;
+  dateCreate: string;
+}

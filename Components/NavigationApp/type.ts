@@ -5,7 +5,7 @@ export type RootStackParamList = {
     HomeTabs: undefined;
     Home: undefined;
     Setting: undefined;
-    Profile: { userId: string };
+    Profile: { usernameProps: string };
     UpdateProfile: undefined;
     Message: undefined;
     Splash: undefined;

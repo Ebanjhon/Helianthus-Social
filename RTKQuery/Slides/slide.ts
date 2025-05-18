@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { createAccount, createFeed, FeedItem, UserProfileInfo, UserResponse, UserSearchResult } from './types';
+import { CommentResponse, createAccount, CreateComment, createFeed, FeedItem, UserProfileInfo, UserResponse, UserSearchResult, UserUpdate } from './types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-export const HOST = '192.168.1.4';
+export const HOST = '192.168.1.2';
 export const BASE_URL = `http://${HOST}:8888`;
 export const BASE_MinIO = `http://${HOST}`;
 
@@ -71,9 +71,9 @@ export const apiSlice = createApi({
         body: params,
       }),
     }),
-    searchUser: builder.mutation<UserSearchResult, { username: string }>({
-      query: ({ username }) => ({
-        url: `/api/user/search?username=${username}`,
+    searchUser: builder.mutation<UserSearchResult, { keyWord: string }>({
+      query: ({ keyWord }) => ({
+        url: `/api/user/search?keyWord=${keyWord}`,
         method: 'GET',
       }),
     }),
@@ -134,6 +134,32 @@ export const apiSlice = createApi({
         method: 'DELETE',
       }),
     }),
+    updateUser: builder.mutation<UserProfileInfo, UserUpdate>({
+      query: params => ({
+        url: "/api/user",
+        method: 'PUT',
+        body: params,
+      }),
+    }),
+    getListComment: builder.mutation<CommentResponse[], { feedId: string, page: number }>({
+      query: ({ feedId, page }) => ({
+        url: `/api/comment?feedId=${feedId}&page=${page}`,
+        method: 'GET',
+      }),
+    }),
+    createComment: builder.mutation<CommentResponse, CreateComment>({
+      query: (params) => ({
+        url: '/api/comment',
+        method: 'POST',
+        body: params,
+      }),
+    }),
+    deleteComment: builder.mutation<any, { commentId: string }>({
+      query: (params) => ({
+        url: `/api/comment?commentId=${params}`,
+        method: 'DELETE',
+      }),
+    }),
   }),
 });
 
@@ -150,5 +176,9 @@ export const { useGetTokenMutation,
   useGetUserInfoMutation,
   useLikeFeedMutation,
   useUnLikeFeedMutation,
-  useDeleteFeedMutation
+  useDeleteFeedMutation,
+  useUpdateUserMutation,
+  useGetListCommentMutation,
+  useCreateCommentMutation,
+  useDeleteCommentMutation
 } = apiSlice;
