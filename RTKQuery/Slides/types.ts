@@ -154,3 +154,57 @@ export type MediaItem = {
   height: number;
   mediaType: 'IMAGE' | 'VIDEO';
 };
+
+// notification
+export type NotificationType = 'LIKE' | 'COMMENT' | 'FOLLOW';
+export interface NotiType {
+  notiId: string;
+  typeNotification: NotificationType;
+  userId: string;
+  createDay: string;
+  createrId: string;
+}
+export interface UserNotiType {
+  userId: string;
+  username: string;
+  firstname: string;
+  lastname: string;
+  avatar: string;
+}
+export interface NotificationItem {
+  noti: NotiType;
+  user: UserNotiType;
+}
+
+export interface NotiListDataResponse extends PageMetaData {
+  content: NotificationItem[];
+}
+
+//page size
+export interface Sort {
+  sorted: boolean;
+  unsorted: boolean;
+  empty: boolean;
+}
+
+export interface Pageable {
+  pageNumber: number;
+  pageSize: number;
+  offset: number;
+  paged: boolean;
+  unpaged: boolean;
+  sort: Sort;
+}
+
+export interface PageMetaData<> {
+  pageable: Pageable;
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  sort: Sort;
+  first: boolean;
+  last: boolean;
+  numberOfElements: number;
+  empty: boolean;
+}

@@ -1,4 +1,4 @@
-import React, { forwardRef, useContext, useEffect, useReducer } from 'react';
+import React, { forwardRef, useContext, useEffect, useReducer, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image, View } from 'react-native';
 import { Provider } from 'react-redux';
@@ -152,6 +152,7 @@ const HomeTabs = forwardRef(() => {
 
 const Navigation = () => {
   const [user, dispatch] = useReducer(UserReducer, null);
+  const ws = useRef<WebSocket | null>(null);
   const loadUserData = async () => {
     try {
       const userData = await AsyncStorage.getItem('user');
@@ -166,6 +167,33 @@ const Navigation = () => {
 
   useEffect(() => {
     loadUserData();
+  }, []);
+
+
+  useEffect(() => {
+    ws.current = new WebSocket('ws://192.168.1.4:8086/ws');
+
+    ws.current.onopen = () => {
+      console.log('✅ Connected to WebSocket');
+      // Gửi tin nhắn nếu muốn
+      ws.current?.send('Hello from React Native');
+    };
+
+    ws.current.onmessage = (event) => {
+      console.log('📩 Received:', event.data);
+    };
+
+    ws.current.onerror = (e) => {
+      console.error('❌ WebSocket Error:', e.message);
+    };
+
+    ws.current.onclose = (e) => {
+      console.log('⚠️ WebSocket Closed:', e.code, e.reason);
+    };
+
+    return () => {
+      ws.current?.close();
+    };
   }, []);
 
   return (

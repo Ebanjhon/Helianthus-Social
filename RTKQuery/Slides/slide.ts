@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { CommentResponse, createAccount, CreateComment, createFeed, MediaItem, TypeFeedItem, UserProfileInfo, UserResponse, UserSearchResult, UserUpdate } from './types';
+import { CommentResponse, createAccount, CreateComment, createFeed, MediaItem, NotiListDataResponse, TypeFeedItem, UserProfileInfo, UserResponse, UserSearchResult, UserUpdate } from './types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 export const HOST = '192.168.1.4';
 export const BASE_URL = `http://${HOST}:8888`;
@@ -175,6 +175,12 @@ export const apiSlice = createApi({
         url: `/api/comment/child?parentId=${parentId}&page=${page}`,
       }),
     }),
+    getListNoti: builder.mutation<NotiListDataResponse, { userId: string, page: number }>({
+      query: ({ userId, page }) => ({
+        url: `/api/noti/list?userId=${userId}&page=${page}&size=10`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -198,5 +204,6 @@ export const { useGetTokenMutation,
   useDeleteCommentMutation,
   useLazyGetListFeedProfileQuery,
   useGetListMediaProfileMutation,
-  useLazyGetListCommentChildQuery
+  useLazyGetListCommentChildQuery,
+  useGetListNotiMutation
 } = apiSlice;

@@ -3,10 +3,8 @@ import colors from '../../assets/color/colors';
 
 const styles = StyleSheet.create({
     container: {
-        width: '100%',
-        height: '100%',
+        flex: 1,
         backgroundColor: colors.xamtrang,
-        alignItems: 'center'
     },
     item_contai: {
         width: '100%',
@@ -33,6 +31,7 @@ const styles = StyleSheet.create({
         fontSize: 17,
     },
     contain_notifi: {
+        flex: 1,
         backgroundColor: colors.light,
         elevation: 9,
         minHeight: 70,
@@ -44,7 +43,6 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     notifi: {
-        width: '82%'
     }
 
 });
