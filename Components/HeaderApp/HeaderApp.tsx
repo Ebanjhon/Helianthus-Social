@@ -48,10 +48,10 @@ const HeaderApp: React.FC<HeaderAppProps> = ({
       <Text style={{ fontSize: 19, fontWeight: '600', lineHeight: 38 }}>{title}</Text>
 
       {isShowrightAction ? (
-        <TouchableOpacity style={[styles.itemHeader, { alignItems: 'flex-end' }, isButtonHead && styles.btnAction]}
+        <TouchableOpacity style={[styles.itemHeader, { alignItems: 'flex-end', alignSelf: 'center' }, isButtonHead && styles.btnAction]}
           onPress={onPrees}
         >
-          <IconSetting height={30} width={30} />
+          <IconMenu height={35} width={35} />
         </TouchableOpacity>
       ) : (
         <View style={styles.itemHeader}>

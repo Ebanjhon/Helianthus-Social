@@ -4,10 +4,6 @@ import colors from "../../../../assets/color/colors";
 const styles = StyleSheet.create({
     container: {
         backgroundColor: colors.trang,
-        // marginHorizontal: 5,
-        borderRadius: 10,
-        elevation: 4,
-
     },
     contentItem: {
         marginHorizontal: 5,

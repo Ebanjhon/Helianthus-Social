@@ -5,7 +5,7 @@ import {
   ScrollView,
   Animated,
 } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { styles } from './styles';
 import { AppImage, AppMedia } from '../../../../Components';
 import {
@@ -18,13 +18,14 @@ import {
 } from '../../../../assets/SVG';
 import { BlurView } from '@react-native-community/blur';
 import colors from '../../../../assets/color/colors';
-import { FeedItem } from '../../../../RTKQuery/Slides/types';
 import { formatTimeAgo } from './functions';
 import { useLikeFeedMutation, useUnLikeFeedMutation } from '../../../../RTKQuery/Slides/slide';
 import { ModalActionRef } from '../modalAction';
+import { TypeFeedItem } from '../../../../RTKQuery/Slides/types';
+import { UserContext } from '../../../../Configs/UserReducer';
 
 interface ItemFeedProps {
-  data: FeedItem;
+  data: TypeFeedItem;
   onShowModalComment: () => void;
   modalActionRef: React.RefObject<ModalActionRef>
 }
@@ -33,8 +34,9 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
   onShowModalComment,
   modalActionRef
 }) => {
-  const [fetchLikeFeed, { error: errorLike }] = useLikeFeedMutation();
-  const [fetchUnLikeFeed, { error: errorUnLike }] = useUnLikeFeedMutation();
+  const { user, dispatch: userDispatch } = useContext(UserContext);
+  const [fetchLikeFeed] = useLikeFeedMutation();
+  const [fetchUnLikeFeed] = useUnLikeFeedMutation();
   const [isLikeFeed, setIsLikeFeed] = useState(data.action.isLike);
   const [countLike, setCountLike] = useState(data.action.countLike);
   const [isHideInfo, setIsHideInfo] = useState(false);
@@ -138,6 +140,7 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
               </Text>
               <TouchableOpacity
                 style={{
+                  display: data.author.userId === user?.userId ? 'none' : 'flex',
                   backgroundColor: true ? colors.gold2 : colors.info,
                   borderRadius: 10,
                   paddingHorizontal: 10,

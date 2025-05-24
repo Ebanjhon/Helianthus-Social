@@ -152,7 +152,9 @@ const UpdateProfile: React.FC<UpdateProfileProps> = ({ }) => {
   };
 
   return <View style={styles.container}>
-    <Toast config={toastConfigExport} />
+    <View style={{ zIndex: 1 }}>
+      <Toast config={toastConfigExport} />
+    </View>
     <HeaderApp
       title={"Update profile"}
       bgColor={colors.trang}

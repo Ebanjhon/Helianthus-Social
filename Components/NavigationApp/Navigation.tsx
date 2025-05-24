@@ -125,7 +125,6 @@ const HomeTabs = forwardRef(() => {
           component={ProfileUser}
           options={{
             headerShown: false,
-            unmountOnBlur: true,
             tabBarStyle: { display: 'none' },
             tabBarIcon: ({ focused }) => (
               <View style={styles.tabBarIconText}>
@@ -141,7 +140,7 @@ const HomeTabs = forwardRef(() => {
             ),
           }}
           listeners={({ navigation }) => ({
-            tabPress: e => {
+            tabPress: () => {
               navigation.navigate("Profile", { usernameProps: user?.username });
             },
           })}
@@ -201,7 +200,7 @@ const Navigation = () => {
                           CardStyleInterpolators.forFadeFromCenter,
                       }}
                     />
-                    <Stack.Screen name="Active" component={ActiveAccount} />
+                    <Stack.Screen name="Active" getComponent={ActiveAccount} />
                   </>
                 ) : (
                   <>

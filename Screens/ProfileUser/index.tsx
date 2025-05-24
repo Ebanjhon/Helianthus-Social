@@ -1,11 +1,10 @@
-import React, { forwardRef, useCallback, useContext, useImperativeHandle, useRef, useState } from "react";
+import React, { forwardRef, useContext, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { ActivityIndicator, Dimensions, NativeScrollEvent, NativeSyntheticEvent, SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native";
 import HeaderApp from "../../Components/HeaderApp/HeaderApp";
 import colors from "../../assets/color/colors";
 import styles from "./styles";
-import { MyFeedMasonry, ViewHeader } from "./components";
+import { MyFeedMasonry, MyMediaList, ViewHeader } from "./components";
 import { IconFavorite, IconFeed, IconMedia } from "../../assets/SVG";
-import { useFocusEffect } from "@react-navigation/native";
 import { useGetUserInfoMutation } from "../../RTKQuery/Slides/slide";
 import { UserContext } from "../../Configs/UserReducer";
 import { ScreenProps } from "../../Components/NavigationApp/type";
@@ -18,6 +17,7 @@ import Animated, {
     useAnimatedStyle,
     useAnimatedScrollHandler,
 } from 'react-native-reanimated';
+import { MyMediaRef } from "./components/myMediaList";
 const { width, height } = Dimensions.get('window');
 const dataTab = [
     {
@@ -44,7 +44,7 @@ const ProfileUser: React.FC<ScreenProps<'Profile'>> = ({ navigation, route }) =>
     const scrollViewRef = useRef<ScrollView>(null);
     const tabbarRef = useRef<TabbarRef | null>(null);
     const feedRef = useRef<MyFeedRef>(null);
-    const mediaRef = useRef<MyFeedRef>(null);
+    const mediaRef = useRef<MyMediaRef>(null);
     const likeRef = useRef<MyFeedRef>(null);
     const translateY = useSharedValue(0);
     const previousTranslationY = useSharedValue(0);
@@ -53,14 +53,9 @@ const ProfileUser: React.FC<ScreenProps<'Profile'>> = ({ navigation, route }) =>
         await fetchData({ username: usernameProps || '' }).unwrap();
     };
 
-    useFocusEffect(
-        useCallback(() => {
-            handeldFetchData();
-            return () => {
-                navigation.setParams({});
-            };
-        }, [])
-    );
+    useEffect(() => {
+        handeldFetchData();
+    }, [usernameProps])
 
     const handleHorizontalScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const offsetX = event.nativeEvent.contentOffset.x;
@@ -145,10 +140,11 @@ const ProfileUser: React.FC<ScreenProps<'Profile'>> = ({ navigation, route }) =>
                     </View> : <>
                         <HeaderApp
                             style={{ zIndex: 2 }}
-                            title={data?.username}
+                            title={usernameProps}
                             bgColor={colors.trang}
                             isShowleftAction
-                            isShowrightAction={data?.userId === user?.userId}
+                            // isShowrightAction={data?.userId === user?.userId}
+                            isShowrightAction={true}
                             isButtonHead
                             onPrees={() => { navigation.navigate('Setting') }}
                         />
@@ -169,16 +165,19 @@ const ProfileUser: React.FC<ScreenProps<'Profile'>> = ({ navigation, route }) =>
                             scrollEventThrottle={16}
                         >
                             <MyFeedMasonry
+                                authorId={data?.userId || ''}
                                 ref={feedRef}
                                 onScroll={handleScroll}
                                 onScrollEnd={onScrollEndFlatlist}
                             />
-                            <MyFeedMasonry
+                            <MyMediaList
+                                authorId={data?.userId || ''}
                                 ref={mediaRef}
                                 onScroll={handleScroll}
                                 onScrollEnd={onScrollEndFlatlist}
                             />
                             <MyFeedMasonry
+                                authorId={data?.userId || ''}
                                 ref={likeRef}
                                 onScroll={handleScroll}
                                 onScrollEnd={onScrollEndFlatlist}

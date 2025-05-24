@@ -61,7 +61,7 @@ export type Action = {
   countLike: number;
 };
 
-export type FeedItem = {
+export type TypeFeedItem = {
   feedId: string;
   resource: Media[];
   data: FeedData;
@@ -130,7 +130,7 @@ export interface User {
 
 export interface CreateComment {
   feedId: string | null,
-  parentCommentId: string | null,
+  parentCommentId?: string;
   content: string;
 }
 // 
@@ -138,8 +138,19 @@ export interface CreateComment {
 export interface CommentResponse {
   commentId: string;
   feedId: string | null;
-  parentCommentId: string | null;
+  parentCommentId?: string;
   content: string;
   userId: string;
   dateCreate: string;
 }
+
+// profile
+export type MediaItem = {
+  mediaId: string;
+  url: string;
+  authorID: string;
+  postId: string;
+  width: number;
+  height: number;
+  mediaType: 'IMAGE' | 'VIDEO';
+};

@@ -3,6 +3,7 @@ import React, { forwardRef, useImperativeHandle, useState } from 'react';
 import { Modal, Text, View, Button, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, TouchableOpacity, FlatList, TextInput, TouchableNativeFeedback, Image, Alert } from 'react-native';
 import styles from './style';
 import { useDeleteFeedMutation } from '../../../../RTKQuery/Slides/slide';
+import { showToast } from '../../../../Configs/ToastConfig';
 
 type ActionProps = {
   isAuthor: boolean,
@@ -18,7 +19,7 @@ const ModalAction = forwardRef<ModalActionRef>((_, ref) => {
   const [isVisibleModal, setIsVisibleModal] = useState(false);
   const [isShowDialog, setIsShowDialog] = useState(false);
   const [dataAction, setDataAction] = useState<ActionProps>();
-  const [fetchDeleteFeed, { data, isLoading, error, isSuccess }] = useDeleteFeedMutation();
+  const [fetchDeleteFeed, { error, isSuccess }] = useDeleteFeedMutation();
 
   useImperativeHandle(ref, () => ({
     onShowModalAction: (data) => {
@@ -29,12 +30,17 @@ const ModalAction = forwardRef<ModalActionRef>((_, ref) => {
 
   const handleDelete = async () => {
     try {
-      await fetchDeleteFeed({ feedId: dataAction?.feedId || '' }).unwrap();
+      const result = await fetchDeleteFeed({ feedId: dataAction?.feedId || '' }).unwrap();
       if (isSuccess) {
         dataAction?.setDeleteFeed();
         console.log(isSuccess);
+      } else {
+        console.log('====================================');
+        console.log(result);
+        console.log('====================================');
       }
-    } catch (error) {
+    } catch {
+      showToast('error', 'Lỗi xóa bài viết!', error);
       console.log('====================================');
       console.log("Lỗi");
       console.log('====================================');

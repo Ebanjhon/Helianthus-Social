@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { CommentResponse, createAccount, CreateComment, createFeed, FeedItem, UserProfileInfo, UserResponse, UserSearchResult, UserUpdate } from './types';
+import { CommentResponse, createAccount, CreateComment, createFeed, MediaItem, TypeFeedItem, UserProfileInfo, UserResponse, UserSearchResult, UserUpdate } from './types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-export const HOST = '192.168.1.2';
+export const HOST = '192.168.1.4';
 export const BASE_URL = `http://${HOST}:8888`;
 export const BASE_MinIO = `http://${HOST}`;
 
@@ -91,7 +91,7 @@ export const apiSlice = createApi({
         body: params
       }),
     }),
-    getFeedHome: builder.mutation<FeedItem[], { page: number }>({
+    getFeedHome: builder.mutation<TypeFeedItem[], { page: number }>({
       query: ({ page }) => ({
         url: `/api/feed/search?page=${page}&size=5`,
         method: 'GET',
@@ -160,6 +160,21 @@ export const apiSlice = createApi({
         method: 'DELETE',
       }),
     }),
+    getListFeedProfile: builder.query<TypeFeedItem[], { authorId: string, page: number }>({
+      query: ({ authorId, page }) =>
+        `/api/feed/profile?authorId=${authorId}&page=${page}&size=5`,
+    }),
+    getListMediaProfile: builder.mutation<MediaItem[], { authorId: string, page: number }>({
+      query: ({ authorId, page }) => ({
+        url: `/api/media/profile?authorId=${authorId}&page=${page}&size=5`,
+        method: 'GET',
+      }),
+    }),
+    getListCommentChild: builder.query<CommentResponse[], { parentId: string, page: number }>({
+      query: ({ parentId, page }) => ({
+        url: `/api/comment/child?parentId=${parentId}&page=${page}`,
+      }),
+    }),
   }),
 });
 
@@ -180,5 +195,8 @@ export const { useGetTokenMutation,
   useUpdateUserMutation,
   useGetListCommentMutation,
   useCreateCommentMutation,
-  useDeleteCommentMutation
+  useDeleteCommentMutation,
+  useLazyGetListFeedProfileQuery,
+  useGetListMediaProfileMutation,
+  useLazyGetListCommentChildQuery
 } = apiSlice;

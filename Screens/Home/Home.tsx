@@ -16,21 +16,19 @@ import {
 import colors from '../../assets/color/colors';
 import icons from '../../assets/iconApp/icons';
 import styles from './HomeStyle';
-import { ItemFeed, ListItemAddFriend, ModalAction, ModalComment } from './components';
+import { ItemFeed, ModalAction, ModalComment } from './components';
 import { ModalCommentRef } from './components/modalComment';
 import { useGetFeedHomeMutation } from '../../RTKQuery/Slides/slide';
-import { FeedItem } from '../../RTKQuery/Slides/types';
 import { NavigationProp, NavigationState, useNavigation } from '@react-navigation/native';
 import { ModalActionRef } from './components/modalAction';
-import Toast from 'react-native-toast-message';
-import { toastConfigExport } from '../../Configs/ToastConfig';
+import { TypeFeedItem } from '../../RTKQuery/Slides/types';
 
 const Home = forwardRef((ref) => {
   const navigation = useNavigation();
   const lastOffsetYFlatlist = useRef(0);
   const [isShowTabar, setIsShowTabar] = useState(false);
   const flatListRef = useRef(null);
-  const [feedHome, setFeedHome] = useState<FeedItem[]>([]);
+  const [feedHome, setFeedHome] = useState<TypeFeedItem[]>([]);
   const [isStop, setIsStop] = useState(false);
   const [fetchData, { data, isLoading, error }] = useGetFeedHomeMutation();
   const modalRef = useRef<ModalCommentRef>(null);
@@ -147,7 +145,6 @@ const Home = forwardRef((ref) => {
       />
       <ModalComment ref={modalRef} />
       <ModalAction ref={modalActionRef} />
-      <Toast config={toastConfigExport} />
     </View>
   );
 });

@@ -1,29 +1,30 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
-import { ActivityIndicator, Dimensions, FlatList, NativeScrollEvent, NativeSyntheticEvent, RefreshControl, Text, View, } from "react-native"
+import { ActivityIndicator, Dimensions, FlatList, NativeScrollEvent, NativeSyntheticEvent, RefreshControl, Text, TouchableOpacity, View, } from "react-native"
 import styles from "./styles"
 import Animated, { useSharedValue } from "react-native-reanimated"
-import { useLazyGetListFeedProfileQuery } from "../../../../RTKQuery/Slides/slide"
-import { TypeFeedItem } from "../../../../RTKQuery/Slides/types"
-import FeedItem from "../FeedItem"
+import { useGetListMediaProfileMutation } from "../../../../RTKQuery/Slides/slide"
+import { AppImage } from "../../../../Components"
+import { MediaItem } from "../../../../RTKQuery/Slides/types"
 import colors from "../../../../assets/color/colors"
-interface MyFeedProps {
+interface MyMediaProps {
     authorId: string
     onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
     onScrollEnd?: () => void;
 }
 
-export interface MyFeedRef {
+export interface MyMediaRef {
     setOffsetY: (y: number) => void;
 }
 
 const { width, height } = Dimensions.get('window');
-const MyFeedMasonry = forwardRef<MyFeedRef, MyFeedProps>((props, ref) => {
+const MyMediaList = forwardRef<MyMediaRef, MyMediaProps>((props, ref) => {
     const { authorId } = props;
-    const [trigger, { isLoading }] = useLazyGetListFeedProfileQuery();
+    const [fetchData, { isLoading }] = useGetListMediaProfileMutation();
     const flatListRef = useRef<FlatList>(null);
-    const scrollY = useSharedValue(0);
     const pageRef = useRef<number>(0);
-    const [listFeed, setListFeed] = useState<TypeFeedItem[]>([]);
+    const scrollY = useSharedValue(0);
+    const [listMedia, setListMedia] = useState<MediaItem[]>([]);
+
     useImperativeHandle(ref, () => ({
         setOffsetY: (y: number) => {
             if (!(scrollY.value == 400 && y === 400)) {
@@ -33,43 +34,42 @@ const MyFeedMasonry = forwardRef<MyFeedRef, MyFeedProps>((props, ref) => {
         },
     }));
 
-    const fetchData = async () => {
+    const getDataMedia = async () => {
         if (pageRef.current !== -1) {
-            try {
-                const response = await trigger({ authorId: authorId, page: pageRef.current }).unwrap();
-                if (response.length !== 0) {
-                    setListFeed(items => [...items, ...response]);
-                    pageRef.current += 1;
-                } else {
-                    pageRef.current = -1;
-                }
-            } catch (err) {
-                console.error('❌ Error:', err);
+            const result = await fetchData({ authorId: authorId, page: pageRef.current }).unwrap();
+            if (result.length !== 0) {
+                setListMedia(pre => [...pre, ...result]);
+                pageRef.current += 1;
+            } else {
+                pageRef.current = -1;
             }
         }
     };
 
     useEffect(() => {
-        fetchData();
-    }, [authorId]);
+        getDataMedia();
+    }, [])
 
     return (
         <Animated.FlatList
             ref={flatListRef}
             nestedScrollEnabled
+            showsVerticalScrollIndicator={false}
             style={[styles.container, { width: width }]}
-            contentContainerStyle={[styles.contentItem, listFeed.length === 0 && { height: height + 500 }]}
+            contentContainerStyle={[styles.contentItem, { minHeight: height + 500 }]}
             showsHorizontalScrollIndicator={false}
-            data={listFeed}
-            onEndReached={fetchData}
+            data={listMedia}
+            numColumns={3}
+            onEndReached={getDataMedia}
             onEndReachedThreshold={0.9}
+            refreshing={isLoading}
             refreshControl={
                 <RefreshControl
                     refreshing={isLoading}
                     onRefresh={() => {
-                        setListFeed([]);
+                        setListMedia([]);
                         pageRef.current = 0;
-                        fetchData();
+                        getDataMedia();
                     }}
                     tintColor="#fcb900"
                     colors={['#fcb900']}
@@ -80,7 +80,9 @@ const MyFeedMasonry = forwardRef<MyFeedRef, MyFeedProps>((props, ref) => {
             onMomentumScrollEnd={props.onScrollEnd}
             scrollEventThrottle={16}
             renderItem={({ item, index }) => (
-                <FeedItem data={item} key={index} />
+                <TouchableOpacity key={index} style={[styles.itemMedia, { width: width / 3, height: (width / 9) * 4 }]}>
+                    <AppImage uri={item.url} width={'100%'} height={'100%'} />
+                </TouchableOpacity >
             )}
             ListEmptyComponent={(
                 <View style={{ paddingTop: 90 }}>
@@ -94,4 +96,4 @@ const MyFeedMasonry = forwardRef<MyFeedRef, MyFeedProps>((props, ref) => {
     )
 });
 
-export default MyFeedMasonry;
+export default MyMediaList;

@@ -1,12 +1,12 @@
 import { BlurView } from '@react-native-community/blur';
-import React, { forwardRef, useContext, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, useContext, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { Modal, Text, View, TouchableOpacity, FlatList, TextInput, TouchableNativeFeedback, Image, ActivityIndicator, Alert } from 'react-native';
 import styles from './style';
 import colors from '../../../../assets/color/colors';
 import { AppImage } from '../../../../Components';
 import { getTime } from '../../functions';
 import icons from '../../../../assets/iconApp/icons';
-import { useCreateCommentMutation, useGetListCommentMutation } from '../../../../RTKQuery/Slides/slide';
+import { useCreateCommentMutation, useGetListCommentMutation, useLazyGetListCommentChildQuery } from '../../../../RTKQuery/Slides/slide';
 import { CommentResponse } from '../../../../RTKQuery/Slides/types';
 import { IconSend } from '../../../../assets/SVG';
 import { UserContext } from '../../../../Configs/UserReducer';
@@ -23,6 +23,7 @@ const ModalComment = forwardRef<ModalCommentRef>((_, ref) => {
   const [isStopFetch, setIsStopFetch] = useState(false);
   const [feedId, setFeedId] = useState('');
   const [comment, setComment] = useState('');
+  const [isShowChild, setIsShowChild] = useState(false);
   const [commentList, setCommentList] = useState<CommentResponse[]>([]);
   const [commentParent, setCommentParent] = useState<CommentResponse | null>(null);
   const pageRef = useRef<number>(0);
@@ -85,17 +86,15 @@ const ModalComment = forwardRef<ModalCommentRef>((_, ref) => {
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Text>{getTime(data.data.dateCreate)}</Text>
                 <Text style={{ paddingHorizontal: 5 }}>•</Text>
-                <TouchableOpacity
-                  onPress={() => { setCommentParent(data) }}
-                >
+                <TouchableOpacity onPress={() => { setCommentParent(data) }}>
                   <Text style={styles.textReply}>Trả lời</Text>
                 </TouchableOpacity>
                 {data.hasChil && <>
                   <Text style={{ paddingHorizontal: 5 }}>•</Text>
                   <TouchableOpacity
-                    onPress={() => { }}
+                    onPress={() => { setIsShowChild(pre => !pre) }}
                   >
-                    <Text style={styles.textReply}>Xem thêm</Text>
+                    <Text style={styles.textReply}>{isShowChild ? 'Ẩn bớt' : "Xem thêm"}</Text>
                   </TouchableOpacity>
                 </>}
               </View>
@@ -105,12 +104,9 @@ const ModalComment = forwardRef<ModalCommentRef>((_, ref) => {
                 <Text style={styles.textDelete}>Xóa</Text>
               </TouchableOpacity>
             </View>
-            {/* {!isChild &&
-              <FlatList
-                data={data.childComment}
-                renderItem={(item) => renderItem(item.item, true)}
-              />
-            } */}
+            {(data.hasChil && isShowChild) && <>
+              <CommentChild isShowCommentChild={isShowChild} commentId={data.data.commentId} />
+            </>}
           </View>
         </View >
       </>
@@ -122,13 +118,14 @@ const ModalComment = forwardRef<ModalCommentRef>((_, ref) => {
       return;
     }
     const result = await createComment({
-      feedId: feedId,
-      parentCommentId: null,
+      feedId: commentParent !== null ? '' : feedId,
+      parentCommentId: commentParent?.data.commentId,
       content: comment
     }).unwrap();
-    let newComment: CommentResponse = {
+
+    let newComment: any = {
       data: {
-        feedId: feedId,
+        feedId: commentParent ? '' : feedId,
         content: result.content,
         commentId: result.commentId,
         userId: result.userId,
@@ -142,9 +139,16 @@ const ModalComment = forwardRef<ModalCommentRef>((_, ref) => {
         avatar: user?.avatar || ''
       },
       hasChil: false,
+      commentId: '',
+      feedId: null,
+      parentCommentId: null,
     };
-    setCommentList(pre => [newComment, ...pre]);
     setComment('');
+    if (commentParent) {
+      setCommentParent(null);
+      return;
+    }
+    setCommentList(pre => [newComment, ...pre]);
   };
 
   return (
@@ -176,13 +180,17 @@ const ModalComment = forwardRef<ModalCommentRef>((_, ref) => {
           data={commentList}
           renderItem={(item) => (renderItem(item.item, false))}
           ListEmptyComponent={() => (isLoading ? <ActivityIndicator size="large" color={colors.gold2} /> : <Text style={{ alignSelf: 'center' }}>Hiện chưa có bình luận nào</Text>)}
-          ListFooterComponent={() => (
-            isStopFetch ?
-              <Text style={{ alignSelf: 'center', fontSize: 16 }}>Đã tải hết bình luận</Text> :
-              <TouchableOpacity onPress={() => { getListComment(feedId) }}>
+          ListFooterComponent={() => {
+            if (commentList.length === 0) return null;
+            if (isStopFetch) {
+              return <Text style={{ alignSelf: 'center', fontSize: 16 }}>Đã tải hết bình luận</Text>;
+            }
+            return (
+              <TouchableOpacity onPress={() => getListComment(feedId)}>
                 <Text style={{ alignSelf: 'center', fontSize: 16 }}>Tải thêm bình luận</Text>
               </TouchableOpacity>
-          )}
+            );
+          }}
         />
         <View style={styles.input_cmt}>
           <TextInput
@@ -201,7 +209,7 @@ const ModalComment = forwardRef<ModalCommentRef>((_, ref) => {
                 style={{
                   fontSize: 17,
                   fontWeight: '700',
-                  color: colors.dark,
+                  color: colors.white,
                 }}>
                 Trả lời:
               </Text>
@@ -209,7 +217,7 @@ const ModalComment = forwardRef<ModalCommentRef>((_, ref) => {
                 style={{
                   fontSize: 16,
                   fontWeight: '400',
-                  color: colors.dark,
+                  color: colors.white,
                   paddingLeft: 5,
                 }}>
                 @{commentParent.user.username}
@@ -231,5 +239,68 @@ const ModalComment = forwardRef<ModalCommentRef>((_, ref) => {
 });
 
 export default ModalComment;
+
+
+type CommentChildProps = {
+  isShowCommentChild: boolean;
+  commentId: string
+};
+
+const CommentChild: React.FC<CommentChildProps> = ({ isShowCommentChild, commentId }) => {
+  const { user, dispatch } = useContext(UserContext);
+  const [trigger] = useLazyGetListCommentChildQuery();
+  const [data, setData] = useState<CommentResponse[]>([]);
+  const pageRef = useRef<number>(0);
+
+  const handleCallAPI = async () => {
+    if (pageRef.current === -1) return;
+    try {
+      const result = await trigger({ parentId: commentId, page: pageRef.current }).unwrap();
+      if (result.length !== 0) {
+        setData(pre => [...pre, ...result]);
+        pageRef.current += 1;
+      } else {
+        pageRef.current = -1;
+      }
+    } catch (err) {
+      console.error('Lỗi khi gọi API comment con:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (data.length === 0) {
+      handleCallAPI();
+    }
+  }, [])
+
+  return (
+    <View style={{ display: isShowCommentChild ? 'flex' : 'none' }}>
+      <FlatList
+        scrollEnabled={true}
+        data={data}
+        renderItem={({ item, index }) => (
+          <View style={styles.contentItemList}>
+            <AppImage uri={item.user.avatar} width={40} height={40} imageStyle={{ borderRadius: 100 }} />
+            <View style={styles.detailComment}>
+              <Text style={styles.nameText}>@{item.user.username}</Text>
+              <Text style={styles.commentText}>{item.data.content}</Text>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Text>{getTime(item.data.dateCreate)}</Text>
+                  <Text style={{ paddingHorizontal: 5 }}>•</Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => { }}
+                  style={{ display: item.user.userId === user?.userId ? 'flex' : 'none' }}>
+                  <Text style={styles.textDelete}>Xóa</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View >
+        )}
+      />
+    </View>
+  )
+}
 
 

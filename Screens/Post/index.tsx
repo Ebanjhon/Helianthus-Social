@@ -244,7 +244,7 @@ const CreateFeed: React.FC<CreateFeedProps> = ({ }) => {
         (1 - saturation) * 0.2126 + saturation, (1 - saturation) * 0.2126, (1 - saturation) * 0.2126, 0, 0, // Kênh đỏ
         (1 - saturation) * 0.7152, (1 - saturation) * 0.7152 + saturation, (1 - saturation) * 0.7152, 0, 0, // Kênh xanh lá
         (1 - saturation) * 0.0722, (1 - saturation) * 0.0722, (1 - saturation) * 0.0722 + saturation, 0, 0, // Kênh xanh dương
-        0, 0, 0, 1, 0  // Alpha (độ trong suốt)
+        0, 0, 0, 1, 0
     ];
 
     const combinedMatrix = [
@@ -369,6 +369,9 @@ const CreateFeed: React.FC<CreateFeedProps> = ({ }) => {
                 </SlideUp>
                 :
                 <SlideUp>
+                    <View style={{ zIndex: 10 }}>
+                        <Toast config={toastConfigExport} />
+                    </View>
                     <HeaderApp title='Tạo bài viết'
                         onActionBack={handleReset}
                         isShowleftAction={!loading}
@@ -396,6 +399,7 @@ const CreateFeed: React.FC<CreateFeedProps> = ({ }) => {
                                 <TextInput
                                     style={styles.textInput}
                                     multiline={true}
+                                    editable={!loading}
                                     value={content}
                                     onChangeText={(text) => setContent(text)}
                                     placeholder="Bạn đang nghĩ gì?..."
