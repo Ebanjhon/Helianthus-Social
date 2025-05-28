@@ -23,6 +23,7 @@ import { useLikeFeedMutation, useUnLikeFeedMutation } from '../../../../RTKQuery
 import { ModalActionRef } from '../modalAction';
 import { TypeFeedItem } from '../../../../RTKQuery/Slides/types';
 import { UserContext } from '../../../../Configs/UserReducer';
+import { myFunctionNoti } from '../../../functions/functions';
 
 interface ItemFeedProps {
   data: TypeFeedItem;
@@ -34,7 +35,7 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
   onShowModalComment,
   modalActionRef
 }) => {
-  const { user, dispatch: userDispatch } = useContext(UserContext);
+  const { user, dispatch } = useContext(UserContext);
   const [fetchLikeFeed] = useLikeFeedMutation();
   const [fetchUnLikeFeed] = useUnLikeFeedMutation();
   const [isLikeFeed, setIsLikeFeed] = useState(data.action.isLike);
@@ -69,6 +70,7 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
         console.log('====================================');
         setIsLikeFeed(pre => !pre)
         setCountLike(pre => pre + 1)
+
       }
     } else {
       setCountLike(pre => pre + 1)
@@ -82,7 +84,7 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
   }
 
   return (
-    <View style={[styles.container, isEmptyMedia && { height: 240, display: isShow ? 'none' : 'flex' }]}>
+    <View style={[styles.container, isEmptyMedia && { height: 240 }, { display: isShow ? 'none' : 'flex' }]}>
       <View style={styles.viewMedia}>
         <Animated.View
           style={[
@@ -166,8 +168,8 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
         <TouchableOpacity
           onPress={() => {
             modalActionRef.current?.onShowModalAction({
-              isAuthor: true,
               feedId: data.feedId,
+              authorId: data.author.userId,
               setDeleteFeed() {
                 setIsShow(true)
               },
@@ -176,6 +178,7 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
           style={{ marginBottom: 10 }}>
           <IconFillOption width={38} height={38} />
         </TouchableOpacity>
+
         <TouchableOpacity
           style={{ marginBottom: 5 }}
           onPress={handleLike}>

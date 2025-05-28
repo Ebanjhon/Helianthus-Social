@@ -180,6 +180,12 @@ export interface NotiListDataResponse extends PageMetaData {
   content: NotificationItem[];
 }
 
+export interface createNoti {
+  userId: string;
+  createrId: string;
+  type: NotificationType;
+}
+
 //page size
 export interface Sort {
   sorted: boolean;

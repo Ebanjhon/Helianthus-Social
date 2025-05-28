@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { CommentResponse, createAccount, CreateComment, createFeed, MediaItem, NotiListDataResponse, TypeFeedItem, UserProfileInfo, UserResponse, UserSearchResult, UserUpdate } from './types';
+import { CommentResponse, createAccount, CreateComment, createFeed, createNoti, MediaItem, NotiListDataResponse, TypeFeedItem, UserProfileInfo, UserResponse, UserSearchResult, UserUpdate } from './types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-export const HOST = '192.168.1.4';
+export const HOST = '192.168.1.2';
 export const BASE_URL = `http://${HOST}:8888`;
 export const BASE_MinIO = `http://${HOST}`;
 
@@ -128,11 +128,28 @@ export const apiSlice = createApi({
         },
       }),
     }),
-    deleteFeed: builder.mutation<any, { feedId: string }>({
+    deleteFeed: builder.mutation<{ success: boolean }, { feedId: string }>({
       query: ({ feedId }) => ({
-        url: `/api/feed?feedId=${feedId}`,
+        url: `/api/feed`,
         method: 'DELETE',
+        body: feedId,
+        headers: {
+          'Content-Type': 'text/plain'
+        },
+        responseHandler: async (response) => {
+          const text = await response.text();
+          return text;
+        },
       }),
+      transformResponse: (response: string, meta, arg) => {
+        if (meta?.response?.status === 200) {
+          return { success: true };
+        }
+        return { success: false };
+      },
+      transformErrorResponse: (error) => {
+        return { success: false };
+      },
     }),
     updateUser: builder.mutation<UserProfileInfo, UserUpdate>({
       query: params => ({
@@ -154,9 +171,9 @@ export const apiSlice = createApi({
         body: params,
       }),
     }),
-    deleteComment: builder.mutation<any, { commentId: string }>({
-      query: (params) => ({
-        url: `/api/comment?commentId=${params}`,
+    deleteComment: builder.mutation<boolean, { commentId: string }>({
+      query: ({ commentId }) => ({
+        url: `/api/comment?commentId=${commentId}`,
         method: 'DELETE',
       }),
     }),
@@ -179,6 +196,13 @@ export const apiSlice = createApi({
       query: ({ userId, page }) => ({
         url: `/api/noti/list?userId=${userId}&page=${page}&size=10`,
         method: 'GET',
+      }),
+    }),
+    createNoti: builder.mutation<any, { param: createNoti }>({
+      query: (param) => ({
+        url: '/api/noti',
+        method: 'POST',
+        body: param
       }),
     }),
   }),
@@ -205,5 +229,6 @@ export const { useGetTokenMutation,
   useLazyGetListFeedProfileQuery,
   useGetListMediaProfileMutation,
   useLazyGetListCommentChildQuery,
-  useGetListNotiMutation
+  useGetListNotiMutation,
+  useCreateNotiMutation
 } = apiSlice;

@@ -1,13 +1,14 @@
 import { BlurView } from '@react-native-community/blur';
-import React, { forwardRef, useImperativeHandle, useState } from 'react';
-import { Modal, Text, View, Button, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, TouchableOpacity, FlatList, TextInput, TouchableNativeFeedback, Image, Alert } from 'react-native';
+import React, { forwardRef, useContext, useImperativeHandle, useRef, useState } from 'react';
+import { Modal, Text, View, TouchableOpacity, TouchableNativeFeedback, Alert } from 'react-native';
 import styles from './style';
 import { useDeleteFeedMutation } from '../../../../RTKQuery/Slides/slide';
 import { showToast } from '../../../../Configs/ToastConfig';
+import { UserContext } from '../../../../Configs/UserReducer';
 
 type ActionProps = {
-  isAuthor: boolean,
   feedId: string,
+  authorId: string,
   setDeleteFeed: () => void
 };
 
@@ -17,32 +18,27 @@ export type ModalActionRef = {
 
 const ModalAction = forwardRef<ModalActionRef>((_, ref) => {
   const [isVisibleModal, setIsVisibleModal] = useState(false);
+  const { user, dispatch } = useContext(UserContext);
   const [isShowDialog, setIsShowDialog] = useState(false);
-  const [dataAction, setDataAction] = useState<ActionProps>();
-  const [fetchDeleteFeed, { error, isSuccess }] = useDeleteFeedMutation();
-
+  const [fetchDeleteFeed] = useDeleteFeedMutation();
+  const deleteFeedCallbackRef = useRef<(ActionProps | any)>(null);
   useImperativeHandle(ref, () => ({
     onShowModalAction: (data) => {
       setIsVisibleModal(true)
-      setDataAction(data);
+      deleteFeedCallbackRef.current = data;
     },
   }));
 
   const handleDelete = async () => {
     try {
-      const result = await fetchDeleteFeed({ feedId: dataAction?.feedId || '' }).unwrap();
-      if (isSuccess) {
-        dataAction?.setDeleteFeed();
-        console.log(isSuccess);
-      } else {
-        console.log('====================================');
-        console.log(result);
-        console.log('====================================');
-      }
-    } catch {
-      showToast('error', 'Lỗi xóa bài viết!', error);
+      const result = await fetchDeleteFeed({ feedId: deleteFeedCallbackRef.current.feedId }).unwrap();
       console.log('====================================');
-      console.log("Lỗi");
+      console.log(result.success);
+      console.log('====================================');
+      deleteFeedCallbackRef.current.setDeleteFeed();
+    } catch (error) {
+      console.log('====================================');
+      console.log(error);
       console.log('====================================');
     }
   }
@@ -72,6 +68,8 @@ const ModalAction = forwardRef<ModalActionRef>((_, ref) => {
     );
   }
 
+  const isAuthor = user?.userId === deleteFeedCallbackRef.current?.authorId;
+
   return (
     <Modal
       animationType='fade'
@@ -91,11 +89,12 @@ const ModalAction = forwardRef<ModalActionRef>((_, ref) => {
         />
       </TouchableNativeFeedback>
       <View style={[styles.actionList, { display: !isShowDialog ? 'flex' : 'none' }]}>
-        <TouchableOpacity
-          onPress={handleDialog}>
-          <Text style={styles.textAction}>Xóa bài viết</Text>
-        </TouchableOpacity>
-
+        {isAuthor &&
+          <TouchableOpacity
+            onPress={handleDialog}>
+            <Text style={styles.textAction}>Xóa bài viết</Text>
+          </TouchableOpacity>
+        }
         <TouchableOpacity
         >
           <Text style={styles.textAction}>Báo cáo bài viết</Text>

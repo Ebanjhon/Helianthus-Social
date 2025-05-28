@@ -6,7 +6,7 @@ import colors from '../../../../assets/color/colors';
 import { AppImage } from '../../../../Components';
 import { getTime } from '../../functions';
 import icons from '../../../../assets/iconApp/icons';
-import { useCreateCommentMutation, useGetListCommentMutation, useLazyGetListCommentChildQuery } from '../../../../RTKQuery/Slides/slide';
+import { useCreateCommentMutation, useDeleteCommentMutation, useGetListCommentMutation, useLazyGetListCommentChildQuery } from '../../../../RTKQuery/Slides/slide';
 import { CommentResponse } from '../../../../RTKQuery/Slides/types';
 import { IconSend } from '../../../../assets/SVG';
 import { UserContext } from '../../../../Configs/UserReducer';
@@ -23,7 +23,6 @@ const ModalComment = forwardRef<ModalCommentRef>((_, ref) => {
   const [isStopFetch, setIsStopFetch] = useState(false);
   const [feedId, setFeedId] = useState('');
   const [comment, setComment] = useState('');
-  const [isShowChild, setIsShowChild] = useState(false);
   const [commentList, setCommentList] = useState<CommentResponse[]>([]);
   const [commentParent, setCommentParent] = useState<CommentResponse | null>(null);
   const pageRef = useRef<number>(0);
@@ -51,67 +50,6 @@ const ModalComment = forwardRef<ModalCommentRef>((_, ref) => {
       setCommentParent(null);
     },
   }));
-
-  const handleDialog = (commentId: string) => {
-    Alert.alert(
-      "Xác nhận",
-      "Xóa bình luận này?",
-      [
-        {
-          text: "Huỷ",
-          onPress: () => {
-          },
-          style: "cancel"
-        },
-        {
-          text: "Xoá",
-          onPress: () => {
-          }
-        }
-      ]
-    );
-  }
-
-  const renderItem = (data: CommentResponse, isChild: boolean) => {
-    if (isChild) {
-    }
-    return (
-      <>
-        <View style={styles.contentItemList}>
-          <AppImage uri={data.user.avatar} width={40} height={40} imageStyle={{ borderRadius: 100 }} />
-          <View style={styles.detailComment}>
-            <Text style={styles.nameText}>@{data.user.username}</Text>
-            <Text style={styles.commentText}>{data.data.content}</Text>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text>{getTime(data.data.dateCreate)}</Text>
-                <Text style={{ paddingHorizontal: 5 }}>•</Text>
-                <TouchableOpacity onPress={() => { setCommentParent(data) }}>
-                  <Text style={styles.textReply}>Trả lời</Text>
-                </TouchableOpacity>
-                {data.hasChil && <>
-                  <Text style={{ paddingHorizontal: 5 }}>•</Text>
-                  <TouchableOpacity
-                    onPress={() => { setIsShowChild(pre => !pre) }}
-                  >
-                    <Text style={styles.textReply}>{isShowChild ? 'Ẩn bớt' : "Xem thêm"}</Text>
-                  </TouchableOpacity>
-                </>}
-              </View>
-              <TouchableOpacity
-                onPress={() => { handleDialog(data.commentId) }}
-                style={{ display: data.user.userId === user?.userId ? 'flex' : 'none' }}>
-                <Text style={styles.textDelete}>Xóa</Text>
-              </TouchableOpacity>
-            </View>
-            {(data.hasChil && isShowChild) && <>
-              <CommentChild isShowCommentChild={isShowChild} commentId={data.data.commentId} />
-            </>}
-          </View>
-        </View >
-      </>
-    )
-  }
 
   const createCommentFeed = async () => {
     if (comment === '') {
@@ -178,7 +116,7 @@ const ModalComment = forwardRef<ModalCommentRef>((_, ref) => {
           contentContainerStyle={styles.containerComment}
           style={{ flex: 1 }}
           data={commentList}
-          renderItem={(item) => (renderItem(item.item, false))}
+          renderItem={({ item }) => <CommentItem data={item} onSetCommentParent={setCommentParent} isAuthorUser={user?.userId === item.data.userId} />}
           ListEmptyComponent={() => (isLoading ? <ActivityIndicator size="large" color={colors.gold2} /> : <Text style={{ alignSelf: 'center' }}>Hiện chưa có bình luận nào</Text>)}
           ListFooterComponent={() => {
             if (commentList.length === 0) return null;
@@ -240,14 +178,89 @@ const ModalComment = forwardRef<ModalCommentRef>((_, ref) => {
 
 export default ModalComment;
 
+type CommentItemProps = {
+  data: CommentResponse;
+  onSetCommentParent: (item: CommentResponse) => void;
+  isAuthorUser: boolean
+};
+
+const CommentItem: React.FC<CommentItemProps> = ({ data, onSetCommentParent, isAuthorUser }) => {
+  const [fetchDelete] = useDeleteCommentMutation();
+  const [isShowChild, setIsShowChild] = useState<boolean>(false);
+  const [isDelete, setIsDelete] = useState<boolean>(false);
+
+  const handleDialog = (commentId: string) => {
+    Alert.alert(
+      "Xác nhận",
+      "Xóa bình luận này?",
+      [
+        {
+          text: "Huỷ",
+          onPress: () => {
+          },
+          style: "cancel"
+        },
+        {
+          text: "Xoá",
+          onPress: async () => {
+            try {
+              const result = await fetchDelete({ commentId: commentId }).unwrap();
+              if (result) {
+                setIsDelete(true);
+              }
+            } catch (error) {
+              console.log('====================================');
+              console.log(error);
+              console.log('====================================');
+            }
+          }
+        }
+      ]
+    );
+  }
+
+  return (
+    <View style={[styles.contentItemList, isDelete && { display: 'none' }]}>
+      <AppImage uri={data.user.avatar} width={40} height={40} imageStyle={{ borderRadius: 100 }} />
+      <View style={styles.detailComment}>
+        <Text style={styles.nameText}>@{data.user.username}</Text>
+        <Text style={styles.commentText}>{data.data.content}</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text>{getTime(data.data.dateCreate)}</Text>
+            <Text style={{ paddingHorizontal: 5 }}>•</Text>
+            <TouchableOpacity onPress={() => { onSetCommentParent(data) }}>
+              <Text style={styles.textReply}>Trả lời</Text>
+            </TouchableOpacity>
+            {data.hasChil && <>
+              <Text style={{ paddingHorizontal: 5 }}>•</Text>
+              <TouchableOpacity
+                onPress={() => { setIsShowChild(pre => !pre) }}
+              >
+                <Text style={styles.textReply}>{isShowChild ? 'Ẩn bớt' : "Xem thêm"}</Text>
+              </TouchableOpacity>
+            </>}
+          </View>
+          <TouchableOpacity
+            onPress={() => { handleDialog(data.data.commentId) }}
+            style={{ display: isAuthorUser ? 'flex' : 'none' }}>
+            <Text style={styles.textDelete}>Xóa</Text>
+          </TouchableOpacity>
+        </View>
+        {(data.hasChil && isShowChild) && <>
+          <CommentChild isShowCommentChild={isShowChild} commentId={data.data.commentId} />
+        </>}
+      </View>
+    </View >
+  )
+}
 
 type CommentChildProps = {
   isShowCommentChild: boolean;
-  commentId: string
+  commentId: string;
 };
 
 const CommentChild: React.FC<CommentChildProps> = ({ isShowCommentChild, commentId }) => {
-  const { user, dispatch } = useContext(UserContext);
   const [trigger] = useLazyGetListCommentChildQuery();
   const [data, setData] = useState<CommentResponse[]>([]);
   const pageRef = useRef<number>(0);
@@ -291,7 +304,7 @@ const CommentChild: React.FC<CommentChildProps> = ({ isShowCommentChild, comment
                 </View>
                 <TouchableOpacity
                   onPress={() => { }}
-                  style={{ display: item.user.userId === user?.userId ? 'flex' : 'none' }}>
+                  style={{ display: true ? 'flex' : 'none' }}>
                   <Text style={styles.textDelete}>Xóa</Text>
                 </TouchableOpacity>
               </View>

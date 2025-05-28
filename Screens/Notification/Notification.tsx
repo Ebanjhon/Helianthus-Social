@@ -4,7 +4,6 @@ import {
   Text,
   View,
   Image,
-  SectionList,
   TouchableOpacity,
   FlatList,
   RefreshControl,
@@ -13,16 +12,19 @@ import styles from './NotifiStyle';
 import HeaderApp from '../../Components/HeaderApp/HeaderApp';
 import { useGetListNotiMutation } from '../../RTKQuery/Slides/slide';
 import { NotificationItem } from '../../RTKQuery/Slides/types';
+import { UserContext } from '../../Configs/UserReducer';
 
 const Notification = () => {
   const [fetchAPI, { isLoading }] = useGetListNotiMutation();
   const pageRef = useRef<number>(0);
+  const { user, dispatch } = useContext(UserContext);
+
   const [listNoti, setListNoti] = useState<NotificationItem[]>([]);
 
 
   const fetchData = async () => {
     if (pageRef.current === -1) return;
-    const result = await fetchAPI({ userId: 'user123', page: 0 }).unwrap();
+    const result = await fetchAPI({ userId: user?.userId || '', page: 0 }).unwrap();
     if (!result.empty) {
       setListNoti(pre => [...pre, ...result.content]);
       pageRef.current += 1;
@@ -33,7 +35,7 @@ const Notification = () => {
 
   useEffect(() => {
     fetchData();
-  }, [])
+  }, [user])
 
   const renderItem = (item: NotificationItem, index: number) => {
     return (

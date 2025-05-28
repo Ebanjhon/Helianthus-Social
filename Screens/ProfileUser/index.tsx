@@ -1,4 +1,4 @@
-import React, { forwardRef, useContext, useEffect, useImperativeHandle, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { ActivityIndicator, Dimensions, NativeScrollEvent, NativeSyntheticEvent, SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native";
 import HeaderApp from "../../Components/HeaderApp/HeaderApp";
 import colors from "../../assets/color/colors";
@@ -6,7 +6,6 @@ import styles from "./styles";
 import { MyFeedMasonry, MyMediaList, ViewHeader } from "./components";
 import { IconFavorite, IconFeed, IconMedia } from "../../assets/SVG";
 import { useGetUserInfoMutation } from "../../RTKQuery/Slides/slide";
-import { UserContext } from "../../Configs/UserReducer";
 import { ScreenProps } from "../../Components/NavigationApp/type";
 import { MyFeedRef } from "./components/myFeeds";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -18,7 +17,7 @@ import Animated, {
     useAnimatedScrollHandler,
 } from 'react-native-reanimated';
 import { MyMediaRef } from "./components/myMediaList";
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const dataTab = [
     {
         id: 1,
@@ -38,7 +37,6 @@ const dataTab = [
 ];
 const ProfileUser: React.FC<ScreenProps<'Profile'>> = ({ navigation, route }) => {
     const { usernameProps } = route.params;
-    const { user, dispatch: userDispatch } = useContext(UserContext);
     const [fetchData, { data, isLoading }] = useGetUserInfoMutation();
     const tabIndexView = useRef<number>(0);
     const scrollViewRef = useRef<ScrollView>(null);
@@ -177,7 +175,7 @@ const ProfileUser: React.FC<ScreenProps<'Profile'>> = ({ navigation, route }) =>
                                 onScrollEnd={onScrollEndFlatlist}
                             />
                             <MyFeedMasonry
-                                authorId={data?.userId || ''}
+                                authorId={''}
                                 ref={likeRef}
                                 onScroll={handleScroll}
                                 onScrollEnd={onScrollEndFlatlist}
