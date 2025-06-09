@@ -10,21 +10,27 @@ type ViewHeaderProps = {
   data?: UserProfileInfo;
   isLoading: boolean
 };
-const temp =
-  'https://i.pinimg.com/736x/c9/e3/eb/c9e3eb487b0deb3f50501c196e332b58.jpg';
+const cover = 'https://i.pinimg.com/736x/89/89/30/898930ef71b48350ab9c7f4878d20cc9.jpg';
+const avatar = 'https://i.pinimg.com/736x/7d/d7/49/7dd749ba968cd0f2716d988a592f461e.jpg';
 const ViewHeader: React.FC<ViewHeaderProps> = ({ data, isLoading }) => {
+  console.log('====================================');
+  console.log(data?.cover);
+  console.log('====================================');
   return (
     <View style={styles.container}>
       <FastImage
         style={styles.cover}
         source={{
-          uri: data?.cover !== null ? BASE_MinIO + data?.cover : temp,
+          uri: data?.cover === null ? cover : BASE_MinIO + data?.cover,
           priority: FastImage.priority.high,
         }}
       />
-      <Image
-        source={{ uri: data?.avatar !== null ? BASE_MinIO + data?.avatar : temp }}
+      <FastImage
         style={[styles.avatar, styles.avtView]}
+        source={{
+          uri: data?.avatar === null ? avatar : BASE_MinIO + data?.avatar,
+          priority: FastImage.priority.high,
+        }}
       />
       <Text style={styles.nameText}>{data?.firstname} {data?.lastname}</Text>
       {/* <TouchableOpacity style={[styles.btnFollow, { display: data?.curentUser ? 'flex' : 'none' }]}>

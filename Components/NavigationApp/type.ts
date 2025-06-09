@@ -1,5 +1,6 @@
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { UserResponse } from "../../RTKQuery/Slides/types";
 
 export type RootStackParamList = {
     HomeTabs: undefined;
@@ -11,7 +12,7 @@ export type RootStackParamList = {
     Splash: undefined;
     Login: undefined;
     Register: undefined;
-    Active: undefined;
+    Active: { userData: UserResponse };
     Chat: undefined;
 };
 

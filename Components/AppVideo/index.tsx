@@ -1,8 +1,8 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {Animated, TouchableOpacity, View} from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, TouchableOpacity, View } from 'react-native';
 import styles from './style';
 import Video from 'react-native-video';
-import {IconPause, IconPlay} from '../../assets/SVG';
+import { IconPause, IconPlay } from '../../assets/SVG';
 import Slider from '@react-native-community/slider';
 import colors from '../../assets/color/colors';
 
@@ -22,7 +22,7 @@ const AppVideo: React.FC<AppVideoProps> = ({
   const [isPause, setIsPause] = useState(isCurrent);
   const AniPause = useRef(new Animated.Value(0.9)).current;
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(1); // Tránh chia cho 0
+  const [duration, setDuration] = useState(1);
   const videoRef = useRef(null);
   useEffect(() => {
     if (!isPause) {
@@ -40,16 +40,16 @@ const AppVideo: React.FC<AppVideoProps> = ({
   }, [isCurrent]);
 
   return (
-    <View style={{width: width, height: 480, overflow: 'hidden'}}>
+    <View style={{ width: width, height: 480, overflow: 'hidden' }}>
       <Video
         ref={videoRef}
         paused={isPause}
-        source={{uri: source}}
+        source={{ uri: source }}
         controls={!true}
-        style={{width: width, height: height, backgroundColor: '#000024'}}
+        style={{ width: width, height: height, backgroundColor: '#000024' }}
         resizeMode="contain"
         repeat={true}
-        onEnd={() => {}}
+        onEnd={() => { }}
         onProgress={data => setCurrentTime(data.currentTime)}
         onLoad={data => setDuration(data.duration)}
       />
@@ -66,14 +66,14 @@ const AppVideo: React.FC<AppVideoProps> = ({
         {isPause ? (
           <IconPlay style={styles.play} />
         ) : (
-          <Animated.View style={{opacity: AniPause}}>
+          <Animated.View style={{ opacity: AniPause }}>
             <IconPause />
           </Animated.View>
         )}
       </TouchableOpacity>
       {/* <Animated.View style={{opacity: AniPause}}> */}
       <Slider
-        style={[styles.line, {width: width}]}
+        style={[styles.line, { width: width }]}
         value={currentTime}
         maximumValue={duration}
         minimumValue={0}

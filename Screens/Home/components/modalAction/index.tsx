@@ -89,16 +89,16 @@ const ModalAction = forwardRef<ModalActionRef>((_, ref) => {
         />
       </TouchableNativeFeedback>
       <View style={[styles.actionList, { display: !isShowDialog ? 'flex' : 'none' }]}>
-        {isAuthor &&
+        {isAuthor ?
           <TouchableOpacity
             onPress={handleDialog}>
             <Text style={styles.textAction}>Xóa bài viết</Text>
+          </TouchableOpacity> :
+          <TouchableOpacity>
+            <Text style={styles.textAction}>Báo cáo bài viết</Text>
           </TouchableOpacity>
         }
-        <TouchableOpacity
-        >
-          <Text style={styles.textAction}>Báo cáo bài viết</Text>
-        </TouchableOpacity>
+
       </View >
     </Modal >
   );

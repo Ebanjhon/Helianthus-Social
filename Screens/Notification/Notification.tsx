@@ -10,9 +10,10 @@ import {
 } from 'react-native';
 import styles from './NotifiStyle';
 import HeaderApp from '../../Components/HeaderApp/HeaderApp';
-import { useGetListNotiMutation } from '../../RTKQuery/Slides/slide';
+import { BASE_MinIO, useGetListNotiMutation } from '../../RTKQuery/Slides/slide';
 import { NotificationItem } from '../../RTKQuery/Slides/types';
 import { UserContext } from '../../Configs/UserReducer';
+import colors from '../../assets/color/colors';
 
 const Notification = () => {
   const [fetchAPI, { isLoading }] = useGetListNotiMutation();
@@ -38,17 +39,18 @@ const Notification = () => {
   }, [user])
 
   const renderItem = (item: NotificationItem, index: number) => {
+    const avatar = `${BASE_MinIO}${item.user.avatar}` || 'https://i.pinimg.com/564x/25/ee/de/25eedef494e9b4ce02b14990c9b5db2d.jpg';
     return (
       <TouchableOpacity style={styles.contain_notifi}>
         <Image
           style={{ width: 45, height: 45, borderRadius: 50, margin: 5 }}
           source={{
-            uri: 'https://i.pinimg.com/564x/25/ee/de/25eedef494e9b4ce02b14990c9b5db2d.jpg'
+            uri: avatar
           }}
         />
         <View style={styles.notifi}>
           <Text style={styles.title}>
-            {item.user.username}
+            {item.user.username} {' '}
             <Text style={styles.content}>{typeContent(item.noti.typeNotification)}</Text>
           </Text>
         </View>
@@ -74,7 +76,7 @@ const Notification = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <HeaderApp title='Thông báo' />
+      <HeaderApp title='Thông báo' bgColor={colors.white} />
       <FlatList
         contentContainerStyle={{ marginHorizontal: 16 }}
         data={listNoti}

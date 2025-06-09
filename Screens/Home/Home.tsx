@@ -53,14 +53,15 @@ const Home = forwardRef((ref) => {
 
   const handleFetchData = async () => {
     try {
-      if (numPageRef.current !== -1) {
-        await fetchData({ page: numPageRef.current }).unwrap();
-        if (data?.length !== 0) {
-          setFeedHome(prev => [...prev || [], ...data || []]);
-          numPageRef.current += 1;
-        } else {
-          numPageRef.current = -1;
-        }
+      if (numPageRef.current !== -1 && !isLoading) {
+        await fetchData({ page: numPageRef.current }).unwrap().then((data) => {
+          if (data.length !== 0) {
+            setFeedHome(prev => [...prev, ...data]);
+            numPageRef.current = numPageRef.current + 1;
+          } else {
+            numPageRef.current = -1;
+          }
+        });
       }
     } catch (e) {
       console.log(error);
@@ -79,7 +80,7 @@ const Home = forwardRef((ref) => {
         nestedScrollEnabled={true}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<Text style={{ textAlign: 'center', color: colors.black }}>
+        ListEmptyComponent={<Text style={{ textAlign: 'center', color: colors.black, display: isLoading ? 'none' : 'flex' }}>
           Không có dữ liệu
         </Text>}
         ListHeaderComponent={
@@ -107,14 +108,14 @@ const Home = forwardRef((ref) => {
             key={index}
             data={item}
             onShowModalComment={() => {
-              modalRef.current?.onShowModalComment(item.feedId);
+              modalRef.current?.onShowModalComment(item);
             }}
             modalActionRef={modalActionRef}
           />
         )}
         refreshControl={
           <RefreshControl
-            refreshing={isLoading}
+            refreshing={false}
             onRefresh={() => {
               numPageRef.current = 0;
               setFeedHome([]);
@@ -126,20 +127,10 @@ const Home = forwardRef((ref) => {
         onEndReached={() => {
           handleFetchData();
         }}
-        onEndReachedThreshold={0.7}
+        onEndReachedThreshold={1}
         ListFooterComponent={
           <>
-            {isLoading ? (
-              <ActivityIndicator size="small" />
-            ) : (
-              <>
-                {numPageRef.current === -1 && (
-                  <Text style={{ textAlign: 'center', color: colors.black }}>
-                    Đã tải hết dữ liệu
-                  </Text>
-                )}
-              </>
-            )}
+            {isLoading && <ActivityIndicator size="small" />}
           </>
         }
         onScroll={handleScroll}

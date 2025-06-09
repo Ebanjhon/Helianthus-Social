@@ -43,7 +43,7 @@ const Register = ({ navigation }) => {
     if (isFormValid) {
       if (password === passConfirm) {
         try {
-          await createAccount({ username: userName, firstname: firstName, email: emailAndress, password: password }).unwrap();
+          await createAccount({ username: userName, firstname: firstName, lastname: lastName, email: emailAndress, password: password }).unwrap();
           showToast('success', 'Đăng ký tài khoản thành công', "Chuyên sang màn hình đăng nhập");
           setTimeout(() => {
             navigation.navigate('Login');
@@ -112,14 +112,14 @@ const Register = ({ navigation }) => {
               unique: 'Tên không được để trống!',
             }}
           />
-          {/* 
+
           <InputText
             text={lastName}
             setText={setLastName}
             placeholder={'Nhập tên người dùng...'}
             title={'Last name'}
             iconUri={icons.lastname}
-          /> */}
+          />
 
           <InputText
             text={emailAndress}
@@ -181,7 +181,7 @@ const Register = ({ navigation }) => {
           )}
 
           <View style={{ alignSelf: 'center' }}>
-            <IconGoogle />
+
           </View>
           <TouchableOpacity
             style={{ width: '100%', alignItems: 'center', paddingBottom: 10 }}

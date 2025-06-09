@@ -1,8 +1,7 @@
-import { Button, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../../assets/color/colors";
 import { useContext, useEffect, useState } from "react";
-import { authApi, endpoints } from "../../Configs/APIs";
 import Toast from "react-native-toast-message";
 import { showToast, toastConfigExport } from '../../Configs/ToastConfig';
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -10,20 +9,25 @@ import React from "react";
 import { UserResponse } from "../../RTKQuery/Slides/types";
 import { UserContext } from "../../Configs/UserReducer";
 import { useCreateOTPMutation, useVerifyOTPMutation } from "../../RTKQuery/Slides/slide";
+import { RouteProp } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
-export type ActiveAccountProps = {
-    route: {
-        params: {
-            userData: UserResponse;
-        };
-    };
-    navigation: any;
+type RootStackParamList = {
+    Active: { userData: UserResponse };
+};
+type ActiveRouteProp = RouteProp<RootStackParamList, 'Active'>;
+type ActiveNavigationProp = StackNavigationProp<RootStackParamList, 'Active'>;
+type Props = {
+    route: ActiveRouteProp;
+    navigation: ActiveNavigationProp;
 };
 
-const ActiveAccount = ({ route }: ActiveAccountProps) => {
+const ActiveAccount: React.FC<Props> = ({ route, navigation }) => {
     const { userData } = route.params;
-    const [create_otp, { data, error: errOTP, isLoading: isLoadingOTP }] = useCreateOTPMutation();
-    const [verifty, { error: errVerify, isLoading: isLoadingVerify }] = useVerifyOTPMutation();
+
+    const [create_otp] = useCreateOTPMutation();
+    const [verifty, { error: errVerify, isLoading }] = useVerifyOTPMutation();
+
     const [timeLeft, setTimeLeft] = useState(0); // Đặt thời gian bắt đầu là 60 giây
     const [showSendOTP, setShowSendOTP] = useState(false);
     const { user, dispatch } = useContext(UserContext);
@@ -40,18 +44,26 @@ const ActiveAccount = ({ route }: ActiveAccountProps) => {
         return () => clearInterval(intervalId);
     }, [timeLeft]); // Chạy effect này khi timeLeft thay đổi
 
+    useEffect(() => {
+        createOTP();
+    }, []);
+
     const createOTP = async () => {
         try {
-            await create_otp().unwrap();
+            const result = await create_otp().unwrap();
             setShowSendOTP(false);
             setTimeLeft(60);
-            console.log("OTP: ", data);
+            console.log("OTP: ", result);
         } catch (error) {
             showToast('error', 'Thông báo!', 'Lỗi tạo mã OTP!');
         }
     };
 
     const sendOTP = async () => {
+        if (otp.length !== 6) {
+            showToast('warning', 'Vui lòng nhập đủ 6 chữ số mã OTP');
+            return;
+        }
         try {
             const { status } = await verifty(otp).unwrap();
             if (status === 200) {
@@ -66,10 +78,6 @@ const ActiveAccount = ({ route }: ActiveAccountProps) => {
             showToast('error', 'Thông báo!', 'Mã OTP không chính xác!');
         }
     };
-
-    useEffect(() => {
-        createOTP();
-    }, []);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -98,11 +106,14 @@ const ActiveAccount = ({ route }: ActiveAccountProps) => {
                 onChange={(e) => setOTP(e.nativeEvent.text)}
             />
 
-            <TouchableOpacity
+            {!isLoading ? <TouchableOpacity
                 onPress={sendOTP}
                 style={styles.btn}>
                 <Text style={styles.textBtn}>Xác nhận</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> : <>
+                <ActivityIndicator size={'large'} />
+            </>}
+
         </SafeAreaView>
     );
 };

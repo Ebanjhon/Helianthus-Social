@@ -24,7 +24,9 @@ const styles = StyleSheet.create({
     title: {
         fontWeight: '700',
         color: colors.black,
-        fontSize: 17
+        fontSize: 17,
+        flexWrap: 'wrap',
+        width: '95%'
     },
     content: {
         fontWeight: '400',

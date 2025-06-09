@@ -7,12 +7,12 @@ import { AppImage } from '../../../../Components';
 import { getTime } from '../../functions';
 import icons from '../../../../assets/iconApp/icons';
 import { useCreateCommentMutation, useDeleteCommentMutation, useGetListCommentMutation, useLazyGetListCommentChildQuery } from '../../../../RTKQuery/Slides/slide';
-import { CommentResponse } from '../../../../RTKQuery/Slides/types';
+import { CommentResponse, TypeFeedItem } from '../../../../RTKQuery/Slides/types';
 import { IconSend } from '../../../../assets/SVG';
 import { UserContext } from '../../../../Configs/UserReducer';
 
 export type ModalCommentRef = {
-  onShowModalComment: (feedId: string) => void;
+  onShowModalComment: (item: TypeFeedItem) => void;
 };
 
 const ModalComment = forwardRef<ModalCommentRef>((_, ref) => {
@@ -21,7 +21,7 @@ const ModalComment = forwardRef<ModalCommentRef>((_, ref) => {
   const [createComment, { isLoading: isLoadingCreate }] = useCreateCommentMutation();
   const [isVisibleModal, setIsVisibleModal] = useState(false);
   const [isStopFetch, setIsStopFetch] = useState(false);
-  const [feedId, setFeedId] = useState('');
+  const [feed, setFeed] = useState<TypeFeedItem>();
   const [comment, setComment] = useState('');
   const [commentList, setCommentList] = useState<CommentResponse[]>([]);
   const [commentParent, setCommentParent] = useState<CommentResponse | null>(null);
@@ -41,12 +41,12 @@ const ModalComment = forwardRef<ModalCommentRef>((_, ref) => {
   };
 
   useImperativeHandle(ref, () => ({
-    onShowModalComment: (feedId) => {
+    onShowModalComment: (feed) => {
       setIsVisibleModal(true);
       pageRef.current = 0;
       setCommentList([]);
-      getListComment(feedId);
-      setFeedId(feedId);
+      getListComment(feed.feedId);
+      setFeed(feed);
       setCommentParent(null);
     },
   }));
@@ -56,14 +56,15 @@ const ModalComment = forwardRef<ModalCommentRef>((_, ref) => {
       return;
     }
     const result = await createComment({
-      feedId: commentParent !== null ? '' : feedId,
+      feedId: commentParent !== null ? '' : feed?.feedId || '',
       parentCommentId: commentParent?.data.commentId,
-      content: comment
+      content: comment,
+      authorId: feed?.author.userId || '',
     }).unwrap();
 
     let newComment: any = {
       data: {
-        feedId: commentParent ? '' : feedId,
+        feedId: commentParent ? '' : feed?.feedId,
         content: result.content,
         commentId: result.commentId,
         userId: result.userId,
@@ -124,7 +125,7 @@ const ModalComment = forwardRef<ModalCommentRef>((_, ref) => {
               return <Text style={{ alignSelf: 'center', fontSize: 16 }}>Đã tải hết bình luận</Text>;
             }
             return (
-              <TouchableOpacity onPress={() => getListComment(feedId)}>
+              <TouchableOpacity onPress={() => getListComment(feed?.feedId || '')}>
                 <Text style={{ alignSelf: 'center', fontSize: 16 }}>Tải thêm bình luận</Text>
               </TouchableOpacity>
             );

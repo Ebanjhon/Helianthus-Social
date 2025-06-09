@@ -11,17 +11,17 @@ import styles from './SearchStyle';
 import { useTabBar } from '../../Configs/TabBarContext';
 import React from 'react';
 import HeaderApp from '../../Components/HeaderApp/HeaderApp';
-import { AppImage } from '../../Components';
 import colors from '../../assets/color/colors';
-import { useFollowUserMutation, useSearchUserMutation, useUnFollowUserMutation } from '../../RTKQuery/Slides/slide';
+import { BASE_MinIO, BASE_URL, useFollowUserMutation, useSearchUserMutation, useUnFollowUserMutation } from '../../RTKQuery/Slides/slide';
 import { UserSearchResult } from '../../RTKQuery/Slides/types';
 import { useNavigation } from '@react-navigation/native';
+import FastImage from 'react-native-fast-image';
 const Search = ({ }) => {
-  const navigation = useNavigation();
   const { state, dispatch } = useTabBar();
   const [text, setText] = useState('');
   const [isSearchAccount, setIssSearchAccount] = useState(true);
-  const [getUser, { data, isLoading, error }] = useSearchUserMutation();
+  const [getUser, { data }] = useSearchUserMutation();
+
   const hideTabBar = () => {
     dispatch({ type: 'HIDE_TAB_BAR' });
   };
@@ -85,6 +85,7 @@ const Search = ({ }) => {
         </View>
       </View>
       <FlatList
+        contentContainerStyle={{ paddingBottom: 60 }}
         style={styles.boxList}
         data={data}
         renderItem={({ item, index }) => <User data={item} key={index} />}
@@ -127,14 +128,14 @@ const User: React.FC<UserProps> = ({ data }) => {
       await fetchUnFollow({ userTargetId: data.userId }).unwrap();
       setIsFollow(false);
     } catch (e) {
-      if (errorUnFl.originalStatus) {
-        setIsFollow(false)
-      }
+      setIsFollow(false)
       console.log('====================================');
       console.log(errorUnFl);
       console.log('====================================');
     }
   }
+
+  const avatar = (data.avatar === null || data.avatar === undefined) ? 'https://i.pinimg.com/736x/c4/28/30/c42830496db49a385f9b4b9df6672294.jpg' : `${BASE_MinIO}${data.avatar}`;
 
   return <TouchableOpacity
     onPress={() => {
@@ -142,12 +143,12 @@ const User: React.FC<UserProps> = ({ data }) => {
     }}
     style={styles.itemUser}>
     <View style={styles.leftInfo}>
-      <AppImage
-        uri={data.avatar || ''}
-        width={60}
-        height={60}
-        style={{ marginRight: 10 }}
-        imageStyle={styles.avatar}
+      <FastImage
+        style={[{ width: 60, height: 60, marginRight: 10 }, styles.avatar]}
+        source={{
+          uri: avatar,
+          priority: FastImage.priority.high,
+        }}
       />
       <View>
         <Text style={styles.textName}>

@@ -12,29 +12,27 @@ import LottieView from 'lottie-react-native';
 import Toast from 'react-native-toast-message';
 import { showToast, toastConfigExport } from '../../Configs/ToastConfig';
 import { AppInputFloat } from '../../Components/AppInputFloating/AppInputFloat';
-import { UserResponse } from '../../RTKQuery/Slides/types';
 import {
   BASE_URL,
   useGetTokenMutation,
   useGetUserProfileMutation,
 } from '../../RTKQuery/Slides/slide';
 import { UserContext } from '../../Configs/UserReducer';
-import { IconGoogle } from '../../assets/SVG';
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 
 const Login = ({ }) => {
   const navigation = useNavigation();
-  const [username, setUsername] = useState('hon123');
+  const [account, setAccout] = useState('jhon123');
   const [password, setPassword] = useState('123');
-  const [fetchToken, { data: tokenData, error, isLoading }] =
-    useGetTokenMutation();
+  const [fetchToken, { isLoading }] = useGetTokenMutation();
   useGetUserProfileMutation();
   const { dispatch } = useContext(UserContext);
+
   const handleGetUserProfile = async (token: string) => {
     try {
       const response = await fetch(
-        `${BASE_URL}/api/user?username=${encodeURIComponent(username)}`,
+        `${BASE_URL}/api/user/account`,
         {
           method: 'GET',
           headers: {
@@ -44,37 +42,35 @@ const Login = ({ }) => {
         },
       );
 
-      const text = await response.text();
-
-      if (!response.ok) {
-        throw new Error(`Lỗi server: ${response.status}`);
-      }
-
-      const result: UserResponse = text
-        ? JSON.parse(text)
-        : ({} as UserResponse);
-      if (result?.active === false) {
-        navigation.navigate('Active', { userData: result });
+      const data = await response.json();
+      if (!data?.active) {
+        navigation.navigate('Active', { userData: data });
       } else {
-        await AsyncStorage.setItem('user', JSON.stringify(result));
-        dispatch({ type: 'login', payload: result });
+        await AsyncStorage.setItem('user', JSON.stringify(data));
+        dispatch({ type: 'login', payload: data });
       }
     } catch (error: any) {
-      console.error('API error:', error.message);
+      console.error('API error:', error.message, "Khi lấy thông tin user!");
       throw error;
     }
   };
 
   const handleLogin = async () => {
     try {
-      const dataToken = await fetchToken({ username, password }).unwrap();
+      const dataToken = await fetchToken({ userInput: account, password: password }).unwrap();
       if (dataToken.token === undefined) {
         showToast('error', 'Đăng nhập thất bại!', 'Vui lòng đăng nhập lại!');
       } else {
+        console.log('====================================');
+        console.log(dataToken.token);
+        console.log('====================================');
         await AsyncStorage.setItem('token', dataToken.token);
         await handleGetUserProfile(dataToken.token);
       }
     } catch (err) {
+      console.log('====================================');
+      console.log(err);
+      console.log('====================================');
       showToast('error', 'Đăng nhập thất bại!', "Mật khẩu hoặc tên người dùng không chính xác!");
     }
   };
@@ -93,9 +89,9 @@ const Login = ({ }) => {
               marginVertical: 20,
             }}>
             <AppInputFloat
-              label="Tên đăng nhập"
-              value={username}
-              setValue={setUsername}
+              label="Tài khoản"
+              value={account}
+              setValue={setAccout}
               isPassword={false}
             />
             <AppInputFloat
@@ -128,7 +124,6 @@ const Login = ({ }) => {
                   alignSelf: 'center',
                   marginTop: 18,
                 }}>
-                <IconGoogle />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => navigation.navigate('Register')}

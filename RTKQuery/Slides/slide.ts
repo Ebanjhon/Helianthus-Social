@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { CommentResponse, createAccount, CreateComment, createFeed, createNoti, MediaItem, NotiListDataResponse, TypeFeedItem, UserProfileInfo, UserResponse, UserSearchResult, UserUpdate } from './types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-export const HOST = '192.168.1.2';
+export const HOST = '10.35.41.94';
 export const BASE_URL = `http://${HOST}:8888`;
 export const BASE_MinIO = `http://${HOST}`;
 
@@ -20,7 +20,7 @@ export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery,
   endpoints: builder => ({
-    getToken: builder.mutation<{ token: string }, { username: string; password: string }>({
+    getToken: builder.mutation<{ token: string }, { userInput: string; password: string }>({
       query: params => ({
         url: '/api/auth/login',
         method: 'POST',

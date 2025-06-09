@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import React, { forwardRef, useContext, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { ActivityIndicator, Dimensions, NativeScrollEvent, NativeSyntheticEvent, SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native";
 import HeaderApp from "../../Components/HeaderApp/HeaderApp";
 import colors from "../../assets/color/colors";
@@ -17,6 +17,7 @@ import Animated, {
     useAnimatedScrollHandler,
 } from 'react-native-reanimated';
 import { MyMediaRef } from "./components/myMediaList";
+import { UserContext } from "../../Configs/UserReducer";
 const { width } = Dimensions.get('window');
 const dataTab = [
     {
@@ -37,6 +38,7 @@ const dataTab = [
 ];
 const ProfileUser: React.FC<ScreenProps<'Profile'>> = ({ navigation, route }) => {
     const { usernameProps } = route.params;
+    const { user, dispatch } = useContext(UserContext);
     const [fetchData, { data, isLoading }] = useGetUserInfoMutation();
     const tabIndexView = useRef<number>(0);
     const scrollViewRef = useRef<ScrollView>(null);
@@ -141,8 +143,8 @@ const ProfileUser: React.FC<ScreenProps<'Profile'>> = ({ navigation, route }) =>
                             title={usernameProps}
                             bgColor={colors.trang}
                             isShowleftAction
-                            // isShowrightAction={data?.userId === user?.userId}
-                            isShowrightAction={true}
+                            isShowrightAction={data?.userId === user?.userId}
+                            // isShowrightAction={true}
                             isButtonHead
                             onPrees={() => { navigation.navigate('Setting') }}
                         />

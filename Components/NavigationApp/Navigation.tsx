@@ -1,10 +1,10 @@
 import React, { forwardRef, useContext, useEffect, useReducer, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Image, PermissionsAndroid, View } from 'react-native';
+import { Image, View } from 'react-native';
 import { Provider } from 'react-redux';
 import colors from '../../assets/color/colors';
 import UserReducer, { UserContext } from '../../Configs/UserReducer';
-import { TabBarProvider } from '../../Configs/TabBarContext';
+import { TabBarProvider, useTabBar } from '../../Configs/TabBarContext';
 import {
   NavigationContainer,
 } from '@react-navigation/native';
@@ -39,6 +39,7 @@ const Tab = createBottomTabNavigator();
 
 const HomeTabs = forwardRef(() => {
   const { user, dispatch } = useContext(UserContext);
+  const { state } = useTabBar();
   return (
     <View style={{ flex: 1 }}>
       <Tab.Navigator
@@ -47,6 +48,7 @@ const HomeTabs = forwardRef(() => {
           tabBarShowLabel: false,
           tabBarStyle: {
             ...styles.tabBarStyle,
+            display: state.visible ? 'flex' : 'none',
           },
         }}>
         <Tab.Screen
@@ -115,7 +117,7 @@ const HomeTabs = forwardRef(() => {
                   source={icons.notifi}
                   resizeMode="contain"
                   style={[
-                    { tintColor: focused ? colors.gold : colors.milk },
+                    { tintColor: focused ? colors.gold : colors.secondary },
                     styles.icon,
                   ]}
                 />
@@ -185,11 +187,10 @@ const Navigation = () => {
     };
 
     ws.current.onmessage = async (event) => {
-      const message = event.data;
-      console.log('Message from server:', message);
+      const data = JSON.parse(event.data);
       await notifee.displayNotification({
-        title: 'Username',
-        body: message,
+        title: `${data.firstname} ${data.lastname}`,
+        body: data.contentNoti,
         android: {
           channelId: 'default',
           importance: AndroidImportance.HIGH,
@@ -245,7 +246,7 @@ const Navigation = () => {
                           CardStyleInterpolators.forFadeFromCenter,
                       }}
                     />
-                    <Stack.Screen name="Active" getComponent={ActiveAccount} />
+                    <Stack.Screen name="Active" component={ActiveAccount} />
                   </>
                 ) : (
                   <>

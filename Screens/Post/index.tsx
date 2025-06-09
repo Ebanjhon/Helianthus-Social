@@ -3,7 +3,6 @@ import { FlatList, Image, Text, TextInput, TouchableOpacity, View } from 'react-
 import styles from './Styles';
 import SlideUp from './SlideUp';
 import colors from '../../assets/color/colors';
-import Navigation from '../../Components/NavigationApp/Navigation';
 import { UserContext } from '../../Configs/UserReducer';
 import HeaderApp from '../../Components/HeaderApp/HeaderApp';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -146,7 +145,7 @@ const CreateFeed: React.FC<CreateFeedProps> = ({ }) => {
             showToast('success', 'Message!', 'Đăng tải bài viết thành công.');
             setTimeout(() => {
                 navigation.goBack();
-            }, 3000);
+            }, 1000);
             return;
         }
         const token = await AsyncStorage.getItem('token');
@@ -174,7 +173,7 @@ const CreateFeed: React.FC<CreateFeedProps> = ({ }) => {
             showToast('success', 'Message!', 'Đăng tải bài viết thành công.');
             setTimeout(() => {
                 navigation.goBack();
-            }, 3000);
+            }, 1000);
         } catch (error: any) {
             console.error('Lỗi upload:', error.message);
             throw error;

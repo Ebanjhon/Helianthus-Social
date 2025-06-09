@@ -23,8 +23,7 @@ import { useLikeFeedMutation, useUnLikeFeedMutation } from '../../../../RTKQuery
 import { ModalActionRef } from '../modalAction';
 import { TypeFeedItem } from '../../../../RTKQuery/Slides/types';
 import { UserContext } from '../../../../Configs/UserReducer';
-import { myFunctionNoti } from '../../../functions/functions';
-
+const temp = 'https://i.pinimg.com/736x/c9/e3/eb/c9e3eb487b0deb3f50501c196e332b58.jpg';
 interface ItemFeedProps {
   data: TypeFeedItem;
   onShowModalComment: () => void;
@@ -89,7 +88,6 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
         <Animated.View
           style={[
             styles.ScrollText,
-            { backgroundColor: expanded ? '#000000E6' : 'transparent' },
             { opacity: fadeAnim },
           ]}>
           <ScrollView nestedScrollEnabled={true}>
@@ -132,17 +130,17 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
           <AppImage
             style={styles.avatarImage}
             imageStyle={[styles.image, { borderWidth: isHideInfo ? 2 : 0 }]}
-            uri={data.author.avatar}
+            uri={data.author?.avatar}
             width={45}
           />
           <Animated.View style={[{ marginLeft: 5 }, { opacity: fadeAnim }]}>
             <View style={{ flexDirection: 'row', gap: 10 }}>
               <Text style={styles.textUsername}>
-                {data.author.firstname} {data.author.lastname}
+                {data.author?.firstname} {data.author?.lastname}
               </Text>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={{
-                  display: data.author.userId === user?.userId ? 'none' : 'flex',
+                  display: data.author?.userId === user?.userId ? 'none' : 'flex',
                   backgroundColor: true ? colors.gold2 : colors.info,
                   borderRadius: 10,
                   paddingHorizontal: 10,
@@ -150,7 +148,7 @@ const ItemFeed: React.FC<ItemFeedProps> = ({
                 <Text style={styles.lableFollow}>
                   {data.action.isLike ? 'Follow' : 'Following'}
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
             <Animated.Text style={[styles.textTime, { opacity: fadeAnim }]}>
               {formatTimeAgo(data.data.createDay)}

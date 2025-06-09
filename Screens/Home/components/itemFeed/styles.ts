@@ -85,9 +85,10 @@ export const styles = StyleSheet.create({
     top: 60,
     paddingHorizontal: 10,
     maxHeight: 390,
-    borderRadius: 10,
+    borderRadius: 5,
     marginHorizontal: 10,
     marginTop: 5,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)'
   },
   avatarImage: {
     marginLeft: 5,

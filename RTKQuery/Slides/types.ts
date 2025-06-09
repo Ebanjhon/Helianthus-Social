@@ -53,7 +53,7 @@ export type Author = {
   username: string;
   firstname: string;
   lastname: string;
-  avatar: string;
+  avatar?: string;
 };
 
 export type Action = {
@@ -132,6 +132,7 @@ export interface CreateComment {
   feedId: string | null,
   parentCommentId?: string;
   content: string;
+  authorId: string;
 }
 // 
 
